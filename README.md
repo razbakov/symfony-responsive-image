@@ -37,6 +37,20 @@ return [
 
 ## Components
 
+Choose the approach that best fits your needs:
+
+- Use `<twig:img>` when you need:
+
+  - Different sizes of the same image
+  - Same aspect ratio across all sizes
+  - Same crop/focal point across all sizes
+
+- Use `<twig:picture>` when you need:
+  - Different aspect ratios per breakpoint
+  - Different crops per breakpoint
+  - Different focal points per breakpoint
+  - Different sizes within each breakpoint
+
 ### Img Component
 
 Use for simple responsive images with automatic WebP conversion:
@@ -44,7 +58,7 @@ Use for simple responsive images with automatic WebP conversion:
 ```twig
 <twig:img
     src="/images/hero.jpg"               # Required: Image source path
-    alt="Hero image"                     # Required: Alt text for accessibility
+    alt="Hero image"                     # Recommended: Alt text for accessibility
     width="800"                          # Optional: Override width
     height="600"                         # Optional: Override height
     ratio="16:9"                         # Optional: Override aspect ratio
@@ -56,20 +70,12 @@ Use for simple responsive images with automatic WebP conversion:
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
     sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
+    fallback="auto"                      # Fallback format (default: auto)
     class="hero-image"                   # Any HTML attribute is supported
     data-controller="zoom"               # Custom data attributes
     aria-label="Hero section"            # ARIA attributes
 />
 ```
-
-Width and height are automatically calculated from:
-
-- Original image dimensions when no ratio specified
-- When ratio specified:
-  - Original width and calculated height if no width/height set
-  - Width and calculated height if width set (width="800" ratio="16:9")
-  - Calculated width and height if height set (height="600" ratio="16:9")
-  - Override both with width/height if needed (width="800" height="600")
 
 ### Picture Component
 
@@ -78,7 +84,7 @@ Use for art direction with different crops per screen size or orientation:
 ```twig
 <twig:picture
     src="/images/hero.jpg"                 # Required: Image source path
-    alt="Hero image"                       # Required: Alt text for accessibility
+    alt="Hero image"                       # Recommended: Alt text for accessibility
     sizes="sm:100vw md:80vw"               # Responsive sizes per breakpoint
     ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
     focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
@@ -87,34 +93,6 @@ Use for art direction with different crops per screen size or orientation:
     fallback="auto"                        # Fallback format (default: auto)
     class="hero-picture"                   # Any HTML attribute is supported
 />
-```
-
-The `fallback` property controls format selection for older browsers:
-
-- `auto` (default): Chooses based on original image
-  - PNG fallback if original has transparency (PNG, WebP, GIF)
-  - JPEG fallback for all other formats
-- `jpg`: Force JPEG as fallback format
-- `png`: Force PNG as fallback format
-
-The generated HTML will include format fallbacks:
-
-```html
-<picture>
-  <source
-    media="(max-width: 768px)"
-    type="image/webp"
-    srcset="hero-400x400.webp 400w, hero-800x800.webp 800w"
-    sizes="100vw"
-  />
-  <source
-    media="(min-width: 769px)"
-    type="image/webp"
-    srcset="hero-800x450.webp 800w, hero-1600x900.webp 1600w"
-    sizes="80vw"
-  />
-  <img src="hero-1600x900.jpg" alt="Hero image" width="1600" height="900" />
-</picture>
 ```
 
 ## Preloading Images
@@ -136,14 +114,15 @@ Add this to your base template to enable preloading of critical images:
 
 The `responsive_image_preloads()` function generates appropriate `<link rel="preload">` tags for any images that have `preload="true"` set. This is especially useful for LCP optimization.
 
-### Image Optimization
+### Fallback Options
 
-| Property   | Values               | Description                                        |
-| ---------- | -------------------- | -------------------------------------------------- |
-| `format`   | "webp", "jpg", "png" | Output format (default: webp)                      |
-| `quality`  | 0-100                | Image quality (default: 80)                        |
-| `fallback` | "auto", "jpg", "png" | Fallback format for older browsers (default: auto) |
-| `focal`    | string               | Focus point for cropping (default: center)         |
+The `fallback` property controls format selection for older browsers:
+
+- `auto` (default): Chooses based on original image
+  - PNG fallback if original has transparency (PNG, WebP, GIF)
+  - JPEG fallback for all other formats
+- `jpg`: Force JPEG as fallback format
+- `png`: Force PNG as fallback format
 
 ### Fit Options
 
@@ -181,6 +160,15 @@ The sizes syntax follows this pattern:
   - `100vw` - Full width on mobile
   - `sm:50vw` - Half width from sm breakpoint (≥640px)
   - `md:400px` - Fixed 400px from md breakpoint (≥768px)
+
+Width and height are automatically calculated from:
+
+- Original image dimensions when no ratio specified
+- When ratio specified:
+  - Original width and calculated height if no width/height set
+  - Width and calculated height if width set (width="800" ratio="16:9")
+  - Calculated width and height if height set (height="600" ratio="16:9")
+  - Override both with width/height if needed (width="800" height="600")
 
 The bundle uses your design system's breakpoints (configurable in `responsive_image.yaml`).
 
@@ -282,20 +270,6 @@ Use `<twig:picture>` when you need different versions of the image:
     focal="sm:center md:0.5,0.3"          # Center on mobile, custom focus on desktop
 />
 ```
-
-Choose the approach that best fits your needs:
-
-- Use `<twig:img>` when you need:
-
-  - Different sizes of the same image
-  - Same aspect ratio across all sizes
-  - Same crop/focal point across all sizes
-
-- Use `<twig:picture>` when you need:
-  - Different aspect ratios per breakpoint
-  - Different crops per breakpoint
-  - Different focal points per breakpoint
-  - Different sizes within each breakpoint
 
 Default breakpoints:
 
