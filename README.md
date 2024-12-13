@@ -6,6 +6,31 @@ A Symfony bundle that provides two components for optimized images:
 - `<twig:picture>` - For art direction with different crops per breakpoint
 - `responsive_image_preloads()` - For preloading images
 
+## Table of Contents
+
+1. [Features](#features)
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+4. [Components](#components)
+   - [Img Component](#img-component)
+   - [Picture Component](#picture-component)
+5. [Configuration](#configuration)
+   - [Preloading Images](#preloading-images)
+   - [Responsive Images](#responsive-images)
+   - [Density Support](#density-support)
+   - [Fit Options](#fit-options-cropping-and-resizing)
+   - [Fallback Options](#fallback-options)
+   - [Placeholder Options](#placeholder-options)
+   - [Art Direction with Breakpoints](#art-direction-with-breakpoints)
+6. [Common Use Cases](#common-use-cases)
+7. [Using Presets](#using-presets)
+8. [Settings](#settings)
+9. [Error Handling](#error-handling)
+10. [Security](#security)
+11. [Development](#development)
+12. [License](#license)
+13. [Credits](#credits)
+
 ## Features
 
 - 🖼️ Automatic responsive image generation
@@ -95,7 +120,9 @@ Use for art direction with different crops per screen size or orientation:
 />
 ```
 
-## Preloading Images
+## Configuration
+
+### Preloading Images
 
 Add this to your base template to enable preloading of critical images:
 
@@ -113,27 +140,6 @@ Add this to your base template to enable preloading of critical images:
 ```
 
 The `responsive_image_preloads()` function generates appropriate `<link rel="preload">` tags for any images that have `preload="true"` set. This is especially useful for LCP optimization.
-
-### Fallback Options
-
-The `fallback` property controls format selection for older browsers:
-
-- `auto` (default): Chooses based on original image
-  - PNG fallback if original has transparency (PNG, WebP, GIF)
-  - JPEG fallback for all other formats
-- `jpg`: Force JPEG as fallback format
-- `png`: Force PNG as fallback format
-
-### Fit Options
-
-The `fit` property specifies how the image should be resized to fit the target dimensions. There are five standard values:
-
-- `cover` (default) - Preserving aspect ratio, ensures the image covers both provided dimensions by cropping/clipping to fit
-- `contain` - Preserving aspect ratio, contains image within both provided dimensions using "letterboxing" where necessary
-- `fill` - Ignores the aspect ratio of the input and stretches to both provided dimensions
-- `inside` - Preserving aspect ratio, resizes the image to be as large as possible while ensuring its dimensions are less than or equal to both those specified
-- `outside` - Preserving aspect ratio, resizes the image to be as small as possible while ensuring its dimensions are greater than or equal to both those specified
-- `none` - Uses original image dimensions
 
 ### Responsive Images
 
@@ -212,6 +218,27 @@ The component will:
 - Generate 1x and 2x versions for each size
 - Include both width (w) and density (x) descriptors in srcset
 - Automatically calculate the correct dimensions for each density
+
+### Fit Options (Cropping and Resizing)
+
+The `fit` property specifies how the image should be resized to fit the target dimensions. There are five standard values:
+
+- `cover` (default) - Preserving aspect ratio, ensures the image covers both provided dimensions by cropping/clipping to fit
+- `contain` - Preserving aspect ratio, contains image within both provided dimensions using "letterboxing" where necessary
+- `fill` - Ignores the aspect ratio of the input and stretches to both provided dimensions
+- `inside` - Preserving aspect ratio, resizes the image to be as large as possible while ensuring its dimensions are less than or equal to both those specified
+- `outside` - Preserving aspect ratio, resizes the image to be as small as possible while ensuring its dimensions are greater than or equal to both those specified
+- `none` - Uses original image dimensions
+
+### Fallback Options
+
+The `fallback` property controls format selection for older browsers:
+
+- `auto` (default): Chooses based on original image
+  - PNG fallback if original has transparency (PNG, WebP, GIF)
+  - JPEG fallback for all other formats
+- `jpg`: Force JPEG as fallback format
+- `png`: Force PNG as fallback format
 
 ### Placeholder Options
 
@@ -403,7 +430,7 @@ Using presets in templates:
 
 You can define your own presets in the configuration. Preset values can be overridden by directly setting properties on the component.
 
-## Configuration
+## Settings
 
 Default settings in `config/packages/responsive_image.yaml`:
 
