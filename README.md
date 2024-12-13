@@ -40,11 +40,12 @@ A Symfony bundle that provides two components for optimized images:
 5. [Common Use Cases](#common-use-cases)
 6. [Using Presets](#using-presets)
 7. [Settings](#settings)
-8. [Error Handling](#error-handling)
-9. [Security](#security)
-10. [Development](#development)
-11. [License](#license)
-12. [Credits](#credits)
+8. [Providers](#providers)
+9. [Error Handling](#error-handling)
+10. [Security](#security)
+11. [Development](#development)
+12. [License](#license)
+13. [Credits](#credits)
 
 ## Requirements
 
@@ -461,6 +462,10 @@ responsive_image:
     placeholder: "none"
     placeholder-class: "lazy-placeholder"
 ```
+
+## Providers
+
+The bundle supports multiple providers for image transformation and optimization. Each provider is responsible for generating optimized image URLs and handling transformations. See [Providers](providers.md) for more information.
 
 ## Error Handling
 
