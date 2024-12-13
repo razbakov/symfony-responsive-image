@@ -1,16 +1,10 @@
 # Symfony Responsive Image Bundle
 
-- [Features](#features)
-- [Installation](#installation)
-- [Requirements](#requirements)
-- [Image Options](#image-options)
-  - [Fit Options](#fit-options)
-- [Responsive Images](#responsive-images)
-  - [Simple Responsive Syntax](#simple-responsive-syntax)
-  - [Density Support](#density-support)
-  - [Art Direction](#art-direction-with-breakpoints)
-- [Performance](#performance)
-- [Development](#development)
+A Symfony bundle that provides two components for optimized images:
+
+- `<twig:img>` - For simple responsive images with automatic WebP conversion
+- `<twig:picture>` - For art direction with different crops per breakpoint
+- `responsive_image_preloads()` - For preloading images
 
 ## Features
 
@@ -20,10 +14,11 @@
 - 🚀 Core Web Vitals optimization
 - ⚡ Image preloading support
 
-A Symfony bundle that provides two components for optimized images:
+## Requirements
 
-- `<twig:img>` - For simple responsive images with automatic WebP conversion
-- `<twig:picture>` - For art direction with different crops per breakpoint
+- PHP 8.1 or higher
+- Symfony 6.0 or higher
+- GD extension or Imagick extension
 
 ## Installation
 
@@ -40,11 +35,30 @@ return [
 ];
 ```
 
-## Requirements
+## Configuration
 
-- PHP 8.1 or higher
-- Symfony 6.0 or higher
-- GD extension or Imagick extension
+Default settings in `config/packages/responsive_image.yaml`:
+
+```yaml
+responsive_image:
+  defaults:
+    breakpoints:
+      xs: 320
+      sm: 640
+      md: 768
+      lg: 1024
+      xl: 1280
+      2xl: 1536
+    format: "webp"
+    quality: 80
+    lazy: true
+    priority: false
+    preload: false
+    fit: "cover"
+    focal: "center"
+    placeholder: "none"
+    placeholder-color: null
+```
 
 ## Error Handling
 
@@ -156,6 +170,25 @@ The generated HTML will include format fallbacks:
   <img src="hero-1600x900.jpg" alt="Hero image" width="1600" height="900" />
 </picture>
 ```
+
+## Preloading Images
+
+Add this to your base template to enable preloading of critical images:
+
+```twig
+<!DOCTYPE html>
+<html>
+    <head>
+        {{ responsive_image_preloads() }}
+        {# Will output preload links for images marked with preload="true" #}
+    </head>
+    <body>
+        {# Your content #}
+    </body>
+</html>
+```
+
+The `responsive_image_preloads()` function generates appropriate `<link rel="preload">` tags for any images that have `preload="true"` set. This is especially useful for LCP optimization.
 
 ### Image Optimization
 
@@ -379,31 +412,6 @@ Default breakpoints:
 />
 ```
 
-## Configuration
-
-Default settings in `config/packages/responsive_image.yaml`:
-
-```yaml
-responsive_image:
-  defaults:
-    breakpoints:
-      xs: 320
-      sm: 640
-      md: 768
-      lg: 1024
-      xl: 1280
-      2xl: 1536
-    format: "webp"
-    quality: 80
-    lazy: true
-    priority: false
-    preload: false
-    fit: "cover"
-    focal: "center"
-    placeholder: "none"
-    placeholder-color: null
-```
-
 ## Using Presets
 
 Presets allow you to reuse common configurations:
@@ -482,119 +490,3 @@ This bundle is available under the MIT license.
 ## Credits
 
 Inspired by [NuxtImg](https://image.nuxtjs.org/) and [Ibexa Platform](https://www.ibexa.co/).
-
-## Attributes
-
-### Required
-
-#### src
-
-Path to the source image file
-
-- Type: string
-- Example: `src="/images/hero.jpg"`
-
-#### alt
-
-Alternative text for accessibility
-
-- Type: string
-- Example: `alt="Hero image"`
-
-### Dimensions
-
-#### width, height
-
-Control image dimensions
-
-- Type: number
-- Example: `width="800" height="600"`
-- Note: Auto-calculated when using ratio
-
-#### ratio
-
-Set aspect ratio
-
-- Type: string
-- Example: `ratio="16:9"`
-- Common: "16:9", "4:3", "1:1"
-
-### Processing
-
-#### fit
-
-Control how image fills space
-
-- Type: string
-- Values: `cover` (default), `contain`, `fill`, `inside`, `outside`, `none`
-
-#### focal
-
-Set focus point for cropping
-
-- Type: string
-- Default: "center"
-- Values: Named (`center`, `top`, etc.) or coordinates (`"0.5,0.3"`)
-
-#### quality
-
-Control compression level
-
-- Type: number (0-100)
-- Default: 80
-
-### Performance
-
-#### lazy
-
-Enable lazy loading
-
-- Type: boolean
-- Default: true
-
-#### priority
-
-Set high fetch priority
-
-- Type: boolean
-- Default: false
-
-#### preload
-
-Add preload link
-
-- Type: boolean
-- Default: false
-
-### Responsive
-
-#### breakpoints
-
-Define responsive widths
-
-- Type: array
-- Example: `[400, 800, 1200]`
-
-#### sizes
-
-Set size hints
-
-- Type: string
-- Example: `"100vw sm:50vw md:400px"`
-
-### Visual
-
-#### background
-
-Set background color (used with `fit="contain"`)
-
-- Type: string (CSS color)
-- Example: `"#ffffff"`
-
-#### placeholder
-
-Loading state visualization
-
-- Type: string
-- Values: `blur`, `dominant`, `none`
-- Color: Use `placeholder-color="#f0f0f0"` for custom color
