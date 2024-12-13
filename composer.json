@@ -1,0 +1,57 @@
+{
+  "name": "ommax/symfony-responsive-image",
+  "description": "A Symfony bundle for responsive images with automatic WebP conversion, smart cropping, and Core Web Vitals optimization",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "keywords": [
+    "symfony",
+    "image",
+    "responsive",
+    "webp",
+    "optimization",
+    "core web vitals"
+  ],
+  "authors": [
+    {
+      "name": "Aleksey Razbakov",
+      "email": "aleksey@razbakov.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "symfony/framework-bundle": "^6.0",
+    "symfony/twig-bundle": "^6.0",
+    "symfony/config": "^6.0",
+    "symfony/dependency-injection": "^6.0",
+    "symfony/http-kernel": "^6.0",
+    "twig/twig": "^3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "symfony/phpunit-bridge": "^6.0",
+    "symfony/browser-kit": "^6.0",
+    "symfony/css-selector": "^6.0",
+    "symfony/debug-bundle": "^6.0",
+    "symfony/yaml": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ommax\\ResponsiveImageBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Ommax\\ResponsiveImageBundle\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "6.0.*"
+    }
+  },
+  "minimum-stability": "stable"
+}
