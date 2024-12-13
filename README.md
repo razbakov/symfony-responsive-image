@@ -51,8 +51,8 @@ Use for simple responsive images with automatic WebP conversion:
     fit="cover"                          # Optional: How image should fit dimensions
     focal="center"                       # Optional: Focus point for cropping
     quality="80"                         # Optional: Image quality 0-100 (default: 80)
-    lazy="true"                          # Optional: Enable lazy loading (default: true)
-    priority="true"                      # Optional: Set high priority for LCP
+    loading="lazy"                       # Optional: Enable lazy loading
+    fetchpriority="high"                 # Optional: Set high priority for LCP
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
     sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
@@ -329,7 +329,7 @@ Default breakpoints:
     ratio="16:9"
     fit="cover"
     focal="center"
-    priority="true"
+    fetchpriority="high"
     preload="true"
     sizes="100vw"                        # Size hints for browser
 />
@@ -345,7 +345,7 @@ Default breakpoints:
     height="800"
     fit="contain"
     background="#ffffff"
-    lazy="true"
+    loading="lazy"
 />
 ```
 
@@ -392,7 +392,7 @@ responsive_image:
     hero:
       ratio: "16:9"
       sizes: "100vw sm:50vw md:400px"
-      priority: true
+      fetchpriority: high
       preload: true
 
     avatar:
@@ -423,7 +423,7 @@ Using presets in templates:
     src="/images/photo.jpg"
     alt="Photo"
     preset="hero"
-    priority="false"    {# Override specific preset value #}
+    fetchpriority="low"    {# Override specific preset value #}
 />
 ```
 
@@ -446,9 +446,8 @@ responsive_image:
       2xl: 1536
     format: "webp"
     quality: 80
-    lazy: true
-    priority: false
-    preload: false
+    loading: lazy
+    fetchpriority: low
     fit: "cover"
     focal: "center"
     placeholder: "none"
