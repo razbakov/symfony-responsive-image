@@ -122,7 +122,7 @@ Use for art direction with different crops per screen size or orientation:
     sizes="sm:100vw md:80vw"               # Responsive sizes per breakpoint
     ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
     focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
-    fit="cover"                            # How image should fit dimensions
+    fit="sm:contain md:cover"              # Fit behavior per breakpoint
     format="webp"                          # Output format (default: webp)
     fallback="auto"                        # Fallback format (default: auto)
     class="hero-picture"                   # Any HTML attribute is supported
