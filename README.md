@@ -117,8 +117,8 @@ Use for art direction with different crops per screen size or orientation:
 
 ```twig
 <twig:picture
-    src="/images/hero.jpg"                  # Required: Image source path
-    alt="Hero image"                        # Required: Alt text for accessibility
+    src="/images/hero.jpg"                 # Required: Image source path
+    alt="Hero image"                       # Required: Alt text for accessibility
     sizes="sm:100vw md:80vw"               # Responsive sizes per breakpoint
     ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
     focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
