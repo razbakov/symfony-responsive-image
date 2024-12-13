@@ -1,0 +1,27 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build outputs
+/build/
+/dist/
+/coverage/
+
+# Cache
+/var/
+*.cache
+
+# Generated files
+composer.lock
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# IDE files
+.idea/
+.vscode/ 

@@ -1,0 +1,70 @@
+responsive_image:
+  # Default image provider (liip_imagine, cloudinary, etc.)
+  default_provider: liip_imagine
+
+  # Path to the image shown when source image is missing
+  missing_image_placeholder: "/bundles/responsiveimage/images/404.svg"
+
+  # Default settings for all images
+  defaults:
+    # Breakpoints for responsive images (in pixels)
+    breakpoints:
+      xs: 320 # Mobile portrait
+      sm: 640 # Mobile landscape
+      md: 768 # Tablet portrait
+      lg: 1024 # Tablet landscape
+      xl: 1280 # Desktop
+      2xl: 1536 # Large desktop
+
+    # Image format and quality
+    format: webp # webp, jpg, png, avif
+    quality: 80 # 1-100
+
+    # Loading behavior
+    loading: lazy # lazy, eager
+    fetchpriority: low # high, low, auto
+
+    # Image fitting
+    fit: cover # cover, contain, fill, inside, outside
+
+    # Placeholder settings
+    placeholder: none # none, blur, dominant
+
+  # Provider-specific configuration
+  providers:
+    liip_imagine:
+      driver: gd # gd, imagick
+      cache: default
+      filters: [] # LiipImagine filters
+
+    cloudinary:
+      cloud_name: "%env(CLOUDINARY_CLOUD_NAME)%"
+      api_key: "%env(CLOUDINARY_API_KEY)%"
+      api_secret: "%env(CLOUDINARY_API_SECRET)%"
+      secure: true
+
+  # Predefined presets for common use cases
+  presets:
+    thumbnail:
+      width: 200
+      height: 200
+      fit: cover
+      quality: 90
+
+    hero:
+      ratio: "16:9"
+      sizes: "100vw sm:50vw md:400px"
+      fetchpriority: high
+      loading: eager
+
+    avatar:
+      width: 48
+      height: 48
+      fit: cover
+      placeholder: blur
+
+    product:
+      ratio: "1:1"
+      fit: contain
+      quality: 85
+      placeholder: dominant

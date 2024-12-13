@@ -54,6 +54,18 @@
   "config": {
     "sort-packages": true
   },
+  "scripts": {
+    "test": "phpunit",
+    "test:unit": "phpunit --testsuite unit",
+    "test:functional": "phpunit --testsuite functional",
+    "test:coverage": "phpunit --coverage-html coverage",
+    "format": "prettier --write \"**/*.{php,yml,yaml,json,md}\"",
+    "format:check": "prettier --check \"**/*.{php,yml,yaml,json,md}\"",
+    "format:php": "prettier --write \"**/*.php\"",
+    "format:yaml": "prettier --write \"**/*.{yml,yaml}\"",
+    "format:json": "prettier --write \"**/*.json\"",
+    "format:md": "prettier --write \"**/*.md\""
+  },
   "extra": {
     "symfony": {
       "allow-contrib": false,
