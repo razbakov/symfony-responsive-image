@@ -6,15 +6,30 @@ A Symfony bundle that provides two components for optimized images:
 - `<twig:picture>` - For art direction with different crops per breakpoint
 - `responsive_image_preloads()` - For preloading images
 
+**Key Features:**
+
+- 🖼️ Automatic responsive image generation
+- 🎯 Smart cropping with focal points
+- 🔄 WebP format conversion
+- 🚀 Performance optimization
+- ⚡ Image preloading support
+
+**Benefits:**
+
+- 📱 Better user experience across all devices and screen sizes
+- ⚡ Faster page loads with optimized image delivery
+- 🎨 Maintain image quality while reducing file sizes
+- 📊 Improved Core Web Vitals scores
+- 💻 Less developer time spent on image optimization
+
 ## Table of Contents
 
-1. [Features](#features)
-2. [Requirements](#requirements)
-3. [Installation](#installation)
-4. [Components](#components)
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Components](#components)
    - [Img Component](#img-component)
    - [Picture Component](#picture-component)
-5. [Configuration](#configuration)
+4. [Configuration](#configuration)
    - [Preloading Images](#preloading-images)
    - [Responsive Images](#responsive-images)
    - [Density Support](#density-support)
@@ -22,22 +37,14 @@ A Symfony bundle that provides two components for optimized images:
    - [Fallback Options](#fallback-options)
    - [Placeholder Options](#placeholder-options)
    - [Art Direction with Breakpoints](#art-direction-with-breakpoints)
-6. [Common Use Cases](#common-use-cases)
-7. [Using Presets](#using-presets)
-8. [Settings](#settings)
-9. [Error Handling](#error-handling)
-10. [Security](#security)
-11. [Development](#development)
-12. [License](#license)
-13. [Credits](#credits)
-
-## Features
-
-- 🖼️ Automatic responsive image generation
-- 🎯 Smart cropping with focal points
-- 🔄 WebP format conversion
-- 🚀 Core Web Vitals optimization
-- ⚡ Image preloading support
+5. [Common Use Cases](#common-use-cases)
+6. [Using Presets](#using-presets)
+7. [Settings](#settings)
+8. [Error Handling](#error-handling)
+9. [Security](#security)
+10. [Development](#development)
+11. [License](#license)
+12. [Credits](#credits)
 
 ## Requirements
 
