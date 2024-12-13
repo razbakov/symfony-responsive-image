@@ -53,7 +53,7 @@ This bundle shows promise as a production-ready solution for responsive image ha
 #### Technical Considerations
 
 - Security: Generate a Secure Hash for Each Request: Use a cryptographic hash (like SHA-256) that includes: The transformation parameters (e.g., dimensions, crop, etc.). A server-side secret key to ensure requests can’t be forged.
-- Fallback for src in img component
+- Fallback for src in img component: The image URL. Mandatory for the `<img>` element. On browsers supporting srcset, src is treated like a candidate image with a pixel density descriptor 1x, unless an image with this pixel density descriptor is already defined in srcset, or unless srcset contains w descriptors.
 - Support transformation from svg to webp, png, jpg, etc.
 - Add densities for picture component
 - Request Caching: Cache generated files and serve them for repeated requests instead of processing transformations each time.
