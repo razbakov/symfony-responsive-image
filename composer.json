@@ -1,0 +1,21 @@
+{
+  "name": "ommax/symfony-img",
+  "description": "A Symfony bundle providing responsive image components similar to NuxtImg",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "YourVendor\\ResponsiveImageBundle\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.1",
+    "symfony/framework-bundle": "^6.0|^7.0",
+    "symfony/twig-bundle": "^6.0|^7.0",
+    "intervention/image": "^2.7",
+    "twig/twig": "^3.0"
+  },
+  "require-dev": {
+    "symfony/phpunit-bridge": "^6.0|^7.0"
+  }
+}

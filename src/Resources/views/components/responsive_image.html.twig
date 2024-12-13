@@ -1,0 +1,5 @@
+<img
+    {%- for attr, value in this.getAttributes() %}
+        {{ attr }}="{{ value }}"
+    {%- endfor -%}
+> 
