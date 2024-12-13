@@ -237,14 +237,7 @@ The sizes syntax follows this pattern:
   - `sm:50vw` - Half width from sm breakpoint (≥640px)
   - `md:400px` - Fixed 400px from md breakpoint (≥768px)
 
-The bundle uses your design system's breakpoints (configurable in `responsive_image.yaml`):
-
-- xs: 320px
-- sm: 640px
-- md: 768px
-- lg: 1024px
-- xl: 1280px
-- 2xl: 1536px
+The bundle uses your design system's breakpoints (configurable in `responsive_image.yaml`).
 
 ### Density Support
 
