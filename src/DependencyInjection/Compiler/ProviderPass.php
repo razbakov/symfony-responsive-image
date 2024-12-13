@@ -21,4 +21,4 @@ class ProviderPass implements CompilerPassInterface
             $registryDefinition->addMethodCall('addProvider', [new Reference($id)]);
         }
     }
-} 
+}

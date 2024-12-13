@@ -2,17 +2,17 @@
 
 namespace Ommax\ResponsiveImageBundle\DependencyInjection;
 
+use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
 
 class ResponsiveImageExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         $configuration = $this->getConfiguration($configs, $container);
@@ -31,7 +31,7 @@ class ResponsiveImageExtension extends Extension
 
         // Configure providers
         foreach ($config['providers'] as $name => $providerConfig) {
-            $providerId = sprintf('responsive_image.provider.%s', $name);
+            $providerId = \sprintf('responsive_image.provider.%s', $name);
             if ($container->hasDefinition($providerId)) {
                 $providerDef = $container->getDefinition($providerId);
                 $providerDef->addMethodCall('configure', [$providerConfig]);
@@ -47,4 +47,4 @@ class ResponsiveImageExtension extends Extension
     {
         return 'responsive_image';
     }
-} 
+}

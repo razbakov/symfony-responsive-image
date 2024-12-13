@@ -31,11 +31,12 @@
     "symfony/options-resolver": "^6.0"
   },
   "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.65",
     "phpunit/phpunit": "^9.5",
-    "symfony/phpunit-bridge": "^6.0",
     "symfony/browser-kit": "^6.0",
     "symfony/css-selector": "^6.0",
     "symfony/debug-bundle": "^6.0",
+    "symfony/phpunit-bridge": "^6.0",
     "symfony/yaml": "^6.0"
   },
   "suggest": {
@@ -59,12 +60,8 @@
     "test:unit": "phpunit --testsuite unit",
     "test:functional": "phpunit --testsuite functional",
     "test:coverage": "phpunit --coverage-html coverage",
-    "format": "prettier --write \"**/*.{php,yml,yaml,json,md}\"",
-    "format:check": "prettier --check \"**/*.{php,yml,yaml,json,md}\"",
-    "format:php": "prettier --write \"**/*.php\"",
-    "format:yaml": "prettier --write \"**/*.{yml,yaml}\"",
-    "format:json": "prettier --write \"**/*.json\"",
-    "format:md": "prettier --write \"**/*.md\""
+    "review": "php-cs-fixer fix --dry-run --diff",
+    "format": "php-cs-fixer fix"
   },
   "extra": {
     "symfony": {

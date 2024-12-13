@@ -12,8 +12,9 @@ interface ProviderInterface
     /**
      * Generate the URL for the image with given options.
      *
-     * @param string $src The source image path
-     * @param array $options The transformation options
+     * @param string $src     The source image path
+     * @param array  $options The transformation options
+     *
      * @return string The transformed image URL
      */
     public function generateUrl(string $src, array $options): string;

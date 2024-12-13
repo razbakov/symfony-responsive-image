@@ -16,7 +16,7 @@ class ProviderRegistryTest extends TestCase
     protected function setUp(): void
     {
         $this->registry = new ProviderRegistry('default_provider');
-        
+
         $this->provider = $this->createMock(ProviderInterface::class);
         $this->provider->method('getName')
             ->willReturn($this->providerName);
@@ -84,11 +84,11 @@ class ProviderRegistryTest extends TestCase
         $this->registry->addProvider($provider2);
 
         $providers = $this->registry->getProviders();
-        
+
         $this->assertCount(2, $providers);
         $this->assertArrayHasKey('provider1', $providers);
         $this->assertArrayHasKey('provider2', $providers);
         $this->assertSame($provider1, $providers['provider1']);
         $this->assertSame($provider2, $providers['provider2']);
     }
-} 
+}

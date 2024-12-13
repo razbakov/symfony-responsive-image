@@ -64,7 +64,7 @@ class ResponsiveImageExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
 
         $this->assertTrue($this->container->hasDefinition('responsive_image.provider_registry'));
-        
+
         $registryDef = $this->container->getDefinition('responsive_image.provider_registry');
         $this->assertEquals(ProviderRegistry::class, $registryDef->getClass());
     }
@@ -88,7 +88,7 @@ class ResponsiveImageExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
 
         $autoconfigured = $this->container->getAutoconfiguredInstanceof();
-        
+
         $this->assertArrayHasKey(ProviderInterface::class, $autoconfigured);
         $this->assertTrue($autoconfigured[ProviderInterface::class]->hasTag('responsive_image.provider'));
     }
@@ -123,7 +123,7 @@ class ResponsiveImageExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
 
         $this->assertTrue($this->container->hasParameter('responsive_image.providers'));
-        
+
         $providers = $this->container->getParameter('responsive_image.providers');
         $this->assertArrayHasKey('liip_imagine', $providers);
         $this->assertArrayHasKey('cloudinary', $providers);
@@ -156,9 +156,9 @@ class ResponsiveImageExtensionTest extends TestCase
         $this->extension->load([$config], $this->container);
 
         $this->assertTrue($this->container->hasParameter('responsive_image.presets'));
-        
+
         $presets = $this->container->getParameter('responsive_image.presets');
         $this->assertArrayHasKey('thumbnail', $presets);
         $this->assertEquals(200, $presets['thumbnail']['width']);
     }
-} 
+}

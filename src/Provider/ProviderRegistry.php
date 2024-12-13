@@ -28,11 +28,7 @@ class ProviderRegistry
         $providerName = $name ?? $this->defaultProvider;
 
         if (!isset($this->providers[$providerName])) {
-            throw new ProviderNotFoundException(sprintf(
-                'Provider "%s" not found. Available providers: %s',
-                $providerName,
-                implode(', ', array_keys($this->providers))
-            ));
+            throw new ProviderNotFoundException(\sprintf('Provider "%s" not found. Available providers: %s', $providerName, implode(', ', array_keys($this->providers))));
         }
 
         return $this->providers[$providerName];
@@ -54,7 +50,7 @@ class ProviderRegistry
     public function setDefaultProvider(string $name): void
     {
         if (!isset($this->providers[$name])) {
-            throw new ProviderNotFoundException(sprintf('Cannot set default provider "%s" as it does not exist', $name));
+            throw new ProviderNotFoundException(\sprintf('Cannot set default provider "%s" as it does not exist', $name));
         }
 
         $this->defaultProvider = $name;
