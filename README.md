@@ -76,8 +76,8 @@ Use for art direction with different crops per screen size or orientation:
     alt="Hero image"                        # Required: Alt text for accessibility
     class="hero-picture"                    # Any HTML attribute is supported
     data-controller="lightbox"              # Custom data attributes
-    format="webp"                           # Primary format (default: webp)
-    fallback="jpg"                          # Fallback format (default: from source)
+    format="webp"                           # Output format (default: webp)
+    fallback="auto"                         # Fallback format (default: auto)
     sources="{{ {
         'sm': {                            # Mobile screens (<768px)
             width: 800,
@@ -97,6 +97,14 @@ Use for art direction with different crops per screen size or orientation:
 />
 ```
 
+The `fallback` property controls format selection for older browsers:
+
+- `auto` (default): Chooses based on original image
+  - PNG fallback if original has transparency (PNG, WebP, GIF)
+  - JPEG fallback for all other formats
+- `jpg`: Force JPEG as fallback format
+- `png`: Force PNG as fallback format
+
 The generated HTML will include format fallbacks:
 
 ```html
@@ -108,40 +116,46 @@ The generated HTML will include format fallbacks:
     sizes="100vw"
   />
   <source
-    media="(max-width: 768px)"
-    type="image/jpeg"
-    srcset="hero-400x400.jpg 400w, hero-800x800.jpg 800w"
-    sizes="100vw"
-  />
-  <source
     media="(min-width: 769px)"
     type="image/webp"
     srcset="hero-800x450.webp 800w, hero-1600x900.webp 1600w"
-    sizes="80vw"
-  />
-  <source
-    media="(min-width: 769px)"
-    type="image/jpeg"
-    srcset="hero-800x450.jpg 800w, hero-1600x900.jpg 1600w"
     sizes="80vw"
   />
   <img src="hero-1600x900.jpg" alt="Hero image" width="1600" height="900" />
 </picture>
 ```
 
-Format fallbacks:
-
-- WebP sources are generated first
-- Fallback sources use original format or specified fallback
-- Fallback `<img>` uses most compatible format
-- Browsers automatically choose the best supported format
-
 ### Image Optimization
 
-| Property  | Values               | Description                               |
-| --------- | -------------------- | ----------------------------------------- |
-| `format`  | "webp", "jpg", "png" | Target format (original used as fallback) |
-| `quality` | 0-100                | Image quality                             |
+| Property   | Values               | Description                                        |
+| ---------- | -------------------- | -------------------------------------------------- |
+| `format`   | "webp", "jpg", "png" | Output format (default: webp)                      |
+| `quality`  | 0-100                | Image quality (default: 80)                        |
+| `fallback` | "auto", "jpg", "png" | Fallback format for older browsers (default: auto) |
+| `focal`    | string               | Focus point for cropping (default: center)         |
+
+### Focal Point Options
+
+The `focal` property controls which part of the image to keep when cropping:
+
+#### Named Positions
+
+- `center` - Center of the image
+- `top` - Top edge, horizontally centered
+- `top-left` - Top-left corner
+- `top-right` - Top-right corner
+- `bottom` - Bottom edge, horizontally centered
+- `bottom-left` - Bottom-left corner
+- `bottom-right` - Bottom-right corner
+- `left` - Left edge, vertically centered
+- `right` - Right edge, vertically centered
+
+#### Coordinates
+
+You can specify exact focus points using:
+
+- Percentages: `0.5,0.3` (50% from left, 30% from top)
+- Pixels: `200,150` (200px from left, 150px from top)
 
 ### Performance
 
@@ -444,6 +458,75 @@ The generated HTML includes inline styles for smooth transitions:
   />
 </div>
 ```
+
+### Fit Options
+
+The `fit` property controls how the image fits within its target dimensions:
+
+#### cover (default)
+
+```twig
+<twig:img
+    src="/images/photo.jpg"
+    width="400"
+    height="300"
+    fit="cover"
+/>
+```
+
+- Scales image to fill both width AND height
+- Maintains aspect ratio
+- Crops excess parts using focal point
+- Best for: Hero images, thumbnails, profile pictures
+
+#### contain
+
+```twig
+<twig:img
+    src="/images/photo.jpg"
+    width="400"
+    height="300"
+    fit="contain"
+    background="#f0f0f0"
+/>
+```
+
+- Scales image to fit within width AND height
+- Maintains aspect ratio
+- No cropping, shows entire image
+- Adds background color to empty space
+- Best for: Product images, logos, icons
+
+#### fill
+
+```twig
+<twig:img
+    src="/images/photo.jpg"
+    width="400"
+    height="300"
+    fit="fill"
+/>
+```
+
+- Stretches image to exactly fill width AND height
+- Does not maintain aspect ratio
+- No cropping needed
+- Best for: Backgrounds where distortion is acceptable
+
+#### none
+
+```twig
+<twig:img
+    src="/images/photo.jpg"
+    width="400"
+    fit="none"
+/>
+```
+
+- Uses original image dimensions
+- No scaling or cropping
+- Ignores width/height (except for HTML attributes)
+- Best for: When you want exact original size
 
 ## License
 
