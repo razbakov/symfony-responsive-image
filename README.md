@@ -1,9 +1,16 @@
 # Symfony Responsive Image Bundle
 
-A Symfony bundle that provides two components for optimized images:
-
-- `<twig:img>` - For simple responsive images with automatic WebP conversion
-- `<twig:picture>` - For art direction with different crops per breakpoint
+- [Features](#features)
+- [Installation](#installation)
+- [Requirements](#requirements)
+- [Image Options](#image-options)
+  - [Fit Options](#fit-options)
+- [Responsive Images](#responsive-images)
+  - [Simple Responsive Syntax](#simple-responsive-syntax)
+  - [Density Support](#density-support)
+  - [Art Direction](#art-direction-with-breakpoints)
+- [Performance](#performance)
+- [Development](#development)
 
 ## Features
 
@@ -12,6 +19,11 @@ A Symfony bundle that provides two components for optimized images:
 - 🔄 WebP format conversion
 - 🚀 Core Web Vitals optimization
 - ⚡ Image preloading support
+
+A Symfony bundle that provides two components for optimized images:
+
+- `<twig:img>` - For simple responsive images with automatic WebP conversion
+- `<twig:picture>` - For art direction with different crops per breakpoint
 
 ## Installation
 
@@ -70,7 +82,7 @@ Use for simple responsive images with automatic WebP conversion:
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
     breakpoints="{{ [400,800,1200] }}"   # Optional: Custom responsive widths
-    sizes="{{ ['100vw'] }}"              # Optional: Responsive size hints
+    sizes="100vw"                        # Optional: Responsive size hints
     class="hero-image"                   # Any HTML attribute is supported
     data-controller="zoom"               # Custom data attributes
     aria-label="Hero section"            # ARIA attributes
@@ -154,68 +166,96 @@ The generated HTML will include format fallbacks:
 | `fallback` | "auto", "jpg", "png" | Fallback format for older browsers (default: auto) |
 | `focal`    | string               | Focus point for cropping (default: center)         |
 
-### Focal Point Options
+### Fit Options
 
-The `focal` property controls which part of the image to keep when cropping:
+The `fit` property specifies how the image should be resized to fit the target dimensions. There are five standard values:
 
-#### Named Positions
-
-- `center` - Center of the image
-- `top` - Top edge, horizontally centered
-- `top-left` - Top-left corner
-- `top-right` - Top-right corner
-- `bottom` - Bottom edge, horizontally centered
-- `bottom-left` - Bottom-left corner
-- `bottom-right` - Bottom-right corner
-- `left` - Left edge, vertically centered
-- `right` - Right edge, vertically centered
-
-#### Coordinates
-
-You can specify exact focus points using:
-
-- Percentages: `0.5,0.3` (50% from left, 30% from top)
-- Pixels: `200,150` (200px from left, 150px from top)
-
-### Performance
-
-| Property            | Values                     | Description              |
-| ------------------- | -------------------------- | ------------------------ |
-| `lazy`              | boolean                    | Enable lazy loading      |
-| `priority`          | boolean                    | Set fetchpriority="high" |
-| `preload`           | boolean                    | Add preload link         |
-| `placeholder`       | "blur", "dominant", "none" | Loading placeholder type |
-| `placeholder-color` | CSS color                  | Custom placeholder color |
+- `cover` (default) - Preserving aspect ratio, ensures the image covers both provided dimensions by cropping/clipping to fit
+- `contain` - Preserving aspect ratio, contains image within both provided dimensions using "letterboxing" where necessary
+- `fill` - Ignores the aspect ratio of the input and stretches to both provided dimensions
+- `inside` - Preserving aspect ratio, resizes the image to be as large as possible while ensuring its dimensions are less than or equal to both those specified
+- `outside` - Preserving aspect ratio, resizes the image to be as small as possible while ensuring its dimensions are greater than or equal to both those specified
+- `none` - Uses original image dimensions
 
 ## Responsive Images
 
-### Simple Responsive Images
-
-Use `<twig:img>` when you need different sizes of the same image:
+### Simple Responsive Syntax
 
 ```twig
 <twig:img
     src="/images/hero.jpg"
     alt="Hero image"
-    width="1600"                         # Maximum/original width
-    ratio="16:9"                         # Maintain aspect ratio
-    breakpoints="[400, 800, 1200]"       # Generate different sizes
-    sizes="100vw"                        # Size hints for browser
+    sizes="100vw sm:50vw md:400px"    # Default size, then breakpoint:size pairs
 />
 ```
 
-The above generates multiple sizes of the same image, maintaining aspect ratio:
+This will automatically:
+
+- Generate appropriate image sizes for each breakpoint
+- Create the correct srcset and sizes attributes
+- Use default breakpoint widths (sm: 640px, md: 768px, etc.)
+
+The sizes syntax follows this pattern:
+
+- Start with default size (applies to smallest screens)
+- Add breakpoint:size pairs for larger screens
+- Each size applies from that breakpoint up
+- Example: `"100vw sm:50vw md:400px"`
+  - `100vw` - Full width on mobile
+  - `sm:50vw` - Half width from sm breakpoint (≥640px)
+  - `md:400px` - Fixed 400px from md breakpoint (≥768px)
+
+You can still use the array syntax for simpler cases:
+
+```twig
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    breakpoints="[400, 800, 1200]"
+    sizes="100vw"
+/>
+```
+
+### Density Support
+
+To generate special versions of images for high-DPI displays (like Retina), use the `densities` attribute:
+
+```twig
+<twig:img
+    src="/images/logo.png"
+    width="100"
+    densities="x1 x2"          # Generate 1x and 2x versions
+    alt="Logo"
+/>
+```
+
+This will generate:
 
 ```html
 <img
-  src="hero-1600.webp"
-  srcset="hero-400.webp 400w, hero-800.webp 800w, hero-1200.webp 1200w"
-  sizes="100vw"
-  alt="Hero image"
-  width="1600"
-  height="900"
+  src="/images/logo-100.jpg"
+  srcset="/images/logo-100.jpg 1x, /images/logo-200.jpg 2x"
+  width="100"
+  alt="Logo"
 />
 ```
+
+You can combine densities with responsive sizes:
+
+```twig
+<twig:img
+    src="/images/hero.jpg"
+    sizes="100vw sm:50vw md:400px"
+    densities="x1 x2"
+    alt="Hero image"
+/>
+```
+
+The component will:
+
+- Generate 1x and 2x versions for each size
+- Include both width (w) and density (x) descriptors in srcset
+- Automatically calculate the correct dimensions for each density
 
 ### Art Direction with Breakpoints
 
@@ -231,14 +271,14 @@ Use `<twig:picture>` when you need different versions of the image:
             ratio: '1:1',                  # Square crop for mobile
             fit: 'cover',
             focal: 'center',               # Center-focused crop
-            sizes: '100vw'                 # Image takes full viewport width
+            sizes: "100vw"                 # Image takes full viewport width
         },
         'md': {                            # Desktop screens (≥768px)
             width: 1600,
             ratio: '16:9',                 # Widescreen for desktop
             fit: 'cover',
             focal: '0.5,0.3',              # Custom focal point
-            sizes: '80vw'                  # Image takes 80% of viewport width
+            sizes: "80vw"                  # Image takes 80% of viewport width
         }
     } }}"
 />
@@ -368,6 +408,38 @@ responsive_image:
 
 Presets allow you to reuse common configurations:
 
+```yaml
+# config/packages/responsive_image.yaml
+responsive_image:
+  presets:
+    thumbnail:
+      width: 200
+      height: 200
+      fit: cover
+      quality: 90
+
+    hero:
+      ratio: "16:9"
+      breakpoints: [400, 800, 1200]
+      sizes: "100vw"
+      priority: true
+      preload: true
+
+    avatar:
+      width: 48
+      height: 48
+      fit: cover
+      placeholder: blur
+
+    product:
+      ratio: "1:1"
+      fit: contain
+      background: "#ffffff"
+      placeholder: dominant
+```
+
+Using presets in templates:
+
 ```twig
 {# Using a preset #}
 <twig:img
@@ -383,169 +455,9 @@ Presets allow you to reuse common configurations:
     preset="hero"
     priority="false"    {# Override specific preset value #}
 />
-
-{# Available presets #}
-
-thumbnail:
-  - Fixed 200x200 square
-  - Cover fit
-  - High quality (90)
-
-hero:
-  - 16:9 ratio
-  - Responsive sizes
-  - Priority loading
-  - Preloading enabled
-
-avatar:
-  - 48x48 square
-  - Blur placeholder
-  - Cover fit
-
-product:
-  - Square ratio
-  - Contain fit
-  - White background
-  - Dominant color placeholder
 ```
 
 You can define your own presets in the configuration. Preset values can be overridden by directly setting properties on the component.
-
-## Placeholders
-
-The component supports different types of placeholders to improve perceived loading performance:
-
-### Blur Placeholder
-
-```twig
-{# Generate a blurred, low-res placeholder #}
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    width="800"
-    placeholder="blur"
-/>
-```
-
-- Generates tiny (10px wide) blurred preview
-- Scales up and animates to full image
-- Best for: Photos and complex images
-
-### Dominant Color
-
-```twig
-{# Use image's dominant color as placeholder #}
-<twig:img
-    src="/images/product.jpg"
-    alt="Product"
-    width="800"
-    placeholder="dominant"
-/>
-```
-
-- Extracts main color from image
-- Shows solid color until image loads
-- Best for: Product photos, simple images
-
-### Custom Color
-
-```twig
-{# Use specific color as placeholder #}
-<twig:img
-    src="/images/photo.jpg"
-    alt="Photo"
-    width="800"
-    placeholder="color"
-    placeholder-color="#f0f0f0"
-/>
-```
-
-- Uses provided color
-- Useful when you know the desired background
-- Best for: Brand-specific colors
-
-The generated HTML includes inline styles for smooth transitions:
-
-```html
-<div class="responsive-image-wrapper" style="background-color: #f0f0f0;">
-  <img
-    src="..."
-    alt="Photo"
-    width="800"
-    class="responsive-image loading"
-    style="transition: opacity 0.2s;"
-  />
-</div>
-```
-
-### Fit Options
-
-The `fit` property controls how the image fits within its target dimensions:
-
-#### cover (default)
-
-```twig
-<twig:img
-    src="/images/photo.jpg"
-    width="400"
-    height="300"
-    fit="cover"
-/>
-```
-
-- Scales image to fill both width AND height
-- Maintains aspect ratio
-- Crops excess parts using focal point
-- Best for: Hero images, thumbnails, profile pictures
-
-#### contain
-
-```twig
-<twig:img
-    src="/images/photo.jpg"
-    width="400"
-    height="300"
-    fit="contain"
-    background="#f0f0f0"
-/>
-```
-
-- Scales image to fit within width AND height
-- Maintains aspect ratio
-- No cropping, shows entire image
-- Adds background color to empty space
-- Best for: Product images, logos, icons
-
-#### fill
-
-```twig
-<twig:img
-    src="/images/photo.jpg"
-    width="400"
-    height="300"
-    fit="fill"
-/>
-```
-
-- Stretches image to exactly fill width AND height
-- Does not maintain aspect ratio
-- No cropping needed
-- Best for: Backgrounds where distortion is acceptable
-
-#### none
-
-```twig
-<twig:img
-    src="/images/photo.jpg"
-    width="400"
-    fit="none"
-/>
-```
-
-- Uses original image dimensions
-- No scaling or cropping
-- Ignores width/height (except for HTML attributes)
-- Best for: When you want exact original size
 
 ## Development
 
@@ -570,3 +482,119 @@ This bundle is available under the MIT license.
 ## Credits
 
 Inspired by [NuxtImg](https://image.nuxtjs.org/) and [Ibexa Platform](https://www.ibexa.co/).
+
+## Attributes
+
+### Required
+
+#### src
+
+Path to the source image file
+
+- Type: string
+- Example: `src="/images/hero.jpg"`
+
+#### alt
+
+Alternative text for accessibility
+
+- Type: string
+- Example: `alt="Hero image"`
+
+### Dimensions
+
+#### width, height
+
+Control image dimensions
+
+- Type: number
+- Example: `width="800" height="600"`
+- Note: Auto-calculated when using ratio
+
+#### ratio
+
+Set aspect ratio
+
+- Type: string
+- Example: `ratio="16:9"`
+- Common: "16:9", "4:3", "1:1"
+
+### Processing
+
+#### fit
+
+Control how image fills space
+
+- Type: string
+- Values: `cover` (default), `contain`, `fill`, `inside`, `outside`, `none`
+
+#### focal
+
+Set focus point for cropping
+
+- Type: string
+- Default: "center"
+- Values: Named (`center`, `top`, etc.) or coordinates (`"0.5,0.3"`)
+
+#### quality
+
+Control compression level
+
+- Type: number (0-100)
+- Default: 80
+
+### Performance
+
+#### lazy
+
+Enable lazy loading
+
+- Type: boolean
+- Default: true
+
+#### priority
+
+Set high fetch priority
+
+- Type: boolean
+- Default: false
+
+#### preload
+
+Add preload link
+
+- Type: boolean
+- Default: false
+
+### Responsive
+
+#### breakpoints
+
+Define responsive widths
+
+- Type: array
+- Example: `[400, 800, 1200]`
+
+#### sizes
+
+Set size hints
+
+- Type: string
+- Example: `"100vw sm:50vw md:400px"`
+
+### Visual
+
+#### background
+
+Set background color (used with `fit="contain"`)
+
+- Type: string (CSS color)
+- Example: `"#ffffff"`
+
+#### placeholder
+
+Loading state visualization
+
+- Type: string
+- Values: `blur`, `dominant`, `none`
+- Color: Use `placeholder-color="#f0f0f0"` for custom color
