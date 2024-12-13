@@ -275,22 +275,10 @@ Use `<twig:picture>` when you need different versions of the image:
 <twig:picture
     src="/images/hero.jpg"
     alt="Hero image"
-    sources="{{ {
-        'sm': {                            # Mobile screens (<768px)
-            width: 800,
-            ratio: '1:1',                  # Square crop for mobile
-            fit: 'cover',
-            focal: 'center',               # Center-focused crop
-            sizes: "100vw"                 # Image takes full viewport width
-        },
-        'md': {                            # Desktop screens (≥768px)
-            width: 1600,
-            ratio: '16:9',                 # Widescreen for desktop
-            fit: 'cover',
-            focal: '0.5,0.3',              # Custom focal point
-            sizes: "80vw"                  # Image takes 80% of viewport width
-        }
-    } }}"
+    sizes="sm:100vw md:80vw"              # Full width on mobile, 80% on desktop
+    ratio="sm:1:1 md:16:9"                # Square for mobile, widescreen for desktop
+    fit="sm:cover md:cover"               # Cover fitting for both breakpoints
+    focal="sm:center md:0.5,0.3"          # Center on mobile, custom focus on desktop
 />
 ```
 
