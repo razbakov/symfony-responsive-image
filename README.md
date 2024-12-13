@@ -435,6 +435,7 @@ Default settings in `config/packages/responsive_image.yaml`:
 
 ```yaml
 responsive_image:
+  missing_image_placeholder: "/path/to/404-placeholder.jpg"
   defaults:
     breakpoints:
       xs: 320
