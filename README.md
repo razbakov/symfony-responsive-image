@@ -25,7 +25,7 @@ Register the bundle in `config/bundles.php`:
 ```php
 return [
     // ...
-    YourVendor\ImageComponentsBundle\ImageComponentsBundle::class => ['all' => true],
+    Ommax\SymfonyImgBundle\OmmaxSymfonyImgBundle::class => ['all' => true],
 ];
 ```
 
@@ -37,23 +37,23 @@ Use for simple responsive images with automatic WebP conversion:
 
 ```twig
 <twig:img
-    src="/images/hero.jpg"          # Required: Image source path
-    alt="Hero image"                # Recommended: Alt text for accessibility
-    width="800"                     # Optional: Override width
-    height="600"                    # Optional: Override height
-    ratio="16:9"                    # Optional: Override aspect ratio
-    fit="cover"                     # Optional: How image should fit dimensions
-    focal="center"                  # Optional: Focus point for cropping
-    quality="80"                    # Optional: Image quality 0-100 (default: 80)
-    lazy="true"                     # Optional: Enable lazy loading (default: true)
-    priority="true"                 # Optional: Set high priority for LCP
-    preload="true"                  # Optional: Add preload link
-    background="#ffffff"            # Optional: Background color for 'contain' fit
+    src="/images/hero.jpg"               # Required: Image source path
+    alt="Hero image"                     # Required: Alt text for accessibility
+    width="800"                          # Optional: Override width
+    height="600"                         # Optional: Override height
+    ratio="16:9"                         # Optional: Override aspect ratio
+    fit="cover"                          # Optional: How image should fit dimensions
+    focal="center"                       # Optional: Focus point for cropping
+    quality="80"                         # Optional: Image quality 0-100 (default: 80)
+    lazy="true"                          # Optional: Enable lazy loading (default: true)
+    priority="true"                      # Optional: Set high priority for LCP
+    preload="true"                       # Optional: Add preload link
+    background="#ffffff"                 # Optional: Background color for 'contain' fit
     breakpoints="{{ [400,800,1200] }}"   # Optional: Custom responsive widths
-    sizes="{{ ['100vw'] }}"             # Optional: Responsive size hints
-    class="hero-image"             # Any HTML attribute is supported
-    data-controller="zoom"         # Custom data attributes
-    aria-label="Hero section"      # ARIA attributes
+    sizes="{{ ['100vw'] }}"              # Optional: Responsive size hints
+    class="hero-image"                   # Any HTML attribute is supported
+    data-controller="zoom"               # Custom data attributes
+    aria-label="Hero section"            # ARIA attributes
 />
 ```
 
@@ -72,8 +72,8 @@ Use for art direction with different crops per breakpoint:
 
 ```twig
 <twig:picture
-    src="/images/hero.jpg"
-    alt="Hero image"
+    src="/images/hero.jpg"         # Required: Image source path
+    alt="Hero image"               # Required: Alt text for accessibility
     class="hero-picture"           # Any HTML attribute is supported
     data-controller="lightbox"     # Custom data attributes
     sources="{{ {
