@@ -1,4 +1,4 @@
-# Symfony Image Components Bundle
+# Symfony Responsive Image Bundle
 
 A Symfony bundle that provides two components for optimized images:
 
@@ -12,12 +12,11 @@ A Symfony bundle that provides two components for optimized images:
 - 🔄 WebP format conversion
 - 🚀 Core Web Vitals optimization
 - ⚡ Image preloading support
-- 💾 Automatic caching
 
 ## Installation
 
 ```bash
-composer require ommax/symfony-img
+composer require ommax/symfony-responsive-image
 ```
 
 Register the bundle in `config/bundles.php`:
@@ -25,9 +24,30 @@ Register the bundle in `config/bundles.php`:
 ```php
 return [
     // ...
-    Ommax\SymfonyImgBundle\OmmaxSymfonyImgBundle::class => ['all' => true],
+    Ommax\ResponsiveImageBundle\ResponsiveImageBundle::class => ['all' => true],
 ];
 ```
+
+## Requirements
+
+- PHP 8.1 or higher
+- Symfony 6.0 or higher
+- GD extension or Imagick extension
+
+## Error Handling
+
+The bundle provides several error handling mechanisms:
+
+- Missing images return a 404 placeholder
+- Invalid configurations throw `InvalidConfigurationException`
+- Processing errors are logged to Symfony's error log
+
+## Security
+
+- Allowed image types: jpg, jpeg, png, gif, webp
+- Maximum upload size: Configured through PHP's upload_max_filesize
+- Path validation prevents directory traversal attacks
+- Image validation ensures file integrity
 
 ## Components
 
@@ -321,10 +341,10 @@ Default breakpoints:
 
 ## Configuration
 
-Default settings in `config/packages/image_components.yaml`:
+Default settings in `config/packages/responsive_image.yaml`:
 
 ```yaml
-image_components:
+responsive_image:
   defaults:
     breakpoints:
       xs: 320
@@ -342,7 +362,6 @@ image_components:
     focal: "center"
     placeholder: "none"
     placeholder-color: null
-  cache_dir: "%kernel.project_dir%/public/media/cache"
 ```
 
 ## Using Presets
@@ -527,6 +546,22 @@ The `fit` property controls how the image fits within its target dimensions:
 - No scaling or cropping
 - Ignores width/height (except for HTML attributes)
 - Best for: When you want exact original size
+
+## Development
+
+### Setup
+
+```bash
+# Clone repository
+git clone https://github.com/ommax/symfony-responsive-image
+cd symfony-responsive-image
+
+# Install dependencies
+composer install
+
+# Run tests
+composer test
+```
 
 ## License
 
