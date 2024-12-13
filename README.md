@@ -71,49 +71,6 @@ Width and height are automatically calculated from:
   - Calculated width and height if height set (height="600" ratio="16:9")
   - Override both with width/height if needed (width="800" height="600")
 
-### Placeholder Options
-
-The `placeholder` property controls image loading placeholders:
-
-```twig
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    placeholder="blur"            # Enable blurred placeholder
-    placeholder="[200]"           # Square placeholder of 200px
-    placeholder="[200,150]"       # Placeholder with specific dimensions
-    placeholder="[200,150,70,3]"  # With quality=70 and blur=3
-/>
-```
-
-Placeholder options:
-
-- `none` (default) - No placeholder
-- `blur` - Blurred version of the image
-- `dominant` - Dominant color of the image
-- Array syntax for custom dimensions:
-  - `[size]` - Square placeholder (e.g. `[200]`)
-  - `[width,height]` - Custom dimensions (e.g. `[200,150]`)
-  - `[width,height,quality,blur]` - Full control (e.g. `[200,150,70,3]`)
-
-The placeholder image is automatically:
-
-- Converted to a lightweight Base64 data URI
-- Shown while the main image loads
-- Faded out when the main image loads
-- Optimized for performance
-
-Example with blur placeholder:
-
-```twig
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    placeholder="blur"
-    placeholder-class="my-placeholder"   # Optional custom class
-/>
-```
-
 ### Picture Component
 
 Use for art direction with different crops per screen size or orientation:
@@ -199,9 +156,7 @@ The `fit` property specifies how the image should be resized to fit the target d
 - `outside` - Preserving aspect ratio, resizes the image to be as small as possible while ensuring its dimensions are greater than or equal to both those specified
 - `none` - Uses original image dimensions
 
-## Responsive Images
-
-### Responsive Syntax
+### Responsive Images
 
 ```twig
 <twig:img
@@ -269,6 +224,49 @@ The component will:
 - Generate 1x and 2x versions for each size
 - Include both width (w) and density (x) descriptors in srcset
 - Automatically calculate the correct dimensions for each density
+
+### Placeholder Options
+
+The `placeholder` property controls image loading placeholders:
+
+```twig
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    placeholder="blur"            # Enable blurred placeholder
+    placeholder="[200]"           # Square placeholder of 200px
+    placeholder="[200,150]"       # Placeholder with specific dimensions
+    placeholder="[200,150,70,3]"  # With quality=70 and blur=3
+/>
+```
+
+Placeholder options:
+
+- `none` (default) - No placeholder
+- `blur` - Blurred version of the image
+- `dominant` - Dominant color of the image
+- Array syntax for custom dimensions:
+  - `[size]` - Square placeholder (e.g. `[200]`)
+  - `[width,height]` - Custom dimensions (e.g. `[200,150]`)
+  - `[width,height,quality,blur]` - Full control (e.g. `[200,150,70,3]`)
+
+The placeholder image is automatically:
+
+- Converted to a lightweight Base64 data URI
+- Shown while the main image loads
+- Faded out when the main image loads
+- Optimized for performance
+
+Example with blur placeholder:
+
+```twig
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    placeholder="blur"
+    placeholder-class="my-placeholder"   # Optional custom class
+/>
+```
 
 ### Art Direction with Breakpoints
 
