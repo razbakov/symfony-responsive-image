@@ -119,26 +119,13 @@ Use for art direction with different crops per screen size or orientation:
 <twig:picture
     src="/images/hero.jpg"                  # Required: Image source path
     alt="Hero image"                        # Required: Alt text for accessibility
-    class="hero-picture"                    # Any HTML attribute is supported
-    data-controller="lightbox"              # Custom data attributes
-    format="webp"                           # Output format (default: webp)
-    fallback="auto"                         # Fallback format (default: auto)
-    sources="{{ {
-        'sm': {                            # Mobile screens (<768px)
-            width: 800,
-            ratio: '1:1',                  # Square crop for mobile
-            fit: 'cover',
-            focal: 'center',               # Center-focused crop
-            sizes: '100vw'                 # Image takes full viewport width
-        },
-        'md': {                            # Desktop screens (≥768px)
-            width: 1600,
-            ratio: '16:9',                 # Widescreen for desktop
-            fit: 'cover',
-            focal: '0.5,0.3',              # Custom focal point
-            sizes: '80vw'                  # Image takes 80% of viewport width
-        }
-    } }}"
+    sizes="sm:100vw md:80vw"               # Responsive sizes per breakpoint
+    ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
+    focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
+    fit="cover"                            # How image should fit dimensions
+    format="webp"                          # Output format (default: webp)
+    fallback="auto"                        # Fallback format (default: auto)
+    class="hero-picture"                   # Any HTML attribute is supported
 />
 ```
 
