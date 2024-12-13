@@ -35,46 +35,6 @@ return [
 ];
 ```
 
-## Configuration
-
-Default settings in `config/packages/responsive_image.yaml`:
-
-```yaml
-responsive_image:
-  defaults:
-    breakpoints:
-      xs: 320
-      sm: 640
-      md: 768
-      lg: 1024
-      xl: 1280
-      2xl: 1536
-    format: "webp"
-    quality: 80
-    lazy: true
-    priority: false
-    preload: false
-    fit: "cover"
-    focal: "center"
-    placeholder: "none"
-    placeholder-color: null
-```
-
-## Error Handling
-
-The bundle provides several error handling mechanisms:
-
-- Missing images return a 404 placeholder
-- Invalid configurations throw `InvalidConfigurationException`
-- Processing errors are logged to Symfony's error log
-
-## Security
-
-- Allowed image types: jpg, jpeg, png, gif, webp
-- Maximum upload size: Configured through PHP's upload_max_filesize
-- Path validation prevents directory traversal attacks
-- Image validation ensures file integrity
-
 ## Components
 
 ### Img Component
@@ -427,6 +387,46 @@ Using presets in templates:
 ```
 
 You can define your own presets in the configuration. Preset values can be overridden by directly setting properties on the component.
+
+## Configuration
+
+Default settings in `config/packages/responsive_image.yaml`:
+
+```yaml
+responsive_image:
+  defaults:
+    breakpoints:
+      xs: 320
+      sm: 640
+      md: 768
+      lg: 1024
+      xl: 1280
+      2xl: 1536
+    format: "webp"
+    quality: 80
+    lazy: true
+    priority: false
+    preload: false
+    fit: "cover"
+    focal: "center"
+    placeholder: "none"
+    placeholder-color: null
+```
+
+## Error Handling
+
+The bundle provides several error handling mechanisms:
+
+- Missing images return a 404 placeholder
+- Invalid configurations throw `InvalidConfigurationException`
+- Processing errors are logged to Symfony's error log
+
+## Security
+
+- Allowed image types: jpg, jpeg, png, gif, webp
+- Maximum upload size: Configured through PHP's upload_max_filesize
+- Path validation prevents directory traversal attacks
+- Image validation ensures file integrity
 
 ## Development
 
