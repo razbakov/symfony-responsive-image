@@ -95,8 +95,7 @@ Use for simple responsive images with automatic WebP conversion:
     priority="true"                      # Optional: Set high priority for LCP
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
-    breakpoints="{{ [400,800,1200] }}"   # Optional: Custom responsive widths
-    sizes="100vw"                        # Optional: Responsive size hints
+    sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
     class="hero-image"                   # Any HTML attribute is supported
     data-controller="zoom"               # Custom data attributes
     aria-label="Hero section"            # ARIA attributes
@@ -212,7 +211,7 @@ The `fit` property specifies how the image should be resized to fit the target d
 
 ## Responsive Images
 
-### Simple Responsive Syntax
+### Responsive Syntax
 
 ```twig
 <twig:img
@@ -224,9 +223,9 @@ The `fit` property specifies how the image should be resized to fit the target d
 
 This will automatically:
 
-- Generate appropriate image sizes for each breakpoint
+- Generate appropriate image widths based on your design system's breakpoints
 - Create the correct srcset and sizes attributes
-- Use default breakpoint widths (sm: 640px, md: 768px, etc.)
+- Optimize image delivery for each viewport size
 
 The sizes syntax follows this pattern:
 
@@ -238,16 +237,14 @@ The sizes syntax follows this pattern:
   - `sm:50vw` - Half width from sm breakpoint (≥640px)
   - `md:400px` - Fixed 400px from md breakpoint (≥768px)
 
-You can still use the array syntax for simpler cases:
+The bundle uses your design system's breakpoints (configurable in `responsive_image.yaml`):
 
-```twig
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    breakpoints="[400, 800, 1200]"
-    sizes="100vw"
-/>
-```
+- xs: 320px
+- sm: 640px
+- md: 768px
+- lg: 1024px
+- xl: 1280px
+- 2xl: 1536px
 
 ### Density Support
 
@@ -350,7 +347,6 @@ Default breakpoints:
     alt="Hero image"
     width="1600"                         # Maximum width
     ratio="16:9"                         # Maintain aspect ratio
-    breakpoints="[400, 800, 1200]"       # Generate different sizes
     sizes="100vw"                        # Size hints for browser
 />
 ```
@@ -366,7 +362,6 @@ Default breakpoints:
     focal="center"
     priority="true"
     preload="true"
-    breakpoints="[400, 800, 1200]"       # Generate different sizes
     sizes="100vw"                        # Size hints for browser
 />
 ```
@@ -394,7 +389,6 @@ Default breakpoints:
     ratio="4:3"
     fit="cover"
     focal="0.5,0.3"
-    breakpoints="[400, 800, 1200]"       # Generate different sizes
     sizes="100vw"                        # Size hints for browser
 />
 ```
@@ -428,8 +422,7 @@ responsive_image:
 
     hero:
       ratio: "16:9"
-      breakpoints: [400, 800, 1200]
-      sizes: "100vw"
+      sizes: "100vw sm:50vw md:400px"
       priority: true
       preload: true
 
