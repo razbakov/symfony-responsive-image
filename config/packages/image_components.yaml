@@ -1,4 +1,4 @@
-responsive_image:
+image_components:
   defaults:
     breakpoints:
       xs: 320
@@ -12,12 +12,8 @@ responsive_image:
     lazy: true
     priority: false
     preload: false
-    legacy: false
-    legacyFormat: null
     fit: "cover"
     focal: "center"
     placeholder: "none"
     placeholder-color: null
-    async: false
-    attributes: {}
   cache_dir: "%kernel.project_dir%/public/media/cache"

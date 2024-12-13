@@ -1,6 +1,9 @@
-# Symfony Responsive Image Bundle
+# Symfony Image Components Bundle
 
-A Symfony bundle that provides responsive image components similar to NuxtImg and NuxtPicture. Optimize your images for Core Web Vitals with automatic resizing, format conversion, and preloading capabilities.
+A Symfony bundle that provides two components for optimized images:
+
+- `<twig:img>` - For simple responsive images with automatic WebP conversion
+- `<twig:picture>` - For art direction with different crops per breakpoint
 
 ## Features
 
@@ -22,22 +25,25 @@ Register the bundle in `config/bundles.php`:
 ```php
 return [
     // ...
-    YourVendor\ResponsiveImageBundle\ResponsiveImageBundle::class => ['all' => true],
+    YourVendor\ImageComponentsBundle\ImageComponentsBundle::class => ['all' => true],
 ];
 ```
 
-## Basic Usage
+## Components
+
+### Img Component
+
+Use for simple responsive images with automatic WebP conversion:
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/hero.jpg"          # Required: Image source path
     alt="Hero image"                # Recommended: Alt text for accessibility
-    width="800"                     # Optional: Target width in pixels
-    height="600"                    # Optional: Target height in pixels
-    ratio="16:9"                    # Optional: Aspect ratio (alternative to width/height)
+    width="800"                     # Optional: Override width
+    height="600"                    # Optional: Override height
+    ratio="16:9"                    # Optional: Override aspect ratio
     fit="cover"                     # Optional: How image should fit dimensions
     focal="center"                  # Optional: Focus point for cropping
-    format="webp"                   # Optional: Output format (default: webp)
     quality="80"                    # Optional: Image quality 0-100 (default: 80)
     lazy="true"                     # Optional: Enable lazy loading (default: true)
     priority="true"                 # Optional: Set high priority for LCP
@@ -45,39 +51,74 @@ return [
     background="#ffffff"            # Optional: Background color for 'contain' fit
     breakpoints="{{ [400,800,1200] }}"   # Optional: Custom responsive widths
     sizes="{{ ['100vw'] }}"             # Optional: Responsive size hints
+    class="hero-image"             # Any HTML attribute is supported
+    data-controller="zoom"         # Custom data attributes
+    aria-label="Hero section"      # ARIA attributes
 />
 ```
 
-The component automatically chooses between `<img>` and `<picture>` tags based on your configuration:
+Width and height are automatically calculated from:
+
+- Original image dimensions when no ratio specified
+- When ratio specified:
+  - Original width and calculated height if no width/height set
+  - Width and calculated height if width set (width="800" ratio="16:9")
+  - Calculated width and height if height set (height="600" ratio="16:9")
+  - Override both with width/height if needed (width="800" height="600")
+
+### Picture Component
+
+Use for art direction with different crops per breakpoint:
 
 ```twig
-{# Outputs <img> when using single format #}
-<twig:responsive_image
+<twig:picture
     src="/images/hero.jpg"
     alt="Hero image"
-    width="800"
-/>
-
-{# Outputs <picture> when format differs from source #}
-<twig:responsive_image
-    src="/images/hero.jpg"    # Source is JPG
-    alt="Hero image"
-    width="800"
-    format="webp"            # Will generate <picture> with WebP and JPG fallback
+    class="hero-picture"           # Any HTML attribute is supported
+    data-controller="lightbox"     # Custom data attributes
+    sources="{{ {
+        '(max-width: 768px)': {     # Mobile: square crop
+            width: 800,             # Width is required for art direction
+            ratio: '1:1',           # Square crop
+            fit: 'cover',
+            focal: 'center'
+        },
+        '(min-width: 769px)': {     # Desktop: wide crop
+            width: 1600,            # Width is required for art direction
+            ratio: '16:9',
+            fit: 'cover',
+            focal: '0.5,0.3'
+        }
+    } }}"
 />
 ```
+
+Width and height are automatically calculated from:
+
+- Largest source dimensions
+- Source ratio if specified
+- Falls back to original image dimensions if no sources
 
 The generated HTML will be:
 
 ```html
-<!-- Single format -->
-<img src="..." alt="Hero image" width="800" />
+<!-- Img component output -->
+<img
+  src="hero.webp"
+  srcset="..."
+  alt="Hero image"
+  width="1600"
+  height="900"
+  class="hero-image"
+  data-controller="zoom"
+  aria-label="Hero section"
+/>
 
-<!-- With format conversion -->
-<picture>
-  <source type="image/webp" srcset="..." />
-  <source type="image/jpeg" srcset="..." />
-  <img src="..." alt="Hero image" width="800" />
+<!-- Picture component output -->
+<picture class="hero-picture" data-controller="lightbox">
+  <source media="(max-width: 768px)" srcset="hero-800x800.webp" />
+  <source media="(min-width: 769px)" srcset="hero-1600x900.webp" />
+  <img src="hero-1600x900.webp" alt="Hero image" width="1600" height="900" />
 </picture>
 ```
 
@@ -106,7 +147,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 
 | Property     | Values                                                | Description                                  |
 | ------------ | ----------------------------------------------------- | -------------------------------------------- |
-| `width`      | number                                                | Target width in pixels                       |
+| `width`      | number                                                | Target width in pixels (default: original)   |
 | `height`     | number                                                | Target height in pixels                      |
 | `ratio`      | "16:9", "4:3", "1:1", "3:2", "2:3"                    | Aspect ratio as width:height                 |
 | `fit`        | "cover", "contain", "fill", "none"                    | How image fits target dimensions (see below) |
@@ -118,7 +159,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 #### cover (default)
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     width="400"
     height="300"
@@ -134,7 +175,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 #### contain
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     width="400"
     height="300"
@@ -152,7 +193,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 #### fill
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     width="400"
     height="300"
@@ -168,7 +209,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 #### none
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     width="400"
     fit="none"
@@ -181,12 +222,10 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 
 ### Image Optimization
 
-| Property      | Values               | Description                      |
-| ------------- | -------------------- | -------------------------------- |
-| `format`      | "webp", "jpg", "png" | Output format                    |
-| `quality`     | 0-100                | Image quality                    |
-| `breakpoints` | number[]             | Custom responsive widths         |
-| `sizes`       | string[] or object   | Size hints or breakpoint configs |
+| Property  | Values               | Description                               |
+| --------- | -------------------- | ----------------------------------------- |
+| `format`  | "webp", "jpg", "png" | Target format (original used as fallback) |
+| `quality` | 0-100                | Image quality                             |
 
 ### Performance
 
@@ -205,25 +244,23 @@ There are two ways to handle responsive images:
 ### 1. Simple Breakpoints & Sizes
 
 ```twig
-{# Generate images for specific widths with size hints #}
-<twig:responsive_image
+<twig:img
     src="/images/hero.jpg"
     alt="Hero image"
     width="1200"
     height="800"
-    :breakpoints="[400, 800, 1200]"
-    :sizes="['100vw']"
+    breakpoints="[400, 800, 1200]"
+    sizes="['100vw']"
 />
 ```
 
 ### 2. Breakpoint-Specific Configurations
 
 ```twig
-{# Different configurations per breakpoint #}
-<twig:responsive_image
+<twig:picture
     src="/images/hero.jpg"
     alt="Hero image"
-    :sizes="{{ {
+    sources="{{ {
         sm: {                # < 768px
             width: 400,
             height: 300,
@@ -255,7 +292,7 @@ Default breakpoints:
 - md: ≤ 768px
 - lg: ≤ 1024px
 - xl: ≤ 1280px
-- 2xl: ��� 1536px
+- 2xl: ≤ 1536px
 
 ## Common Use Cases
 
@@ -263,7 +300,7 @@ Default breakpoints:
 
 ```twig
 {# Different dimensions for different screen sizes #}
-<twig:responsive_image
+<twig:img
     src="/images/hero.jpg"
     alt="Hero image"
     :sizes="{{ {
@@ -289,7 +326,7 @@ Default breakpoints:
 ### Hero Image (LCP Optimization)
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/hero.jpg"
     alt="Hero image"
     ratio="16:9"
@@ -308,7 +345,7 @@ Default breakpoints:
 ### Product Image (Contained)
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/product.jpg"
     alt="Product"
     width="800"
@@ -322,7 +359,7 @@ Default breakpoints:
 ### Portrait with Smart Cropping
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="/images/portrait.jpg"
     alt="Portrait"
     ratio="4:3"
@@ -334,7 +371,7 @@ Default breakpoints:
 ### Integration with Ibexa
 
 ```twig
-<twig:responsive_image
+<twig:img
     src="{{ content.image.uri }}"
     alt="{{ content.image.alt }}"
     width="{{ content.image.width }}"
@@ -346,10 +383,10 @@ Default breakpoints:
 
 ## Configuration
 
-Default settings in `config/packages/responsive_image.yaml`:
+Default settings in `config/packages/image_components.yaml`:
 
 ```yaml
-responsive_image:
+image_components:
   defaults:
     breakpoints:
       xs: 320
@@ -365,33 +402,8 @@ responsive_image:
     preload: false
     fit: "cover"
     focal: "center"
-  presets:
-    thumbnail:
-      width: 200
-      height: 200
-      fit: "cover"
-      quality: 90
-    hero:
-      ratio: "16:9"
-      fit: "cover"
-      priority: true
-      preload: true
-      sizes:
-        xs: { width: 320 }
-        sm: { width: 640 }
-        md: { width: 768 }
-        lg: { width: 1024 }
-    avatar:
-      width: 48
-      height: 48
-      fit: "cover"
-      placeholder: "blur"
-    product:
-      ratio: "1:1"
-      fit: "contain"
-      background: "#ffffff"
-      quality: 90
-      placeholder: "dominant"
+    placeholder: "none"
+    placeholder-color: null
   cache_dir: "%kernel.project_dir%/public/media/cache"
 ```
 
@@ -401,14 +413,14 @@ Presets allow you to reuse common configurations:
 
 ```twig
 {# Using a preset #}
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     alt="Photo"
     preset="hero"
 />
 
 {# Override preset values #}
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     alt="Photo"
     preset="hero"
@@ -458,7 +470,7 @@ The component supports different types of placeholders to improve perceived load
 
 ```twig
 {# Generate a blurred, low-res placeholder #}
-<twig:responsive_image
+<twig:img
     src="/images/hero.jpg"
     alt="Hero image"
     width="800"
@@ -474,7 +486,7 @@ The component supports different types of placeholders to improve perceived load
 
 ```twig
 {# Use image's dominant color as placeholder #}
-<twig:responsive_image
+<twig:img
     src="/images/product.jpg"
     alt="Product"
     width="800"
@@ -490,7 +502,7 @@ The component supports different types of placeholders to improve perceived load
 
 ```twig
 {# Use specific color as placeholder #}
-<twig:responsive_image
+<twig:img
     src="/images/photo.jpg"
     alt="Photo"
     width="800"
@@ -516,3 +528,36 @@ The generated HTML includes inline styles for smooth transitions:
   />
 </div>
 ```
+
+## Legacy Format Selection
+
+When using `legacy="true"`, the fallback format is determined as follows:
+
+```twig
+{# Automatic fallback format selection #}
+<twig:img
+    src="/images/logo.png"     # Original has transparency
+    format="webp"
+    legacy="true"              # Will use PNG as fallback
+/>
+
+<twig:img
+    src="/images/photo.jpg"    # Original without transparency
+    format="webp"
+    legacy="true"              # Will use JPG as fallback
+/>
+
+{# Override fallback format #}
+<twig:img
+    src="/images/photo.jpg"
+    format="webp"
+    legacy="true"
+    legacyFormat="png"        # Force PNG as fallback
+/>
+```
+
+Default fallback selection:
+
+- If original format supports transparency (PNG, WebP, GIF) → PNG fallback
+- Otherwise → JPEG fallback
+- Can be overridden with `legacyFormat` property

@@ -1,6 +1,6 @@
 {
   "name": "ommax/symfony-img",
-  "description": "A Symfony bundle providing responsive image components similar to NuxtImg",
+  "description": "Symfony Image Components Bundle",
   "type": "symfony-bundle",
   "license": "MIT",
   "autoload": {
