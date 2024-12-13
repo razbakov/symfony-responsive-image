@@ -255,7 +255,7 @@ Default breakpoints:
 - md: ≤ 768px
 - lg: ≤ 1024px
 - xl: ≤ 1280px
-- 2xl: ≤ 1536px
+- 2xl: ��� 1536px
 
 ## Common Use Cases
 
@@ -365,8 +365,82 @@ responsive_image:
     preload: false
     fit: "cover"
     focal: "center"
+  presets:
+    thumbnail:
+      width: 200
+      height: 200
+      fit: "cover"
+      quality: 90
+    hero:
+      ratio: "16:9"
+      fit: "cover"
+      priority: true
+      preload: true
+      sizes:
+        xs: { width: 320 }
+        sm: { width: 640 }
+        md: { width: 768 }
+        lg: { width: 1024 }
+    avatar:
+      width: 48
+      height: 48
+      fit: "cover"
+      placeholder: "blur"
+    product:
+      ratio: "1:1"
+      fit: "contain"
+      background: "#ffffff"
+      quality: 90
+      placeholder: "dominant"
   cache_dir: "%kernel.project_dir%/public/media/cache"
 ```
+
+## Using Presets
+
+Presets allow you to reuse common configurations:
+
+```twig
+{# Using a preset #}
+<twig:responsive_image
+    src="/images/photo.jpg"
+    alt="Photo"
+    preset="hero"
+/>
+
+{# Override preset values #}
+<twig:responsive_image
+    src="/images/photo.jpg"
+    alt="Photo"
+    preset="hero"
+    priority="false"    {# Override specific preset value #}
+/>
+
+{# Available presets #}
+
+thumbnail:
+  - Fixed 200x200 square
+  - Cover fit
+  - High quality (90)
+
+hero:
+  - 16:9 ratio
+  - Responsive sizes
+  - Priority loading
+  - Preloading enabled
+
+avatar:
+  - 48x48 square
+  - Blur placeholder
+  - Cover fit
+
+product:
+  - Square ratio
+  - Contain fit
+  - White background
+  - Dominant color placeholder
+```
+
+You can define your own presets in the configuration. Preset values can be overridden by directly setting properties on the component.
 
 ## License
 
