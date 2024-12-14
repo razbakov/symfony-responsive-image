@@ -23,49 +23,6 @@ class PictureTest extends KernelTestCase
         $this->assertSame('/image.jpg', $component->src);
     }
 
-    public function testComponentRendersAlt(): void
-    {
-        $rendered = $this->renderTwigComponent(
-            name: 'picture',
-            data: [
-                'src' => '/image.jpg',
-                'alt' => 'Test image',
-            ]
-        );
-
-        $this->assertStringContainsString('alt="Test image"', $rendered);
-    }
-
-    public function testComponentRendersClass(): void
-    {
-        $rendered = $this->renderTwigComponent(
-            name: 'picture',
-            data: [
-                'src' => '/image.jpg',
-                'class' => 'img-fluid rounded',
-            ]
-        );
-
-        $this->assertStringContainsString('class="img-fluid rounded"', $rendered);
-    }
-
-    public function testComponentRendersCustomAttributes(): void
-    {
-        $rendered = $this->renderTwigComponent(
-            name: 'picture',
-            data: [
-                'src' => '/image.jpg',
-                'referrerpolicy' => 'origin',
-                'id' => 'image',
-                'data-controller' => 'responsive-image',
-            ]
-        );
-
-        $this->assertStringContainsString('referrerpolicy="origin"', $rendered);
-        $this->assertStringContainsString('id="image"', $rendered);
-        $this->assertStringContainsString('data-controller="responsive-image"', $rendered);
-    }
-
     public function testEmptySrcThrowsException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -77,5 +34,35 @@ class PictureTest extends KernelTestCase
                 'src' => '',
             ]
         );
+    }
+
+    public function testComponentRenders(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'picture',
+            data: [
+                'src' => '/image.jpg',
+                'alt' => 'Test image',
+                'class' => 'img-fluid rounded',
+                'referrerpolicy' => 'origin',
+                'id' => 'image',
+                'data-controller' => 'responsive-image',
+                'width' => '100',
+                'height' => '100',
+                'loading' => 'lazy',
+                'fetchpriority' => 'auto',
+                'sizes' => '(max-width: 768px) 100vw, 50vw',
+                'fallback' => 'auto',
+                'class' => 'img-fluid rounded',
+            ]
+        );
+
+        $this->assertStringContainsString('alt="Test image"', $rendered);
+        $this->assertStringContainsString('class="img-fluid rounded"', $rendered);
+        $this->assertStringContainsString('referrerpolicy="origin"', $rendered);
+        $this->assertStringContainsString('id="image"', $rendered);
+        $this->assertStringContainsString('data-controller="responsive-image"', $rendered);
+        $this->assertStringContainsString('width="100"', $rendered);
+        $this->assertStringContainsString('height="100"', $rendered);
     }
 }
