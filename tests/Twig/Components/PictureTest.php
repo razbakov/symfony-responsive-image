@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Unit\Twig\Components;
+namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 
 use PHPUnit\Framework\TestCase;
 use Ommax\ResponsiveImageBundle\Twig\Components\Picture;

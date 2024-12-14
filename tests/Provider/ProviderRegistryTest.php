@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Unit\Provider;
+namespace Ommax\ResponsiveImageBundle\Tests\Provider;
 
 use Ommax\ResponsiveImageBundle\Exception\ProviderNotFoundException;
 use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;

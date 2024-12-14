@@ -1,25 +1,24 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Functional\DependencyInjection;
+namespace Ommax\ResponsiveImageBundle\Tests\DependencyInjection;
 
-use Ommax\ResponsiveImageBundle\DependencyInjection\ResponsiveImageExtension;
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
-use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Ommax\ResponsiveImageBundle\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
 
-class ResponsiveImageExtensionTest extends TestCase
+class ConfigurationTest extends TestCase
 {
-    private ContainerBuilder $container;
-    private ResponsiveImageExtension $extension;
+    private Configuration $configuration;
+    private Processor $processor;
 
     protected function setUp(): void
     {
-        $this->container = new ContainerBuilder();
-        $this->extension = new ResponsiveImageExtension();
+        $this->configuration = new Configuration();
+        $this->processor = new Processor();
     }
 
-    public function testLoadSetParameters(): void
+    public function testDefaultValues(): void
     {
         $config = [
             'default_provider' => 'liip_imagine',
@@ -35,24 +34,34 @@ class ResponsiveImageExtensionTest extends TestCase
             ],
         ];
 
-        $this->extension->load([$config], $this->container);
+        $processedConfig = $this->processor->processConfiguration(
+            $this->configuration,
+            [$config]
+        );
 
-        $this->assertTrue($this->container->hasParameter('responsive_image.default_provider'));
-        $this->assertTrue($this->container->hasParameter('responsive_image.missing_image_placeholder'));
-        $this->assertTrue($this->container->hasParameter('responsive_image.defaults'));
-
-        $this->assertEquals('liip_imagine', $this->container->getParameter('responsive_image.default_provider'));
-        $this->assertEquals('/path/to/404.jpg', $this->container->getParameter('responsive_image.missing_image_placeholder'));
+        $this->assertEquals('liip_imagine', $processedConfig['default_provider']);
+        $this->assertEquals('/path/to/404.jpg', $processedConfig['missing_image_placeholder']);
+        $this->assertEquals(['sm' => 640], $processedConfig['defaults']['breakpoints']);
     }
 
-    public function testLoadRegistersProviderRegistry(): void
+    public function testRequiredValues(): void
     {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $config = [];
+        $this->processor->processConfiguration($this->configuration, [$config]);
+    }
+
+    public function testInvalidFormat(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
         $config = [
             'default_provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
-                'format' => 'webp',
+                'format' => 'invalid',  // Invalid format
                 'quality' => 80,
                 'loading' => 'lazy',
                 'fetchpriority' => 'low',
@@ -61,23 +70,20 @@ class ResponsiveImageExtensionTest extends TestCase
             ],
         ];
 
-        $this->extension->load([$config], $this->container);
-
-        $this->assertTrue($this->container->hasDefinition('responsive_image.provider_registry'));
-
-        $registryDef = $this->container->getDefinition('responsive_image.provider_registry');
-        $this->assertEquals(ProviderRegistry::class, $registryDef->getClass());
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
 
-    public function testLoadRegistersAutoconfigurationForProviders(): void
+    public function testInvalidQuality(): void
     {
+        $this->expectException(InvalidConfigurationException::class);
+
         $config = [
             'default_provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
-                'quality' => 80,
+                'quality' => 101,  // Invalid quality (> 100)
                 'loading' => 'lazy',
                 'fetchpriority' => 'low',
                 'fit' => 'cover',
@@ -85,15 +91,10 @@ class ResponsiveImageExtensionTest extends TestCase
             ],
         ];
 
-        $this->extension->load([$config], $this->container);
-
-        $autoconfigured = $this->container->getAutoconfiguredInstanceof();
-
-        $this->assertArrayHasKey(ProviderInterface::class, $autoconfigured);
-        $this->assertTrue($autoconfigured[ProviderInterface::class]->hasTag('responsive_image.provider'));
+        $this->processor->processConfiguration($this->configuration, [$config]);
     }
 
-    public function testLoadWithProviders(): void
+    public function testValidProviders(): void
     {
         $config = [
             'default_provider' => 'liip_imagine',
@@ -120,16 +121,16 @@ class ResponsiveImageExtensionTest extends TestCase
             ],
         ];
 
-        $this->extension->load([$config], $this->container);
+        $processedConfig = $this->processor->processConfiguration(
+            $this->configuration,
+            [$config]
+        );
 
-        $this->assertTrue($this->container->hasParameter('responsive_image.providers'));
-
-        $providers = $this->container->getParameter('responsive_image.providers');
-        $this->assertArrayHasKey('liip_imagine', $providers);
-        $this->assertArrayHasKey('cloudinary', $providers);
+        $this->assertArrayHasKey('liip_imagine', $processedConfig['providers']);
+        $this->assertArrayHasKey('cloudinary', $processedConfig['providers']);
     }
 
-    public function testLoadWithPresets(): void
+    public function testValidPresets(): void
     {
         $config = [
             'default_provider' => 'liip_imagine',
@@ -150,15 +151,23 @@ class ResponsiveImageExtensionTest extends TestCase
                     'fit' => 'cover',
                     'quality' => 90,
                 ],
+                'hero' => [
+                    'ratio' => '16:9',
+                    'sizes' => '100vw',
+                    'loading' => 'eager',
+                    'fetchpriority' => 'high',
+                ],
             ],
         ];
 
-        $this->extension->load([$config], $this->container);
+        $processedConfig = $this->processor->processConfiguration(
+            $this->configuration,
+            [$config]
+        );
 
-        $this->assertTrue($this->container->hasParameter('responsive_image.presets'));
-
-        $presets = $this->container->getParameter('responsive_image.presets');
-        $this->assertArrayHasKey('thumbnail', $presets);
-        $this->assertEquals(200, $presets['thumbnail']['width']);
+        $this->assertArrayHasKey('thumbnail', $processedConfig['presets']);
+        $this->assertArrayHasKey('hero', $processedConfig['presets']);
+        $this->assertEquals(200, $processedConfig['presets']['thumbnail']['width']);
+        $this->assertEquals('16:9', $processedConfig['presets']['hero']['ratio']);
     }
 }
