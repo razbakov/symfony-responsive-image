@@ -2,6 +2,7 @@
 
 namespace Ommax\ResponsiveImageBundle\Twig\Components;
 
+use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -31,6 +32,7 @@ class Img
 
     public function __construct(
         private ParameterBagInterface $params,
+        private ProviderRegistry $providerRegistry,
     ) {
         $this->params = $params;
     }
@@ -115,7 +117,7 @@ class Img
                 $scale = (int) substr($density, 1);
                 $width = $this->width * $scale;
                 $srcset[] = \sprintf('%s %s%s',
-                    $this->generateImageUrl(['width' => $width]),
+                    $this->getImage(['width' => $width]),
                     $scale,
                     'x'
                 );
@@ -127,15 +129,8 @@ class Img
         return '';
     }
 
-    private function generateImageUrl(array $options = []): string
+    private function getImage(array $modifiers = []): string
     {
-        // This would be implemented by your image provider
-        // For now, just append width parameter
-        $width = $options['width'] ?? null;
-        if ($width) {
-            return \sprintf('%s?width=%d', $this->src, $width);
-        }
-
-        return $this->src;
+        return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
     }
 }

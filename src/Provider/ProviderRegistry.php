@@ -3,6 +3,7 @@
 namespace Ommax\ResponsiveImageBundle\Provider;
 
 use Ommax\ResponsiveImageBundle\Exception\ProviderNotFoundException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderRegistry
 {
@@ -11,6 +12,20 @@ class ProviderRegistry
      */
     private array $providers = [];
 
+    private ?string $defaultProvider = null;
+
+    public function __construct(string $defaultProvider = null)
+    {
+        if ($defaultProvider) {
+            $this->setDefaultProvider($defaultProvider);
+        }
+    }
+
+    public function setDefaultProvider(string $providerName): void
+    {
+        $this->defaultProvider = $providerName;
+    }
+
     public function addProvider(ProviderInterface $provider): void
     {
         $this->providers[$provider->getName()] = $provider;
@@ -18,17 +33,31 @@ class ProviderRegistry
 
     public function getProvider(?string $name = null): ProviderInterface
     {
-        if (!isset($this->providers[$name])) {
+        $provider = $name ?? $this->defaultProvider;
+
+        if ($provider === null) {
+            throw new ProviderNotFoundException(
+                'No provider specified and no default provider configured.'
+            );
+        }
+
+        if (empty($this->providers)) {
+            throw new ProviderNotFoundException(
+                'No providers configured.'
+            );
+        }
+
+        if (!isset($this->providers[$provider])) {
             throw new ProviderNotFoundException(
                 \sprintf(
                     'Provider "%s" not found. Available providers: %s',
-                    $name,
+                    $provider,
                     implode(', ', array_keys($this->providers))
                 )
             );
         }
 
-        return $this->providers[$name];
+        return $this->providers[$provider];
     }
 
     /**

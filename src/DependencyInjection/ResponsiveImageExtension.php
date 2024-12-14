@@ -46,10 +46,6 @@ class ResponsiveImageExtension extends Extension
                 $providerDef->addMethodCall('configure', [$providerConfig]);
             }
         }
-
-        // Configure default options for the registry
-        $registryDef = $container->getDefinition('responsive_image.provider_registry');
-        $registryDef->setArgument(0, $config['provider']);
     }
 
     public function getAlias(): string

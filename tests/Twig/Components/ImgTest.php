@@ -2,13 +2,37 @@
 
 namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 
+use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
+use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
 use Ommax\ResponsiveImageBundle\Twig\Components\Img;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
 
 class ImgTest extends KernelTestCase
 {
     use InteractsWithTwigComponents;
+
+     /** @var ProviderInterface&MockObject */
+    private ProviderInterface $provider;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $registry = static::getContainer()->get(ProviderRegistry::class);
+
+        $this->provider = $this->createMock(ProviderInterface::class);
+        $this->provider->method('getName')->willReturn('mock');
+        $this->provider
+            ->method('getImage')
+            ->willReturnCallback(function ($src, $modifiers) {
+                return $src . '?' . http_build_query($modifiers);
+            });
+
+        $registry->addProvider($this->provider);
+        $registry->setDefaultProvider('mock');
+    }
 
     public function testComponentMount(): void
     {
@@ -76,7 +100,6 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        // Assert preset values are applied
         $this->assertStringContainsString('sizes="100vw sm:50vw md:400px"', $rendered);
         $this->assertStringContainsString('fetchpriority="high"', $rendered);
     }

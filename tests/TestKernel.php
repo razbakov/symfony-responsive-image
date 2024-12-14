@@ -25,15 +25,6 @@ class TestKernel extends Kernel
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
-        $container->loadFromExtension('framework', [
-            'test' => true,
-            'secret' => 'test',
-        ]);
-
-        $container->loadFromExtension('twig', [
-            'default_path' => __DIR__.'/templates',
-        ]);
-
         $loader->load(__DIR__.'/../src/Resources/config/services.yaml');
     }
 }

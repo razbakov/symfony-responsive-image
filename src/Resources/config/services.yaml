@@ -11,12 +11,10 @@ services:
       - "../../Resources/"
       - "../../Tests/"
 
-  # Provider Registry service
   responsive_image.provider_registry:
     class: Ommax\ResponsiveImageBundle\Provider\ProviderRegistry
     public: true
 
-  # Twig Components
   Ommax\ResponsiveImageBundle\Twig\Components\Img:
     tags: ["twig.component"]
 
