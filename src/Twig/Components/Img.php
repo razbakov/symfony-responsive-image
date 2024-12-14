@@ -2,9 +2,9 @@
 
 namespace Ommax\ResponsiveImageBundle\Twig\Components;
 
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
@@ -29,7 +29,7 @@ class Img
     public ?string $placeholder = null;
 
     public function __construct(
-        private ParameterBagInterface $params
+        private ParameterBagInterface $params,
     ) {
         $this->params = $params;
     }

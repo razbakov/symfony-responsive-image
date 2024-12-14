@@ -2,9 +2,9 @@
 
 namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 
+use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
-use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
 
 class PictureTest extends KernelTestCase
 {

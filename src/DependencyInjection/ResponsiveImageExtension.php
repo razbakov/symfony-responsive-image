@@ -16,11 +16,11 @@ class ResponsiveImageExtension extends Extension
         // Load services configuration
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
-        
+
         // Load default configuration using Yaml component
         $defaultConfigFile = __DIR__.'/../Resources/config/responsive_image.yaml';
         $defaultConfig = Yaml::parseFile($defaultConfigFile);
-        
+
         // Merge default config with user configs
         $configs = array_merge([$defaultConfig['responsive_image']], $configs);
 
