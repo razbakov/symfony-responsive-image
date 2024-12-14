@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Ommax\ResponsiveImageBundle\:
+    resource: "../../*"
+    exclude:
+      - "../../DependencyInjection/"
+      - "../../Resources/"
+      - "../../Tests/"
+
+  # Provider Registry service
+  responsive_image.provider_registry:
+    class: Ommax\ResponsiveImageBundle\Provider\ProviderRegistry
+    public: true
+
+  # Twig Extension
+  responsive_image.twig_extension:
+    class: Ommax\ResponsiveImageBundle\Twig\ResponsiveImageExtension
+    tags: ["twig.extension"]
