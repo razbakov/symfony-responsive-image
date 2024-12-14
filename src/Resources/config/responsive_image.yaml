@@ -54,7 +54,7 @@ responsive_image:
       ratio: "16:9"
       sizes: "100vw sm:50vw md:400px"
       fetchpriority: high
-      loading: eager
+      preload: true
 
     avatar:
       width: 48

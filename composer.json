@@ -58,7 +58,7 @@
   },
   "scripts": {
     "test": "phpunit",
-    "test:unit": "phpunit --testsuite unit",
+    "test:unit": "phpunit",
     "test:functional": "phpunit --testsuite functional",
     "test:coverage": "phpunit --coverage-html coverage",
     "review": "php-cs-fixer fix --dry-run --diff",

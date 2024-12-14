@@ -65,4 +65,19 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('width="100"', $rendered);
         $this->assertStringContainsString('height="100"', $rendered);
     }
+
+    public function testPresetConfiguration(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'preset' => 'hero',
+            ]
+        );
+
+        // Assert preset values are applied
+        $this->assertStringContainsString('sizes="100vw sm:50vw md:400px"', $rendered);
+        $this->assertStringContainsString('fetchpriority="high"', $rendered);
+    }
 }

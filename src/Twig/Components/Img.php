@@ -80,6 +80,15 @@ class Img
         $resolver->setAllowedTypes('preset', ['string', 'null']);
         $resolver->setAllowedTypes('placeholder', ['string', 'null']);
 
+        if (isset($data['preset'])) {
+            $presetName = $data['preset'];
+            $presets = $this->params->get('responsive_image.presets');
+
+            if (isset($presets[$presetName])) {
+                $data = array_merge($presets[$presetName], $data);
+            }
+        }
+
         return $resolver->resolve($data) + $data;
     }
 
