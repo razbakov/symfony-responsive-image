@@ -1,0 +1,22 @@
+<picture>
+    {# Generate source elements for each breakpoint #}
+    {% for breakpoint in breakpoints|default([]) %}
+        <source
+            media="{{ breakpoint.media }}"
+            srcset="{{ breakpoint.srcset }}"
+            {% if breakpoint.sizes is defined %}sizes="{{ breakpoint.sizes }}"{% endif %}
+            type="{{ breakpoint.type|default('image/webp') }}"
+        >
+    {% endfor %}
+
+    {# Fallback img element #}
+    <img
+        src="{{ src }}"
+        {% if alt is defined %}alt="{{ alt }}"{% endif %}
+        {% if width is defined %}width="{{ width }}"{% endif %}
+        {% if height is defined %}height="{{ height }}"{% endif %}
+        {% if loading is defined %}loading="{{ loading }}"{% endif %}
+        {% if class is defined %}class="{{ class }}"{% endif %}
+        {{ attributes|default('')|raw }}
+    />
+</picture> 

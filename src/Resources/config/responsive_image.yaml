@@ -3,7 +3,7 @@ responsive_image:
   default_provider: liip_imagine
 
   # Path to the image shown when source image is missing
-  missing_image_placeholder: "/bundles/responsiveimage/images/404.svg"
+  missing_image_placeholder: "src/Resources/public/images/image-not-found.png"
 
   # Default settings for all images
   defaults:
@@ -18,17 +18,17 @@ responsive_image:
 
     # Image format and quality
     format: webp # webp, jpg, png, avif
-    quality: 80 # 1-100
+    # quality: 80
 
     # Loading behavior
-    loading: lazy # lazy, eager
-    fetchpriority: low # high, low, auto
+    # loading: lazy
+    # fetchpriority: auto
 
     # Image fitting
-    fit: cover # cover, contain, fill, inside, outside
+    # fit: cover
 
     # Placeholder settings
-    placeholder: none # none, blur, dominant
+    # placeholder: none
 
   # Provider-specific configuration
   providers:
@@ -48,7 +48,6 @@ responsive_image:
     thumbnail:
       width: 200
       height: 200
-      fit: cover
       quality: 90
 
     hero:
@@ -60,7 +59,6 @@ responsive_image:
     avatar:
       width: 48
       height: 48
-      fit: cover
       placeholder: blur
 
     product:

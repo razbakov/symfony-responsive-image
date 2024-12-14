@@ -1,0 +1,21 @@
+{# Handle placeholder if enabled #}
+{% if placeholder is defined and placeholder != 'none' %}
+    <div class="responsive-image-wrapper {{ placeholder_class|default('lazy-placeholder') }}">
+{% endif %}
+
+<img
+    src="{{ src }}"
+    {% if alt is defined %}alt="{{ alt }}"{% endif %}
+    {% if width is defined %}width="{{ width }}"{% endif %}
+    {% if height is defined %}height="{{ height }}"{% endif %}
+    {% if loading is defined %}loading="{{ loading }}"{% endif %}
+    {% if fetchpriority is defined %}fetchpriority="{{ fetchpriority }}"{% endif %}
+    {% if class is defined %}class="{{ class }}"{% endif %}
+    {% if sizes is defined %}sizes="{{ sizes }}"{% endif %}
+    {# Add other attributes as needed #}
+    {{ attributes|default('')|raw }}
+/>
+
+{% if placeholder is defined and placeholder != 'none' %}
+    </div>
+{% endif %} 

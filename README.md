@@ -104,6 +104,8 @@ Use for simple responsive images with automatic WebP conversion:
     background="#ffffff"                 # Optional: Background color for 'contain' fit
     sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
     fallback="auto"                      # Fallback format (default: auto)
+    placeholder="blur"                   # Enable blurred placeholder
+    preset="hero"                        # Use preset
     class="hero-image"                   # Any HTML attribute is supported
     data-controller="zoom"               # Custom data attributes
     aria-label="Hero section"            # ARIA attributes
