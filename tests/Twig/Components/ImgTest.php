@@ -47,8 +47,8 @@ class ImgTest extends KernelTestCase
                 'referrerpolicy' => 'origin',
                 'id' => 'image',
                 'data-controller' => 'responsive-image',
-                'width' => '100',
-                'height' => '100',
+                'width' => 100,
+                'height' => 100,
                 'loading' => 'lazy',
                 'fetchpriority' => 'auto',
                 'sizes' => '(max-width: 768px) 100vw, 50vw',
@@ -79,5 +79,33 @@ class ImgTest extends KernelTestCase
         // Assert preset values are applied
         $this->assertStringContainsString('sizes="100vw sm:50vw md:400px"', $rendered);
         $this->assertStringContainsString('fetchpriority="high"', $rendered);
+    }
+
+    public function testPlaceholderRendering(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'placeholder' => 'blur',
+                'placeholder-class' => 'custom-placeholder',
+            ]
+        );
+
+        $this->assertStringContainsString('class="custom-placeholder"', $rendered);
+    }
+
+    public function testDensityBasedSrcset(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => 100,
+                'densities' => 'x1 x2',
+            ]
+        );
+
+        $this->assertStringContainsString('srcset="/image.jpg?width=100 1x, /image.jpg?width=200 2x"', $rendered);
     }
 }

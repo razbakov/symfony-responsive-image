@@ -103,6 +103,7 @@ Use for simple responsive images with automatic WebP conversion:
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
     sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
+    densities="x1 x2"                    # Optional: Generate different densities
     fallback="auto"                      # Fallback format (default: auto)
     placeholder="blur"                   # Enable blurred placeholder
     preset="hero"                        # Use preset

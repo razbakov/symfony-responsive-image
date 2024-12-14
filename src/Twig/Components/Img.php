@@ -12,8 +12,8 @@ class Img
 {
     public string $src;
     public ?string $alt = null;
-    public ?string $width = null;
-    public ?string $height = null;
+    public ?int $width = null;
+    public ?int $height = null;
     public ?string $ratio = null;
     public ?string $fit = 'cover';
     public ?string $focal = 'center';
@@ -27,6 +27,7 @@ class Img
     public ?string $class = null;
     public ?string $preset = null;
     public ?string $placeholder = null;
+    public ?string $srcset = null;
 
     public function __construct(
         private ParameterBagInterface $params,
@@ -57,28 +58,29 @@ class Img
                 'class',
                 'preset',
                 'placeholder',
+                'srcset',
             ])
             ->setIgnoreUndefined(true);
 
         $resolver->setRequired('src');
 
         $resolver->setAllowedTypes('src', 'string');
-        $resolver->setAllowedTypes('alt', ['string', 'null']);
-        $resolver->setAllowedTypes('width', ['string', 'null']);
-        $resolver->setAllowedTypes('height', ['string', 'null']);
-        $resolver->setAllowedTypes('ratio', ['string', 'null']);
-        $resolver->setAllowedTypes('fit', ['string', 'null']);
-        $resolver->setAllowedTypes('focal', ['string', 'null']);
-        $resolver->setAllowedTypes('quality', ['string', 'null']);
-        $resolver->setAllowedTypes('loading', ['string', 'null']);
-        $resolver->setAllowedTypes('fetchpriority', ['string', 'null']);
-        $resolver->setAllowedTypes('preload', ['bool', 'null']);
-        $resolver->setAllowedTypes('background', ['string', 'null']);
-        $resolver->setAllowedTypes('sizes', ['string', 'null']);
-        $resolver->setAllowedTypes('fallback', ['string', 'null']);
-        $resolver->setAllowedTypes('class', ['string', 'null']);
-        $resolver->setAllowedTypes('preset', ['string', 'null']);
-        $resolver->setAllowedTypes('placeholder', ['string', 'null']);
+        $resolver->setAllowedTypes('alt', 'string');
+        $resolver->setAllowedTypes('width', 'int');
+        $resolver->setAllowedTypes('height', 'int');
+        $resolver->setAllowedTypes('ratio', 'string');
+        $resolver->setAllowedTypes('fit', 'string');
+        $resolver->setAllowedTypes('focal', 'string');
+        $resolver->setAllowedTypes('quality', 'string');
+        $resolver->setAllowedTypes('loading', 'string');
+        $resolver->setAllowedTypes('fetchpriority', 'string');
+        $resolver->setAllowedTypes('preload', 'bool');
+        $resolver->setAllowedTypes('background', 'string');
+        $resolver->setAllowedTypes('sizes', 'string');
+        $resolver->setAllowedTypes('fallback', 'string');
+        $resolver->setAllowedTypes('class', 'string');
+        $resolver->setAllowedTypes('preset', 'string');
+        $resolver->setAllowedTypes('placeholder', 'string');
 
         if (isset($data['preset'])) {
             $presetName = $data['preset'];
@@ -92,12 +94,48 @@ class Img
         return $resolver->resolve($data) + $data;
     }
 
-    public function mount(string $src): void
+    public function mount(string $src, ?string $densities = null, ?int $width = null): void
     {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
         }
 
         $this->src = $src;
+        $this->width = $width;
+        $this->srcset = $this->getSrcset($densities);
+    }
+
+    private function getSrcset(?string $densities = null): string
+    {
+        $srcset = [];
+
+        if ($densities) {
+            $densities = explode(' ', $densities);
+            foreach ($densities as $density) {
+                $scale = (int) substr($density, 1);
+                $width = $this->width * $scale;
+                $srcset[] = \sprintf('%s %s%s',
+                    $this->generateImageUrl(['width' => $width]),
+                    $scale,
+                    'x'
+                );
+            }
+
+            return implode(', ', $srcset);
+        }
+
+        return '';
+    }
+
+    private function generateImageUrl(array $options = []): string
+    {
+        // This would be implemented by your image provider
+        // For now, just append width parameter
+        $width = $options['width'] ?? null;
+        if ($width) {
+            return \sprintf('%s?width=%d', $this->src, $width);
+        }
+
+        return $this->src;
     }
 }
