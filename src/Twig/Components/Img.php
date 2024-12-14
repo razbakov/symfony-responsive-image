@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
-#[AsTwigComponent('img', template: 'img.html.twig')]
+#[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
 class Img
 {
     public string $src;
@@ -38,26 +38,27 @@ class Img
     public function preMount(array $data): array
     {
         $resolver = new OptionsResolver();
-        $resolver->setIgnoreUndefined(true);
 
-        $resolver->setDefaults([
-            'alt' => null,
-            'width' => null,
-            'height' => null,
-            'ratio' => null,
-            'fit' => 'cover',
-            'focal' => 'center',
-            'quality' => '80',
-            'loading' => 'lazy',
-            'fetchpriority' => 'auto',
-            'preload' => false,
-            'background' => null,
-            'sizes' => null,
-            'fallback' => 'auto',
-            'class' => null,
-            'preset' => null,
-            'placeholder' => null,
-        ]);
+        $resolver
+            ->setDefined([
+                'alt',
+                'width',
+                'height',
+                'ratio',
+                'fit',
+                'focal',
+                'quality',
+                'loading',
+                'fetchpriority',
+                'preload',
+                'background',
+                'sizes',
+                'fallback',
+                'class',
+                'preset',
+                'placeholder',
+            ])
+            ->setIgnoreUndefined(true);
 
         $resolver->setRequired('src');
 
@@ -80,5 +81,14 @@ class Img
         $resolver->setAllowedTypes('placeholder', ['string', 'null']);
 
         return $resolver->resolve($data) + $data;
+    }
+
+    public function mount(string $src): void
+    {
+        if (empty($src)) {
+            throw new \InvalidArgumentException('Image src cannot be empty');
+        }
+
+        $this->src = $src;
     }
 }
