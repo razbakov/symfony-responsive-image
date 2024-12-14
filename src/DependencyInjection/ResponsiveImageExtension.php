@@ -7,13 +7,22 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Yaml\Yaml;
 
 class ResponsiveImageExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
+        // Load services configuration
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
+        
+        // Load default configuration using Yaml component
+        $defaultConfigFile = __DIR__.'/../Resources/config/responsive_image.yaml';
+        $defaultConfig = Yaml::parseFile($defaultConfigFile);
+        
+        // Merge default config with user configs
+        $configs = array_merge([$defaultConfig['responsive_image']], $configs);
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);

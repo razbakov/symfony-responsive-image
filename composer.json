@@ -28,7 +28,8 @@
     "liip/imagine-bundle": "^2.11",
     "cloudinary/cloudinary_php": "^2.11",
     "guzzlehttp/guzzle": "^7.8",
-    "symfony/options-resolver": "^6.0"
+    "symfony/options-resolver": "^6.0",
+    "symfony/ux-twig-component": "^2.13"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.65",

@@ -1,8 +1,3 @@
-{# Handle placeholder if enabled #}
-{% if placeholder is defined and placeholder != 'none' %}
-    <div class="responsive-image-wrapper {{ placeholder_class|default('lazy-placeholder') }}">
-{% endif %}
-
 <img
     src="{{ src }}"
     {% if alt is defined %}alt="{{ alt }}"{% endif %}
@@ -15,7 +10,3 @@
     {# Add other attributes as needed #}
     {{ attributes|default('')|raw }}
 />
-
-{% if placeholder is defined and placeholder != 'none' %}
-    </div>
-{% endif %} 

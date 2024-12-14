@@ -1,0 +1,15 @@
+framework:
+  test: true
+  secret: test
+  router:
+    resource: ~
+    utf8: true
+  http_method_override: false
+  handle_all_throwables: true
+  php_errors:
+    log: true
+
+twig_component:
+  anonymous_template_directory: "components/"
+  defaults:
+    Ommax\ResponsiveImageBundle\Twig\Components\: components/
