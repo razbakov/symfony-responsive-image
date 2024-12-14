@@ -10,24 +10,18 @@ interface ProviderInterface
     public function getName(): string;
 
     /**
-     * Generate the URL for the image with given options.
+     * Generates the URL for the image with the specified options.
      *
-     * @param string $src     The source image path
-     * @param array  $options The transformation options
+     * This method takes the source image path and an array of transformation options,
+     * and returns the URL of the transformed image. The transformation options can include
+     * parameters such as image size, format, quality, and other modifications defined in the
+     * image component or as a preset.
      *
-     * @return string The transformed image URL
-     */
-    public function generateUrl(string $src, array $options): string;
-
-    /**
-     * Check if the provider supports the given source.
-     */
-    public function supports(string $src): bool;
-
-    /**
-     * Get provider-specific configuration options.
+     * @param string $src       The path to the source image
+     * @param array  $modifiers List of image modifiers that are defined in the image component
+     *                          or as a preset.
      *
-     * @return array<string, mixed>
+     * @return string Absolute or relative url of optimized image
      */
-    public function getDefaultOptions(): array;
+    public function getImage(string $src, array $modifiers): string;
 }

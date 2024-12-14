@@ -32,7 +32,7 @@ class ResponsiveImageExtension extends Extension
             ->addTag('responsive_image.provider');
 
         // Set parameters
-        $container->setParameter('responsive_image.default_provider', $config['default_provider']);
+        $container->setParameter('responsive_image.provider', $config['provider']);
         $container->setParameter('responsive_image.missing_image_placeholder', $config['missing_image_placeholder']);
         $container->setParameter('responsive_image.defaults', $config['defaults']);
         $container->setParameter('responsive_image.providers', $config['providers']);
@@ -49,7 +49,7 @@ class ResponsiveImageExtension extends Extension
 
         // Configure default options for the registry
         $registryDef = $container->getDefinition('responsive_image.provider_registry');
-        $registryDef->setArgument(0, $config['default_provider']);
+        $registryDef->setArgument(0, $config['provider']);
     }
 
     public function getAlias(): string

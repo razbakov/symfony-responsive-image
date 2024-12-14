@@ -1,6 +1,6 @@
 responsive_image:
-  # Default image provider (liip_imagine, cloudinary, etc.)
-  default_provider: liip_imagine
+  # Image provider (liip_imagine, cloudinary, etc.)
+  provider: liip_imagine
 
   # Path to the image shown when source image is missing
   missing_image_placeholder: "src/Resources/public/images/image-not-found.png"

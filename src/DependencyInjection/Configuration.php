@@ -14,8 +14,8 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('default_provider')
-                    ->info('Default image provider to use')
+                ->scalarNode('provider')
+                    ->info('Image provider to use')
                     ->isRequired()
                 ->end()
                 ->scalarNode('missing_image_placeholder')

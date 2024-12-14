@@ -21,7 +21,7 @@ class ConfigurationTest extends TestCase
     public function testDefaultValues(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -39,7 +39,7 @@ class ConfigurationTest extends TestCase
             [$config]
         );
 
-        $this->assertEquals('liip_imagine', $processedConfig['default_provider']);
+        $this->assertEquals('liip_imagine', $processedConfig['provider']);
         $this->assertEquals('/path/to/404.jpg', $processedConfig['missing_image_placeholder']);
         $this->assertEquals(['sm' => 640], $processedConfig['defaults']['breakpoints']);
     }
@@ -57,7 +57,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
 
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -78,7 +78,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
 
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -97,7 +97,7 @@ class ConfigurationTest extends TestCase
     public function testValidProviders(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -133,7 +133,7 @@ class ConfigurationTest extends TestCase
     public function testValidPresets(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],

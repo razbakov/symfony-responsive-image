@@ -57,7 +57,7 @@ Each provider can be configured in your `responsive_image.yaml`:
 ```yaml
 # config/packages/responsive_image.yaml
 responsive_image:
-  default_provider: liip_imagine
+  provider: liip_imagine
   providers:
     liip_imagine:
       driver: gd

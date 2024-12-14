@@ -22,7 +22,7 @@ class ResponsiveImageExtensionTest extends TestCase
     public function testLoadSetParameters(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -37,18 +37,18 @@ class ResponsiveImageExtensionTest extends TestCase
 
         $this->extension->load([$config], $this->container);
 
-        $this->assertTrue($this->container->hasParameter('responsive_image.default_provider'));
+        $this->assertTrue($this->container->hasParameter('responsive_image.provider'));
         $this->assertTrue($this->container->hasParameter('responsive_image.missing_image_placeholder'));
         $this->assertTrue($this->container->hasParameter('responsive_image.defaults'));
 
-        $this->assertEquals('liip_imagine', $this->container->getParameter('responsive_image.default_provider'));
+        $this->assertEquals('liip_imagine', $this->container->getParameter('responsive_image.provider'));
         $this->assertEquals('/path/to/404.jpg', $this->container->getParameter('responsive_image.missing_image_placeholder'));
     }
 
     public function testLoadRegistersProviderRegistry(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -72,7 +72,7 @@ class ResponsiveImageExtensionTest extends TestCase
     public function testLoadRegistersAutoconfigurationForProviders(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -96,7 +96,7 @@ class ResponsiveImageExtensionTest extends TestCase
     public function testLoadWithProviders(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
@@ -132,7 +132,7 @@ class ResponsiveImageExtensionTest extends TestCase
     public function testLoadWithPresets(): void
     {
         $config = [
-            'default_provider' => 'liip_imagine',
+            'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
             'defaults' => [
                 'breakpoints' => ['sm' => 640],
