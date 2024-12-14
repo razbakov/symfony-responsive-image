@@ -13,7 +13,7 @@ class ImgTest extends KernelTestCase
 {
     use InteractsWithTwigComponents;
 
-     /** @var ProviderInterface&MockObject */
+    /** @var ProviderInterface&MockObject */
     private ProviderInterface $provider;
 
     protected function setUp(): void
@@ -27,7 +27,7 @@ class ImgTest extends KernelTestCase
         $this->provider
             ->method('getImage')
             ->willReturnCallback(function ($src, $modifiers) {
-                return $src . '?' . http_build_query($modifiers);
+                return $src.'?'.http_build_query($modifiers);
             });
 
         $registry->addProvider($this->provider);

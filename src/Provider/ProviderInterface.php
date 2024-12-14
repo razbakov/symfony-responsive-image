@@ -18,8 +18,8 @@ interface ProviderInterface
      * image component or as a preset.
      *
      * @param string $src       The path to the source image
-     * @param array  $modifiers List of image modifiers that are defined in the image component
-     *                          or as a preset.
+     * @param array  $modifiers list of image modifiers that are defined in the image component
+     *                          or as a preset
      *
      * @return string Absolute or relative url of optimized image
      */
