@@ -2,7 +2,7 @@
 
 namespace Ommax\ResponsiveImageBundle\Service;
 
-class ResponsiveWidthCalculator
+class Transformer
 {
     private const BREAKPOINT_ORDER = ['default', 'sm', 'md', 'lg', 'xl', '2xl'];
     private array $breakpoints;

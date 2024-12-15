@@ -2,16 +2,16 @@
 
 namespace Ommax\ResponsiveImageBundle\Tests\Service;
 
-use Ommax\ResponsiveImageBundle\Service\ResponsiveWidthCalculator;
+use Ommax\ResponsiveImageBundle\Service\Transformer;
 use PHPUnit\Framework\TestCase;
 
-class ResponsiveWidthCalculatorTest extends TestCase
+class TransformerTest extends TestCase
 {
-    private ResponsiveWidthCalculator $calculator;
+    private Transformer $transformer;
     
     protected function setUp(): void
     {
-        $this->calculator = new ResponsiveWidthCalculator([
+        $this->transformer = new Transformer([
             // 'xs' => 320, Mobile Portrait BrowserStack
             'sm' => 640,
             'md' => 768,
@@ -34,7 +34,7 @@ class ResponsiveWidthCalculatorTest extends TestCase
      */
     public function testParseWidth(string $input, array $expected): void
     {
-        $result = $this->calculator->getSizes($input);
+        $result = $this->transformer->getSizes($input);
         $this->assertEquals($expected, $result);
     }
 

@@ -3,7 +3,7 @@
 namespace Ommax\ResponsiveImageBundle\Twig\Components;
 
 use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
-use Ommax\ResponsiveImageBundle\Service\ResponsiveWidthCalculator;
+use Ommax\ResponsiveImageBundle\Service\Transformer;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -33,13 +33,12 @@ class Img
     public ?string $sizes = null;
     public ?string $srcset = null;
 
-    private array $parsedWidths = [];
     private array $widths = [];
 
     public function __construct(
         private ParameterBagInterface $params,
         private ProviderRegistry $providerRegistry,
-        private ResponsiveWidthCalculator $widthCalculator,
+        private Transformer $transformer,
     ) {
         $this->params = $params;
     }
@@ -111,7 +110,7 @@ class Img
         $this->width = $width;
         
         if ($this->width) {
-            $this->widths = $this->widthCalculator->getSizes($this->width);
+            $this->widths = $this->transformer->getSizes($this->width);
             $this->widthComputed = $this->widths['default']['value'];
             $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
         } else {
