@@ -9,7 +9,6 @@ responsive_image:
   defaults:
     # Breakpoints for responsive images (in pixels)
     breakpoints:
-      xs: 320 # Mobile portrait
       sm: 640 # Mobile landscape
       md: 768 # Tablet portrait
       lg: 1024 # Tablet landscape
@@ -52,7 +51,7 @@ responsive_image:
 
     hero:
       ratio: "16:9"
-      sizes: "100vw sm:50vw md:400px"
+      width: "100vw sm:50vw md:400px"
       fetchpriority: high
       preload: true
 

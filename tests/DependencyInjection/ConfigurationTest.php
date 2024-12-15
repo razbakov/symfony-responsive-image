@@ -153,7 +153,7 @@ class ConfigurationTest extends TestCase
                 ],
                 'hero' => [
                     'ratio' => '16:9',
-                    'sizes' => '100vw',
+                    'width' => '100vw',
                     'loading' => 'eager',
                     'fetchpriority' => 'high',
                 ],

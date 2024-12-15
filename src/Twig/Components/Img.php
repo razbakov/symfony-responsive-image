@@ -12,8 +12,10 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 class Img
 {
     public string $src;
+    public ?string $srcComputed = null;
     public ?string $alt = null;
-    public ?int $width = null;
+    public ?string $width = null;
+    public ?int $widthComputed = null;
     public ?int $height = null;
     public ?string $ratio = null;
     public ?string $fit = 'cover';
@@ -23,12 +25,15 @@ class Img
     public ?string $fetchpriority = 'auto';
     public ?bool $preload = false;
     public ?string $background = null;
-    public ?string $sizes = null;
     public ?string $fallback = 'auto';
     public ?string $class = null;
     public ?string $preset = null;
     public ?string $placeholder = null;
+    public ?string $sizes = null;
     public ?string $srcset = null;
+
+    private array $parsedWidths = [];
+    private array $widths = [];
 
     public function __construct(
         private ParameterBagInterface $params,
@@ -55,7 +60,6 @@ class Img
                 'fetchpriority',
                 'preload',
                 'background',
-                'sizes',
                 'fallback',
                 'class',
                 'preset',
@@ -68,7 +72,7 @@ class Img
 
         $resolver->setAllowedTypes('src', 'string');
         $resolver->setAllowedTypes('alt', 'string');
-        $resolver->setAllowedTypes('width', 'int');
+        $resolver->setAllowedTypes('width', ['string', 'int']);
         $resolver->setAllowedTypes('height', 'int');
         $resolver->setAllowedTypes('ratio', 'string');
         $resolver->setAllowedTypes('fit', 'string');
@@ -78,7 +82,6 @@ class Img
         $resolver->setAllowedTypes('fetchpriority', 'string');
         $resolver->setAllowedTypes('preload', 'bool');
         $resolver->setAllowedTypes('background', 'string');
-        $resolver->setAllowedTypes('sizes', 'string');
         $resolver->setAllowedTypes('fallback', 'string');
         $resolver->setAllowedTypes('class', 'string');
         $resolver->setAllowedTypes('preset', 'string');
@@ -96,7 +99,7 @@ class Img
         return $resolver->resolve($data) + $data;
     }
 
-    public function mount(string $src, ?string $densities = null, ?int $width = null): void
+    public function mount(string $src, ?string $densities = null, $width = null): void
     {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -105,28 +108,105 @@ class Img
         $this->src = $src;
         $this->width = $width;
         $this->srcset = $this->getSrcset($densities);
+        
+        if ($this->width) {
+            $this->parsedWidths = $this->parseWidthString($this->width);
+            $this->widths = $this->calculateSizes($this->parsedWidths, [
+                'sm' => 640,
+                'md' => 768,
+                'lg' => 1024,
+                'xl' => 1280,
+                '2xl' => 1536
+            ]);
+
+            $this->widthComputed = min($this->widths);
+            $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
+        } else {
+            $this->srcComputed = $this->getImage();
+        }
     }
 
-    private function getSrcset(?string $densities = null): string
+    private function getSrcset(): string
     {
-        $srcset = [];
-
-        if ($densities) {
-            $densities = explode(' ', $densities);
-            foreach ($densities as $density) {
-                $scale = (int) substr($density, 1);
-                $width = $this->width * $scale;
-                $srcset[] = \sprintf('%s %s%s',
-                    $this->getImage(['width' => $width]),
-                    $scale,
-                    'x'
-                );
-            }
-
-            return implode(', ', $srcset);
+        if (!$this->width) {
+            return '';
         }
 
-        return '';
+        $srcset = [];
+
+        foreach ($this->widths as $width) {
+            $srcset[] = sprintf('%s %sw',
+                $this->getImage(['width' => $width]),
+                $width
+            );
+        }
+
+        return implode(', ', $srcset);
+    }
+
+    private function parseWidthString(string $width): array
+    {
+        $parts = preg_split('/\s+/', trim($width));
+        $widths = [];
+        
+        foreach ($parts as $part) {
+            if (strpos($part, ':') !== false) {
+                [$breakpoint, $value] = explode(':', $part);
+                $widths[$breakpoint] = $this->normalizeWidthValue($value);
+            } else {
+                $widths['default'] = $this->normalizeWidthValue($part);
+            }
+        }
+        
+        return $widths;
+    }
+
+    private function normalizeWidthValue(string $value): array
+    {
+        $isVw = str_ends_with($value, 'vw');
+        return [
+            'value' => (int) $value,
+            'isVw' => $isVw
+        ];
+    }
+
+    private function calculateSizes(array $widths, array $breakpoints): array
+    {
+        $sizes = [];
+        
+        // If no breakpoints specified, treat each width as a breakpoint
+        if (count($widths) === 1 && isset($widths['default'])) {
+            $width = $widths['default']['value'];
+            if ($widths['default']['isVw']) {
+                return array_values($breakpoints);
+            }
+            if ($width > $breakpoints['sm']) {
+                return array_filter($breakpoints, fn($bp) => $bp <= $width);
+            }
+            return [$width];
+        }
+
+        // Sort breakpoints and process them in order
+        $breakpointOrder = ['default', 'sm', 'md', 'lg', 'xl', '2xl'];
+        $currentWidth = null;
+        
+        foreach ($breakpointOrder as $bp) {
+            if (!isset($widths[$bp])) continue;
+            
+            $width = $widths[$bp];
+            if ($width['isVw']) {
+                // Add all remaining breakpoint sizes
+                $sizes = array_merge($sizes,
+                    array_filter($breakpoints, fn($bpSize) => $bpSize >= ($currentWidth ?? 0))
+                );
+                break;
+            } else {
+                $sizes[] = $width['value'];
+                $currentWidth = $width['value'];
+            }
+        }
+
+        return array_unique($sizes);
     }
 
     private function getImage(array $modifiers = []): string

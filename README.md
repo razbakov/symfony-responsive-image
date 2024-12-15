@@ -36,7 +36,7 @@ A Symfony bundle that provides two components for optimized images:
    - [Fit Options](#fit-options-cropping-and-resizing)
    - [Fallback Options](#fallback-options)
    - [Placeholder Options](#placeholder-options)
-   - [Art Direction with Breakpoints](#art-direction-with-breakpoints)
+   - [Art Direction](#art-direction)
 5. [Common Use Cases](#common-use-cases)
 6. [Using Presets](#using-presets)
 7. [Settings](#settings)
@@ -92,7 +92,7 @@ Use for simple responsive images with automatic WebP conversion:
 <twig:img
     src="/images/hero.jpg"               # Required: Image source path
     alt="Hero image"                     # Recommended: Alt text for accessibility
-    width="800"                          # Optional: Override width
+    width="100vw sm:50vw md:400px        # Full width on mobile, half width on tablet, 400px on desktop
     height="600"                         # Optional: Override height
     ratio="16:9"                         # Optional: Override aspect ratio
     fit="cover"                          # Optional: How image should fit dimensions
@@ -102,7 +102,6 @@ Use for simple responsive images with automatic WebP conversion:
     fetchpriority="high"                 # Optional: Set high priority for LCP
     preload="true"                       # Optional: Add preload link
     background="#ffffff"                 # Optional: Background color for 'contain' fit
-    sizes="100vw sm:50vw md:400px"       # Optional: Responsive size hints
     densities="x1 x2"                    # Optional: Generate different densities
     fallback="auto"                      # Fallback format (default: auto)
     placeholder="blur"                   # Enable blurred placeholder
@@ -121,7 +120,7 @@ Use for art direction with different crops per screen size or orientation:
 <twig:picture
     src="/images/hero.jpg"                 # Required: Image source path
     alt="Hero image"                       # Recommended: Alt text for accessibility
-    sizes="sm:100vw md:80vw"               # Responsive sizes per breakpoint
+    width="100vw md:80vw"                  # Responsive sizes per breakpoint
     ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
     focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
     fit="sm:contain md:cover"              # Fit behavior per breakpoint
@@ -158,7 +157,7 @@ The `responsive_image_preloads()` function generates appropriate `<link rel="pre
 <twig:img
     src="/images/hero.jpg"
     alt="Hero image"
-    sizes="100vw sm:50vw md:400px"    # Default size, then breakpoint:size pairs
+    width="100vw sm:50vw md:400px lg:800" # Default size for mobile, then breakpoint:size pairs
 />
 ```
 
@@ -173,10 +172,38 @@ The sizes syntax follows this pattern:
 - Start with default size (applies to smallest screens)
 - Add breakpoint:size pairs for larger screens
 - Each size applies from that breakpoint up
-- Example: `"100vw sm:50vw md:400px"`
-  - `100vw` - Full width on mobile
-  - `sm:50vw` - Half width from sm breakpoint (≥640px)
-  - `md:400px` - Fixed 400px from md breakpoint (≥768px)
+- Example: `"100vw sm:50vw md:400px lg:800"`
+  - `100vw` - full width (640px) on mobile (<640px)
+  - `sm:50vw` - half width (384px) from sm breakpoint (≥640px)
+  - `md:400px` - fixed 400px from md breakpoint (≥768px)
+  - `lg:800` - fixed 800px from lg breakpoint (≥1024px)
+
+Default breakpoints:
+
+- sm: ≥ 640px - Mobile landscape
+- md: ≥ 768px - Tablet portrait
+- lg: ≥ 1024px - Tablet landscape
+- xl: ≥ 1280px - Desktop
+- 2xl: ≥ 1536px - Large desktop
+
+Transformation rules:
+- If default width is not set, it will be taken from the smallest breakpoint, i.e `sm:50vw md:400px` is translated to `50vw md:400px`.
+- Dynamic width `vw` will generate all sizes from smallest breakpoint to image size but not larger than largest breakpoint.
+- Fixed width wll be used until there is a breakpoint with `vw` width set, from which point it will use dynamic rule.
+- If fixed width is greater then the screen size, it will generate all sizes from smallest breakpoint to image size.
+- If breakpoints are not set, each width defines a breakpoint.
+
+| Width string        | Image versions |
+| --------------------| -------------- |
+| 100                 | 100px |
+| 50 100 200          | 50px, 100px, 200px |
+| sm:50 md:100 lg:200 | 50px, 100px, 200px |
+| 1000                | 640px, 768px, 1000px |
+| 100vw               | 640px, 768px, 1024px, 1280px, 1536px |
+| 100 lg:100vw        | 100px, 1024px, 1280px, 1536px |
+| 100vw md:100        | 640px, 768px, 100px |
+| 1000 lg:100vw       | 640px, 768px, 1024px, 1280px, 1536px |
+| 100vw md:1000       | 640px, 768px, 1000px |
 
 Width and height are automatically calculated from:
 
@@ -197,7 +224,7 @@ To generate special versions of images for high-DPI displays (like Retina), use 
 <twig:img
     src="/images/logo.png"
     width="100"
-    densities="x1 x2"          # Generate 1x and 2x versions
+    densities="x1 x2" # Generate 1x and 2x versions
     alt="Logo"
 />
 ```
@@ -207,7 +234,7 @@ This will generate:
 ```html
 <img
   src="/images/logo-100.jpg"
-  srcset="/images/logo-100.jpg 1x, /images/logo-200.jpg 2x"
+  srcset="/images/logo-100.jpg 100w, /images/logo-200.jpg 200w"
   width="100"
   alt="Logo"
 />
@@ -218,7 +245,7 @@ You can combine densities with responsive sizes:
 ```twig
 <twig:img
     src="/images/hero.jpg"
-    sizes="100vw sm:50vw md:400px"
+    width="100vw sm:50vw md:400px"
     densities="x1 x2"
     alt="Hero image"
 />
@@ -294,7 +321,7 @@ Example with blur placeholder:
 />
 ```
 
-### Art Direction with Breakpoints
+### Art Direction
 
 Use `<twig:picture>` when you need different versions of the image:
 
@@ -302,21 +329,12 @@ Use `<twig:picture>` when you need different versions of the image:
 <twig:picture
     src="/images/hero.jpg"
     alt="Hero image"
-    sizes="sm:100vw md:80vw"              # Full width on mobile, 80% on desktop
+    width="100vw md:80vw"                 # Full width on mobile, 80% on desktop
     ratio="sm:1:1 md:16:9"                # Square for mobile, widescreen for desktop
     fit="sm:cover md:cover"               # Cover fitting for both breakpoints
     focal="sm:center md:0.5,0.3"          # Center on mobile, custom focus on desktop
 />
 ```
-
-Default breakpoints:
-
-- xs: ≤ 320px
-- sm: ≤ 640px
-- md: ≤ 768px
-- lg: ≤ 1024px
-- xl: ≤ 1280px
-- 2xl: ≤ 1536px
 
 ## Common Use Cases
 
@@ -326,9 +344,8 @@ Default breakpoints:
 <twig:img
     src="/images/hero.jpg"
     alt="Hero image"
-    width="1600"                         # Maximum width
-    ratio="16:9"                         # Maintain aspect ratio
-    sizes="100vw"                        # Size hints for browser
+    width="100vw"
+    ratio="16:9"
 />
 ```
 
@@ -343,7 +360,7 @@ Default breakpoints:
     focal="center"
     fetchpriority="high"
     preload="true"
-    sizes="100vw"                        # Size hints for browser
+    width="100vw"
 />
 ```
 
@@ -370,7 +387,7 @@ Default breakpoints:
     ratio="4:3"
     fit="cover"
     focal="0.5,0.3"
-    sizes="100vw"                        # Size hints for browser
+    width="100vw"                     
 />
 ```
 

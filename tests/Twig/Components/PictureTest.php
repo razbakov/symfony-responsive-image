@@ -2,6 +2,8 @@
 
 namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 
+use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
+use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
 use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
@@ -10,6 +12,27 @@ class PictureTest extends KernelTestCase
 {
     use InteractsWithTwigComponents;
 
+    /** @var ProviderInterface&MockObject */
+    private ProviderInterface $provider;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $registry = static::getContainer()->get(ProviderRegistry::class);
+
+        $this->provider = $this->createMock(ProviderInterface::class);
+        $this->provider->method('getName')->willReturn('mock');
+        $this->provider
+            ->method('getImage')
+            ->willReturnCallback(function ($src, $modifiers) {
+                return $src.'?'.http_build_query($modifiers);
+            });
+
+        $registry->addProvider($this->provider);
+        $registry->setDefaultProvider('mock');
+    }
+    
     public function testComponentMount(): void
     {
         $component = $this->mountTwigComponent(
