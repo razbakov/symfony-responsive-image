@@ -141,6 +141,23 @@ class ImgTest extends KernelTestCase
         );
 
         $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertStringNotContainsString('sizes="', $rendered);
+        $this->assertStringNotContainsString('srcset="', $rendered);
+    }
+
+    public function testFixedWidthLarge(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '1000',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=1000"', $rendered);
+        $this->assertStringNotContainsString('sizes="', $rendered);
+        $this->assertStringNotContainsString('srcset="', $rendered);
     }
 
     public function testFixedWidthBreakpoints(): void
@@ -157,24 +174,10 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('/image.jpg?width=50 50w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
-    }
-
-    public function testFixedWidthLarge(): void
-    {
-        $this->markTestIncomplete("Not implemented");
-
-        $rendered = $this->renderTwigComponent(
-            name: 'img',
-            data: [
-                'src' => '/image.jpg',
-                'width' => '1000',
-            ]
-        );
-
-        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=640 640w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1000 1000w', $rendered);
+        $this->assertStringContainsString('(max-width: 640px) 50px', $rendered);
+        $this->assertStringContainsString('(max-width: 768px) 100px', $rendered);
+        $this->assertStringContainsString('(max-width: 1024px) 200px', $rendered);
+        $this->assertStringContainsString('200px', $rendered);
     }
 
     public function testDensities(): void

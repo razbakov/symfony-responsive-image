@@ -110,14 +110,20 @@ class Img
         $this->width = $width;
         
         if ($this->width) {
+            if (is_string($this->width) && (str_ends_with($this->width, 'px') || is_numeric($this->width))) {
+                $this->widthComputed = (int) str_replace('px', '', $this->width);
+                $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
+                return;
+            }
+
             $this->widths = $this->transformer->getSizes($this->width);
             $this->widthComputed = $this->widths['default']['value'];
             $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
+            $this->srcset = $this->getSrcset();
+            $this->sizes = $this->getSizes();
         } else {
             $this->srcComputed = $this->getImage();
         }
-
-        $this->srcset = $this->getSrcset();
     }
 
     private function getSrcset(): string
@@ -136,6 +142,41 @@ class Img
         }
 
         return implode(', ', $srcset);
+    }
+
+    private function getSizes(): string
+    {
+        if (!$this->width) {
+            return '';
+        }
+
+        $sizes = [];
+        $breakpoints = [
+            'sm' => 640,
+            'md' => 768,
+            'lg' => 1024
+        ];
+
+        foreach ($this->widths as $key => $width) {
+            if ($key === 'default') {
+                continue;
+            }
+
+            $breakpoint = $breakpoints[$key] ?? null;
+            if ($breakpoint) {
+                $sizes[] = sprintf('(max-width: %dpx) %dpx',
+                    $breakpoint,
+                    $width['value']
+                );
+            }
+        }
+
+        // Add the default size without a media query
+        if (isset($this->widths['default'])) {
+            $sizes[] = $this->widths['default']['value'] . 'px';
+        }
+
+        return implode(', ', $sizes);
     }
 
     private function getImage(array $modifiers = []): string
