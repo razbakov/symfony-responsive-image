@@ -99,7 +99,7 @@ class Img
         return $resolver->resolve($data) + $data;
     }
 
-    public function mount(string $src, ?string $densities = null, $width = null): void
+    public function mount(string $src, $width = null): void
     {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -107,7 +107,7 @@ class Img
 
         $this->src = $src;
         $this->width = $width;
-        $this->srcset = $this->getSrcset($densities);
+        $this->srcset = $this->getSrcset();
         
         if ($this->width) {
             $this->parsedWidths = $this->parseWidthString($this->width);
@@ -119,7 +119,9 @@ class Img
                 '2xl' => 1536
             ]);
 
-            $this->widthComputed = min($this->widths);
+            if (count($this->widths) > 0) {
+                $this->widthComputed = min($this->widths);
+            }
             $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
         } else {
             $this->srcComputed = $this->getImage();

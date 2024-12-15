@@ -132,8 +132,6 @@ class ImgTest extends KernelTestCase
 
     public function testFixedWidthPx(): void
     {
-        $this->markTestIncomplete("Not implemented");
-
         $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
