@@ -180,30 +180,28 @@ The sizes syntax follows this pattern:
 
 Default breakpoints:
 
-- sm: ≥ 640px - Mobile landscape
-- md: ≥ 768px - Tablet portrait
-- lg: ≥ 1024px - Tablet landscape
-- xl: ≥ 1280px - Desktop
-- 2xl: ≥ 1536px - Large desktop
+- default: <640px - Mobile portrait
+- sm: >= 640px - Mobile landscape
+- md: >= 768px - Tablet portrait
+- lg: >= 1024px - Tablet landscape
+- xl: >= 1280px - Desktop
+- 2xl: >= 1536px - Large desktop
 
 Transformation rules:
 - If default width is not set, it will be taken from the smallest breakpoint, i.e `sm:50vw md:400px` is translated to `50vw md:400px`.
 - Dynamic width `vw` will generate all sizes from smallest breakpoint to image size but not larger than largest breakpoint.
 - Fixed width wll be used until there is a breakpoint with `vw` width set, from which point it will use dynamic rule.
-- If fixed width is greater then the screen size, it will generate all sizes from smallest breakpoint to image size.
-- If breakpoints are not set, each width defines a breakpoint.
 
 | Width string        | Image versions |
 | --------------------| -------------- |
 | 100                 | 100px |
-| 50 100 200          | 50px, 100px, 200px |
+| 1000                | 1000px |
 | sm:50 md:100 lg:200 | 50px, 100px, 200px |
-| 1000                | 640px, 768px, 1000px |
 | 100vw               | 640px, 768px, 1024px, 1280px, 1536px |
+| 50vw lg:400px       | 320px, 384px, 400px |
 | 100 lg:100vw        | 100px, 1024px, 1280px, 1536px |
 | 100vw md:100        | 640px, 768px, 100px |
-| 1000 lg:100vw       | 640px, 768px, 1024px, 1280px, 1536px |
-| 100vw md:1000       | 640px, 768px, 1000px |
+| 1000 lg:100vw       | 1000px, 1024px, 1280px, 1536px |
 
 Width and height are automatically calculated from:
 

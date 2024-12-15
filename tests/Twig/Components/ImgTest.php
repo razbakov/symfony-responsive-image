@@ -143,28 +143,8 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
     }
 
-    public function testFixedWidthSequence(): void
-    {
-        $this->markTestIncomplete("Not implemented");
-
-        $rendered = $this->renderTwigComponent(
-            name: 'img',
-            data: [
-                'src' => '/image.jpg',
-                'width' => '50 100 200',
-            ]
-        );
-
-        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=50 50w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
-    }
-
     public function testFixedWidthBreakpoints(): void
     {
-        $this->markTestIncomplete("Not implemented");
-
         $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
