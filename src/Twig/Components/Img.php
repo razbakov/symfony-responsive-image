@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
+use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 
 #[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
 class Img
@@ -40,6 +41,7 @@ class Img
         private ParameterBagInterface $params,
         private ProviderRegistry $providerRegistry,
         private Transformer $transformer,
+        private PreloadManager $preloadManager,
     ) {
         $this->params = $params;
     }
@@ -132,7 +134,7 @@ class Img
         return $resolver->resolve($data) + $data;
     }
 
-    public function mount(string $src, $width = null): void
+    public function mount(string $src, $width = null, ?bool $preload = null): void
     {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -140,6 +142,9 @@ class Img
 
         $this->src = $src;
         $this->width = $width;
+        if ($preload !== null) {
+            $this->preload = $preload;
+        }
 
         if ($this->width) {
             // Get sizes from transformer
@@ -161,6 +166,13 @@ class Img
             }
         } else {
             $this->srcComputed = $this->getImage();
+        }
+
+        if ($this->preload) {
+            $this->preloadManager->addPreloadImage($this->srcComputed, [
+                'srcset' => $this->srcset,
+                'sizes' => $this->sizes,
+            ]);
         }
     }
 

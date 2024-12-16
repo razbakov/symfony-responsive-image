@@ -8,6 +8,7 @@ use Ommax\ResponsiveImageBundle\Twig\Components\Img;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
+use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 
 class ImgTest extends KernelTestCase
 {
@@ -15,12 +16,15 @@ class ImgTest extends KernelTestCase
 
     /** @var ProviderInterface&MockObject */
     private ProviderInterface $provider;
+    private PreloadManager $preloadManager;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $registry = static::getContainer()->get(ProviderRegistry::class);
+        $this->preloadManager = static::getContainer()->get(PreloadManager::class);
+        $this->preloadManager->reset();
 
         $this->provider = $this->createMock(ProviderInterface::class);
         $this->provider->method('getName')->willReturn('mock');
@@ -254,5 +258,72 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
         $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
+    }
+
+    public function testPreloadSimpleImage(): void
+    {
+        // First verify the PreloadManager service exists
+        $preloadManager = static::getContainer()->get(PreloadManager::class);
+        $this->assertInstanceOf(PreloadManager::class, $preloadManager);
+        
+        // Reset the PreloadManager
+        $preloadManager->reset();
+
+        // Mount component with preload=true
+        $component = $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'preload' => true,
+            ]
+        );
+
+        $this->assertTrue($component->preload, "Preload flag should be true");
+        $this->assertEquals('/image.jpg?width=400', $component->srcComputed, "Computed src should match expected");
+
+        $preloadTags = $preloadManager->getPreloadTags();
+
+        $this->assertStringContainsString(
+            '<link rel="preload" as="image" href="/image.jpg?width=400">',
+            $preloadTags,
+            "Preload tags should contain the expected link tag"
+        );
+    }
+
+    public function testPreloadResponsiveImage(): void
+    {
+        $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '100vw',
+                'preload' => true,
+            ]
+        );
+
+        $preloadManager = static::getContainer()->get(PreloadManager::class);
+        $preloadTags = $preloadManager->getPreloadTags();
+
+        $this->assertStringContainsString('imagesrcset="', $preloadTags);
+        $this->assertStringContainsString('sizes="100vw"', $preloadTags);
+        $this->assertStringContainsString('/image.jpg?width=640 640w', $preloadTags);
+        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $preloadTags);
+    }
+
+    public function testPreloadDisabledByDefault(): void
+    {
+        $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+            ]
+        );
+
+        $preloadManager = static::getContainer()->get(PreloadManager::class);
+        $preloadTags = $preloadManager->getPreloadTags();
+
+        $this->assertEmpty($preloadTags);
     }
 }

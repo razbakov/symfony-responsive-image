@@ -24,3 +24,9 @@ services:
 
   Ommax\ResponsiveImageBundle\Twig\Components\Picture:
     tags: ["twig.component"]
+
+  Ommax\ResponsiveImageBundle\Service\PreloadManager:
+    public: true
+
+  Ommax\ResponsiveImageBundle\Twig\Extension\ResponsiveImageExtension:
+    tags: ["twig.extension"]
