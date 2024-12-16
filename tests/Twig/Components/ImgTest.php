@@ -346,4 +346,46 @@ class ImgTest extends KernelTestCase
 
         $this->assertStringContainsString('src="/image.jpg?width=400&amp;format=avif"', $rendered);
     }
+
+    public function testQualityParameter(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'quality' => '90',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;quality=90"', $rendered);
+    }
+
+    public function testFitParameter(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'fit' => 'contain',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;fit=contain"', $rendered);
+    }
+
+    public function testFocalParameter(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'focal' => 'top',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;focal=top"', $rendered);
+    }
 }
