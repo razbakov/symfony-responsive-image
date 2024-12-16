@@ -7,6 +7,7 @@ use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
 use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PictureTest extends KernelTestCase
 {
@@ -87,5 +88,36 @@ class PictureTest extends KernelTestCase
         $this->assertStringContainsString('data-controller="responsive-image"', $rendered);
         $this->assertStringContainsString('width="100"', $rendered);
         $this->assertStringContainsString('height="100"', $rendered);
+    }
+
+    public function testFixedWidth(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'picture',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '100',
+            ]
+        );
+
+        $this->assertStringContainsString('width="100"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+    }
+
+    public function testResponsiveWidth(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'picture',
+            data: [
+                'src' => '/image.jpg',
+                'width' => 'sm:50 md:100 lg:200',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
+        $this->assertStringContainsString('media="(min-width: 768px)"', $rendered);
+        $this->assertStringContainsString('media="(min-width: 1024px)"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=100"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=200"', $rendered);
     }
 }

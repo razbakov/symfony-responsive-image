@@ -35,13 +35,13 @@ class Img
     public ?string $sizes = null;
     public ?string $srcset = null;
 
-    private array $widths = [];
+    protected array $widths = [];
 
     public function __construct(
-        private ParameterBagInterface $params,
-        private ProviderRegistry $providerRegistry,
-        private Transformer $transformer,
-        private PreloadManager $preloadManager,
+        protected ParameterBagInterface $params,
+        protected ProviderRegistry $providerRegistry,
+        protected Transformer $transformer,
+        protected PreloadManager $preloadManager,
     ) {
         $this->params = $params;
     }
@@ -176,8 +176,22 @@ class Img
         }
     }
 
-    private function getImage(array $modifiers = []): string
+    protected function getImage(array $modifiers = []): string
     {
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
+    }
+
+    protected function parseWidth(string $width): array 
+    {
+        $widths = [];
+        foreach (explode(' ', $width) as $value) {
+            if (str_contains($value, ':')) {
+                [$breakpoint, $size] = explode(':', $value);
+                $widths[$breakpoint] = (int) str_replace('px', '', $size);
+            } else {
+                $widths['default'] = (int) str_replace('px', '', $value);
+            }
+        }
+        return $widths;
     }
 }

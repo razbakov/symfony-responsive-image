@@ -1,6 +1,6 @@
 <picture>
     {# Generate source elements for each breakpoint #}
-    {% for breakpoint in breakpoints|default([]) %}
+    {% for breakpoint in this.breakpoints %}
         <source
             media="{{ breakpoint.media }}"
             srcset="{{ breakpoint.srcset }}"
@@ -11,7 +11,7 @@
 
     {# Fallback img element #}
     <img
-        src="{{ src }}"
+        src="{{ this.srcComputed }}"
         {% if alt is defined %}alt="{{ alt }}"{% endif %}
         {% if width is defined %}width="{{ width }}"{% endif %}
         {% if height is defined %}height="{{ height }}"{% endif %}
