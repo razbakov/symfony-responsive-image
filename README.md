@@ -93,22 +93,25 @@ Use for simple responsive images with automatic WebP conversion:
     src="/images/hero.jpg"               # Required: Image source path
     alt="Hero image"                     # Recommended: Alt text for accessibility
     width="100vw sm:50vw md:400px        # Full width on mobile, half width on tablet, 400px on desktop
-    height="600"                         # Optional: Override height
-    ratio="16:9"                         # Optional: Override aspect ratio
-    fit="cover"                          # Optional: How image should fit dimensions
-    focal="center"                       # Optional: Focus point for cropping
-    quality="80"                         # Optional: Image quality 0-100 (default: 80)
-    loading="lazy"                       # Optional: Enable lazy loading
-    fetchpriority="high"                 # Optional: Set high priority for LCP
-    preload="true"                       # Optional: Add preload link
-    background="#ffffff"                 # Optional: Background color for 'contain' fit
-    densities="x1 x2"                    # Optional: Generate different densities
-    fallback="auto"                      # Fallback format (default: auto)
-    placeholder="blur"                   # Enable blurred placeholder
     preset="hero"                        # Use preset
     class="hero-image"                   # Any HTML attribute is supported
     data-controller="zoom"               # Custom data attributes
     aria-label="Hero section"            # ARIA attributes
+    preload="true"                       # Optional: Add preload link
+    fetchpriority="high"                 # Optional: Set high priority for LCP
+    loading="lazy"                       # Optional: Enable lazy loading
+
+    format="webp"                        # Output format (default: webp)
+    quality="80"                         # Optional: Image quality 0-100 (default: 80)
+    fallback="auto"                      # Fallback format (default: auto)
+
+    ratio="16:9"                         # Optional: Override aspect ratio
+    height="600"                         # Optional: Override height
+    densities="x1 x2"                    # Optional: Generate different densities
+    focal="center"                       # Optional: Focus point for cropping
+    fit="cover"                          # Optional: How image should fit dimensions
+    background="#ffffff"                 # Optional: Background color for 'contain' fit
+    placeholder="blur"                   # Enable blurred placeholder
 />
 ```
 
