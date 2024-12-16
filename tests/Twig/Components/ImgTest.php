@@ -101,7 +101,7 @@ class ImgTest extends KernelTestCase
 
     public function testPresetConfiguration(): void
     {
-        $rendered = $this->renderTwigComponent(
+        $component = $this->mountTwigComponent(
             name: 'img',
             data: [
                 'src' => '/image.jpg',
@@ -109,8 +109,10 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        // $this->assertStringContainsString('sizes="100vw sm:50vw md:400px"', $rendered);
-        $this->assertStringContainsString('fetchpriority="high"', $rendered);
+        $this->assertStringContainsString('high', $component->fetchpriority);
+        $this->assertStringContainsString('16:9', $component->ratio);
+        $this->assertStringContainsString('100vw sm:50vw md:400px', $component->width);
+        $this->assertTrue($component->preload);
     }
 
     public function testPlaceholderRendering(): void

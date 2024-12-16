@@ -40,3 +40,9 @@ responsive_image:
     xl: 1280
     2xl: 1536
   defaults: ~
+  presets:
+    hero:
+      ratio: "16:9"
+      width: "100vw sm:50vw md:400px"
+      fetchpriority: high
+      preload: true
