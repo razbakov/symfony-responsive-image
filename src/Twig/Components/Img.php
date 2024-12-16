@@ -119,21 +119,9 @@ class Img
         if ($this->width) {
             // Get sizes from transformer
             $this->widths = $this->transformer->parseWidth($this->width);
-
-            // Determine the initial width based on the pattern
-            if (preg_match('/^\d+vw/', $this->width)) {
-                // If pattern starts with viewport width
-                $smallestWidth = \PHP_INT_MAX;
-                foreach ($this->widths as $width) {
-                    if ($width['value'] < $smallestWidth && '0' !== $width['vw']) {
-                        $smallestWidth = $width['value'];
-                    }
-                }
-                $this->widthComputed = $smallestWidth;
-            } else {
-                // For fixed widths or patterns starting with fixed width
-                $this->widthComputed = $this->widths['default']['value'];
-            }
+            
+            // Use new transformer method to determine initial width
+            $this->widthComputed = $this->transformer->getInitialWidth($this->widths, $this->width);
 
             $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
 

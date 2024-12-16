@@ -257,4 +257,21 @@ class Transformer
             ? $width['vw'].'vw'
             : $width['value'].'px';
     }
+
+    public function getInitialWidth(array $widths, string $pattern): int
+    {
+        if (preg_match('/^\d+vw/', $pattern)) {
+            // If pattern starts with viewport width
+            $smallestWidth = \PHP_INT_MAX;
+            foreach ($widths as $width) {
+                if ($width['value'] < $smallestWidth && '0' !== $width['vw']) {
+                    $smallestWidth = $width['value'];
+                }
+            }
+            return $smallestWidth;
+        }
+        
+        // For fixed widths or patterns starting with fixed width
+        return $widths['default']['value'];
+    }
 }

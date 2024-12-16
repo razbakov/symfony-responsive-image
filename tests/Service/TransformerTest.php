@@ -197,4 +197,44 @@ class TransformerTest extends TestCase
             // Add more test cases for srcset here
         ];
     }
+
+    /**
+     * @dataProvider provideInitialWidthData
+     */
+    public function testGetInitialWidth(array $widths, string $pattern, int $expected): void
+    {
+        $result = $this->transformer->getInitialWidth($widths, $pattern);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function provideInitialWidthData(): array
+    {
+        return [
+            'viewport width pattern' => [
+                [
+                    'default' => ['value' => 640, 'vw' => '100'],
+                    'sm' => ['value' => 640, 'vw' => '100'],
+                    'md' => ['value' => 768, 'vw' => '100'],
+                ],
+                '100vw',
+                640
+            ],
+            'fixed width pattern' => [
+                [
+                    'default' => ['value' => 300, 'vw' => '0'],
+                    'sm' => ['value' => 400, 'vw' => '0'],
+                ],
+                '300',
+                300
+            ],
+            'mixed pattern starting with fixed' => [
+                [
+                    'default' => ['value' => 400, 'vw' => '0'],
+                    'md' => ['value' => 768, 'vw' => '100'],
+                ],
+                '400 md:100vw',
+                400
+            ],
+        ];
+    }
 }
