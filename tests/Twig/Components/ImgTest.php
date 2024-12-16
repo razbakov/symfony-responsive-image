@@ -180,6 +180,64 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('200px', $rendered);
     }
 
+    public function testFullscreen(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '100vw',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=640 640w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
+        $this->assertStringContainsString('sizes="100vw', $rendered);
+    }
+
+    public function testHalfscreenAndFixed(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '50vw lg:400px',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=320"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=320 320w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
+        $this->assertStringContainsString('(max-width: 1024px) 50vw', $rendered);
+        $this->assertStringContainsString('400px', $rendered);
+    }
+
+    public function testMixedValues(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400 sm:500 md:100vw',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=500 500w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
+        $this->assertStringContainsString('(max-width: 640px) 400px', $rendered);
+        $this->assertStringContainsString('(max-width: 768px) 500px', $rendered);
+        $this->assertStringContainsString('100vw', $rendered);
+    }
+
     public function testDensities(): void
     {
         $this->markTestIncomplete("Not implemented");
