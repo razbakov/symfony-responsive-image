@@ -164,7 +164,7 @@ class TransformerTest extends TestCase
                     'xl' => ['value' => 1280, 'vw' => '100'],
                     '2xl' => ['value' => 1536, 'vw' => '100'],
                 ],
-                '100vw'
+                '100vw',
             ],
             // Add more test cases for getSizes here
         ];
@@ -178,7 +178,7 @@ class TransformerTest extends TestCase
         $result = $this->transformer->getSrcset(
             $src,
             $widths,
-            fn ($modifiers) => $src . '?' . http_build_query($modifiers)
+            fn ($modifiers) => $src.'?'.http_build_query($modifiers)
         );
         $this->assertEquals($expected, $result);
     }
@@ -192,7 +192,7 @@ class TransformerTest extends TestCase
                     'default' => ['value' => 300, 'vw' => '0'],
                     'sm' => ['value' => 400, 'vw' => '0'],
                 ],
-                '/image.jpg?width=300 300w, /image.jpg?width=400 400w'
+                '/image.jpg?width=300 300w, /image.jpg?width=400 400w',
             ],
             // Add more test cases for srcset here
         ];
@@ -217,7 +217,7 @@ class TransformerTest extends TestCase
                     'md' => ['value' => 768, 'vw' => '100'],
                 ],
                 '100vw',
-                640
+                640,
             ],
             'fixed width pattern' => [
                 [
@@ -225,7 +225,7 @@ class TransformerTest extends TestCase
                     'sm' => ['value' => 400, 'vw' => '0'],
                 ],
                 '300',
-                300
+                300,
             ],
             'mixed pattern starting with fixed' => [
                 [
@@ -233,7 +233,7 @@ class TransformerTest extends TestCase
                     'md' => ['value' => 768, 'vw' => '100'],
                 ],
                 '400 md:100vw',
-                400
+                400,
             ],
         ];
     }

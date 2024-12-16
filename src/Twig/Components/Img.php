@@ -119,7 +119,7 @@ class Img
         if ($this->width) {
             // Get sizes from transformer
             $this->widths = $this->transformer->parseWidth($this->width);
-            
+
             // Use new transformer method to determine initial width
             $this->widthComputed = $this->transformer->getInitialWidth($this->widths, $this->width);
 

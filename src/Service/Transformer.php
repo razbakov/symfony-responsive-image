@@ -197,7 +197,7 @@ class Transformer
                 $sizeVariants[] = [
                     'size' => $this->formatSizeValue($widths[$key]),
                     'screenMaxWidth' => $this->breakpoints[$key],
-                    'media' => sprintf('(max-width: %dpx)', $this->breakpoints[$key]),
+                    'media' => \sprintf('(max-width: %dpx)', $this->breakpoints[$key]),
                 ];
 
                 // If next value is different, add it at this breakpoint
@@ -205,7 +205,7 @@ class Transformer
                     $sizeVariants[] = [
                         'size' => $this->formatSizeValue($nextValue),
                         'screenMaxWidth' => $this->breakpoints[$key],
-                        'media' => sprintf('(max-width: %dpx)', $this->breakpoints[$key]),
+                        'media' => \sprintf('(max-width: %dpx)', $this->breakpoints[$key]),
                     ];
                 }
             }
@@ -222,7 +222,7 @@ class Transformer
         // Add default value if it exists and differs from sm breakpoint
         if (isset($widths['default'])
             && (!isset($widths['sm']) || !$this->isSameValue($widths['default'], $widths['sm']))) {
-            $sizes[] = sprintf('(max-width: %dpx) %s',
+            $sizes[] = \sprintf('(max-width: %dpx) %s',
                 $this->breakpoints['sm'],
                 $this->formatSizeValue($widths['default'])
             );
@@ -236,7 +236,7 @@ class Transformer
         $srcset = [];
         foreach ($widths as $width) {
             if ($width['value'] > 0) { // Only include positive widths
-                $srcset[] = sprintf('%s %sw',
+                $srcset[] = \sprintf('%s %sw',
                     $imageCallback(['width' => $width['value']]),
                     $width['value']
                 );
@@ -268,9 +268,10 @@ class Transformer
                     $smallestWidth = $width['value'];
                 }
             }
+
             return $smallestWidth;
         }
-        
+
         // For fixed widths or patterns starting with fixed width
         return $widths['default']['value'];
     }
