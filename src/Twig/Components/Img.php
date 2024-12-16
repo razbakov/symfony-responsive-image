@@ -180,19 +180,4 @@ class Img
     {
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
     }
-
-    protected function parseWidth(string $width): array
-    {
-        $widths = [];
-        foreach (explode(' ', $width) as $value) {
-            if (str_contains($value, ':')) {
-                [$breakpoint, $size] = explode(':', $value);
-                $widths[$breakpoint] = (int) str_replace('px', '', $size);
-            } else {
-                $widths['default'] = (int) str_replace('px', '', $value);
-            }
-        }
-
-        return $widths;
-    }
 }
