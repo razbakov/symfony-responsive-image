@@ -19,7 +19,7 @@ class PlaceholderProvider implements ProviderInterface
     public function getImage(string $src, array $modifiers): string
     {
         $width = $modifiers['width'] ?? 600;
-        $height = $modifiers['height'] ?? 400;
+        $height = $modifiers['height'] ?? $width;
         $background = $modifiers['background'] ?? '868e96';
         $text = $modifiers['text'] ?? "{$width}x{$height}";
         $textColor = $modifiers['text_color'] ?? 'FFFFFF';
