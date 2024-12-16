@@ -30,6 +30,7 @@ class Img
     public ?string $class = null;
     public ?string $preset = null;
     public ?string $placeholder = null;
+    public ?string $placeholderClass = null;
     public ?string $sizes = null;
     public ?string $srcset = null;
 
@@ -65,9 +66,25 @@ class Img
                 'class',
                 'preset',
                 'placeholder',
+                'placeholder-class',
                 'srcset',
-            ])
-            ->setIgnoreUndefined(true);
+                'id',
+                'referrerpolicy',
+                'sizes',
+                'style',
+                'title',
+                'crossorigin',
+                'decoding',
+            ]);
+
+        // Allow any data-* and aria-* attributes
+        $resolver->setDefaults([]);
+        foreach ($data as $key => $value) {
+            if (str_starts_with($key, 'data-') || str_starts_with($key, 'aria-')) {
+                $resolver->setDefined($key);
+                $resolver->setAllowedTypes($key, ['string', 'null']);
+            }
+        }
 
         $resolver->setRequired('src');
 
@@ -75,18 +92,26 @@ class Img
         $resolver->setAllowedTypes('alt', ['string', 'null']);
         $resolver->setAllowedTypes('width', ['string', 'int', 'null']);
         $resolver->setAllowedTypes('height', ['int', 'null']);
-        $resolver->setAllowedTypes('ratio', 'string');
-        $resolver->setAllowedTypes('fit', 'string');
-        $resolver->setAllowedTypes('focal', 'string');
-        $resolver->setAllowedTypes('quality', 'string');
-        $resolver->setAllowedTypes('loading', 'string');
-        $resolver->setAllowedTypes('fetchpriority', 'string');
-        $resolver->setAllowedTypes('preload', 'bool');
-        $resolver->setAllowedTypes('background', 'string');
-        $resolver->setAllowedTypes('fallback', 'string');
-        $resolver->setAllowedTypes('class', 'string');
-        $resolver->setAllowedTypes('preset', 'string');
-        $resolver->setAllowedTypes('placeholder', 'string');
+        $resolver->setAllowedTypes('ratio', ['string', 'null']);
+        $resolver->setAllowedTypes('fit', ['string', 'null']);
+        $resolver->setAllowedTypes('focal', ['string', 'null']);
+        $resolver->setAllowedTypes('quality', ['string', 'null']);
+        $resolver->setAllowedTypes('loading', ['string', 'null']);
+        $resolver->setAllowedTypes('fetchpriority', ['string', 'null']);
+        $resolver->setAllowedTypes('preload', ['bool', 'null']);
+        $resolver->setAllowedTypes('background', ['string', 'null']);
+        $resolver->setAllowedTypes('fallback', ['string', 'null']);
+        $resolver->setAllowedTypes('class', ['string', 'null']);
+        $resolver->setAllowedTypes('preset', ['string', 'null']);
+        $resolver->setAllowedTypes('placeholder', ['string', 'null']);
+        $resolver->setAllowedTypes('placeholder-class', ['string', 'null']);
+        $resolver->setAllowedTypes('sizes', ['string', 'null']);
+        $resolver->setAllowedTypes('id', ['string', 'null']);
+        $resolver->setAllowedTypes('referrerpolicy', ['string', 'null']);
+        $resolver->setAllowedTypes('style', ['string', 'null']);
+        $resolver->setAllowedTypes('title', ['string', 'null']);
+        $resolver->setAllowedTypes('crossorigin', ['string', 'null']);
+        $resolver->setAllowedTypes('decoding', ['string', 'null']);
 
         if (isset($data['preset'])) {
             $presetName = $data['preset'];
