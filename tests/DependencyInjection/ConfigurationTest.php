@@ -23,8 +23,8 @@ class ConfigurationTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -41,7 +41,7 @@ class ConfigurationTest extends TestCase
 
         $this->assertEquals('liip_imagine', $processedConfig['provider']);
         $this->assertEquals('/path/to/404.jpg', $processedConfig['missing_image_placeholder']);
-        $this->assertEquals(['sm' => 640], $processedConfig['defaults']['breakpoints']);
+        $this->assertEquals(['sm' => 640], $processedConfig['breakpoints']);
     }
 
     public function testRequiredValues(): void
@@ -59,8 +59,8 @@ class ConfigurationTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'invalid',  // Invalid format
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -80,8 +80,8 @@ class ConfigurationTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 101,  // Invalid quality (> 100)
                 'loading' => 'lazy',
@@ -99,8 +99,8 @@ class ConfigurationTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -135,8 +135,8 @@ class ConfigurationTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',

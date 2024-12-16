@@ -20,15 +20,15 @@ class Img
     public ?int $widthComputed = null;
     public ?int $height = null;
     public ?string $ratio = null;
-    public ?string $fit = 'cover';
-    public ?string $focal = 'center';
-    public ?string $quality = '80';
-    public ?string $format = 'webp';
-    public ?string $loading = 'lazy';
-    public ?string $fetchpriority = 'auto';
-    public ?bool $preload = false;
+    public ?string $fit = null;
+    public ?string $focal = null;
+    public ?string $quality = null;
+    public ?string $format = null;
+    public ?string $loading = null;
+    public ?string $fetchpriority = null;
+    public ?bool $preload = null;
     public ?string $background = null;
-    public ?string $fallback = 'auto';
+    public ?string $fallback = null;
     public ?string $class = null;
     public ?string $preset = null;
     public ?string $placeholder = null;
@@ -78,6 +78,7 @@ class Img
                 'title',
                 'crossorigin',
                 'decoding',
+                'format',
             ]);
 
         // Allow any data-* and aria-* attributes
@@ -135,14 +136,26 @@ class Img
         return $resolver->resolve($data) + $data;
     }
 
-    public function mount(string $src, $width = null, ?bool $preload = null): void
-    {
+    public function mount(
+        string $src, 
+        $width = null, 
+        ?bool $preload = null,
+        ?string $format = null,
+        ?string $quality = null,
+        ?string $fit = null,
+        ?string $focal = null
+    ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
         }
 
         $this->src = $src;
         $this->width = $width;
+        $this->format = $format;
+        $this->quality = $quality;
+        $this->fit = $fit;
+        $this->focal = $focal;
+        
         if (null !== $preload) {
             $this->preload = $preload;
         }
@@ -179,13 +192,22 @@ class Img
 
     protected function getImage(array $modifiers = []): string
     {
-        if (isset($this->format)) {
-            $modifiers['format'] = (string) $this->format;
+        // Add format and quality to modifiers if they are set
+        if ($this->format) {
+            $modifiers['format'] = $this->format;
         }
 
-        // if (isset($modifiers['quality'])) {
-        //     $modifiers['quality'] = (string) $modifiers['quality'];
-        // }
+        if ($this->quality) {
+            $modifiers['quality'] = $this->quality;
+        }
+
+        if ($this->fit) {
+            $modifiers['fit'] = $this->fit;
+        }
+
+        if ($this->focal) {
+            $modifiers['focal'] = $this->focal;
+        }
 
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
     }

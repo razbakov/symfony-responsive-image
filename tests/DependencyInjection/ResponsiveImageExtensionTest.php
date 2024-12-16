@@ -17,6 +17,7 @@ class ResponsiveImageExtensionTest extends TestCase
     {
         $this->container = new ContainerBuilder();
         $this->extension = new ResponsiveImageExtension();
+        $this->extension->setLoadDefaultConfig(false);
     }
 
     public function testLoadSetParameters(): void
@@ -24,8 +25,8 @@ class ResponsiveImageExtensionTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -37,12 +38,14 @@ class ResponsiveImageExtensionTest extends TestCase
 
         $this->extension->load([$config], $this->container);
 
-        $this->assertTrue($this->container->hasParameter('responsive_image.provider'));
-        $this->assertTrue($this->container->hasParameter('responsive_image.missing_image_placeholder'));
-        $this->assertTrue($this->container->hasParameter('responsive_image.defaults'));
+        $this->assertTrue($this->container->hasParameter('responsive_image.provider'), 'Provider is not set');
+        $this->assertTrue($this->container->hasParameter('responsive_image.missing_image_placeholder'), 'Missing image placeholder is not set');
+        $this->assertTrue($this->container->hasParameter('responsive_image.defaults'), 'Defaults are not set');
+        $this->assertTrue($this->container->hasParameter('responsive_image.breakpoints'), 'Breakpoints are not set');
 
         $this->assertEquals('liip_imagine', $this->container->getParameter('responsive_image.provider'));
         $this->assertEquals('/path/to/404.jpg', $this->container->getParameter('responsive_image.missing_image_placeholder'));
+        $this->assertEquals(['sm' => 640], $this->container->getParameter('responsive_image.breakpoints'));
     }
 
     public function testLoadRegistersProviderRegistry(): void
@@ -50,8 +53,8 @@ class ResponsiveImageExtensionTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -74,8 +77,8 @@ class ResponsiveImageExtensionTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -98,8 +101,8 @@ class ResponsiveImageExtensionTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',
@@ -134,8 +137,8 @@ class ResponsiveImageExtensionTest extends TestCase
         $config = [
             'provider' => 'liip_imagine',
             'missing_image_placeholder' => '/path/to/404.jpg',
+            'breakpoints' => ['sm' => 640],
             'defaults' => [
-                'breakpoints' => ['sm' => 640],
                 'format' => 'webp',
                 'quality' => 80,
                 'loading' => 'lazy',

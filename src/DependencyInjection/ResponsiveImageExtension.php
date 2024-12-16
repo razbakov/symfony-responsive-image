@@ -11,18 +11,27 @@ use Symfony\Component\Yaml\Yaml;
 
 class ResponsiveImageExtension extends Extension
 {
+    private bool $loadDefaultConfig = true;
+
+    public function setLoadDefaultConfig(bool $load): void
+    {
+        $this->loadDefaultConfig = $load;
+    }
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         // Load services configuration
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
-        // Load default configuration using Yaml component
-        $defaultConfigFile = __DIR__.'/../Resources/config/responsive_image.yaml';
-        $defaultConfig = Yaml::parseFile($defaultConfigFile);
+        if ($this->loadDefaultConfig) {
+            // Load default configuration using Yaml component
+            $defaultConfigFile = __DIR__.'/../Resources/config/responsive_image.yaml';
+            $defaultConfig = Yaml::parseFile($defaultConfigFile);
 
-        // Merge default config with user configs
-        $configs = array_merge([$defaultConfig['responsive_image']], $configs);
+            // Merge default config with user configs
+            $configs = array_merge([$defaultConfig['responsive_image']], $configs);
+        }
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -37,6 +46,7 @@ class ResponsiveImageExtension extends Extension
         $container->setParameter('responsive_image.defaults', $config['defaults']);
         $container->setParameter('responsive_image.providers', $config['providers']);
         $container->setParameter('responsive_image.presets', $config['presets'] ?? []);
+        $container->setParameter('responsive_image.breakpoints', $config['breakpoints']);
 
         // Configure providers
         foreach ($config['providers'] as $name => $providerConfig) {

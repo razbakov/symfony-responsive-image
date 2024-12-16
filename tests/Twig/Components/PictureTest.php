@@ -101,7 +101,7 @@ class PictureTest extends KernelTestCase
         );
 
         $this->assertStringContainsString('width="100"', $rendered);
-        $this->assertStringContainsString('src="/image.jpg?width=100&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
     }
 
     public function testResponsiveWidth(): void
@@ -114,10 +114,10 @@ class PictureTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=50&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
         $this->assertStringContainsString('media="(min-width: 768px)"', $rendered);
         $this->assertStringContainsString('media="(min-width: 1024px)"', $rendered);
-        $this->assertStringContainsString('srcset="/image.jpg?width=100&amp;format=webp"', $rendered);
-        $this->assertStringContainsString('srcset="/image.jpg?width=200&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=100"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=200"', $rendered);
     }
 }

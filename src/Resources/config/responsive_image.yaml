@@ -5,29 +5,28 @@ responsive_image:
   # Path to the image shown when source image is missing
   missing_image_placeholder: "src/Resources/public/images/image-not-found.png"
 
+  breakpoints:
+    sm: 640
+    md: 768
+    lg: 1024
+    xl: 1280
+    2xl: 1536
+
   # Default settings for all images
   defaults:
-    # Breakpoints for responsive images (in pixels)
-    breakpoints:
-      sm: 640 # Mobile landscape
-      md: 768 # Tablet portrait
-      lg: 1024 # Tablet landscape
-      xl: 1280 # Desktop
-      2xl: 1536 # Large desktop
-
     # Image format and quality
     format: webp # webp, jpg, png, avif
-    # quality: 80
+    quality: 80
 
     # Loading behavior
-    # loading: lazy
-    # fetchpriority: auto
+    loading: lazy
+    fetchpriority: auto
 
     # Image fitting
-    # fit: cover
+    fit: cover
 
     # Placeholder settings
-    # placeholder: none
+    placeholder: none
 
   # Provider-specific configuration
   providers:
