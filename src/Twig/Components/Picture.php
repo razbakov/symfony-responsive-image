@@ -15,9 +15,9 @@ class Picture extends Img
 
         $breakpoints = [];
         $widths = $this->transformer->parseWidth($this->width);
-        
+
         foreach ($widths as $breakpoint => $width) {
-            if ($breakpoint === 'default') {
+            if ('default' === $breakpoint) {
                 continue;
             }
 
@@ -45,6 +45,7 @@ class Picture extends Img
     {
         $widths = $this->transformer->parseWidth($this->width);
         $width = $widths['default'] ?? array_shift($widths);
+
         return $this->getImage(['width' => $width['value']]);
     }
 }

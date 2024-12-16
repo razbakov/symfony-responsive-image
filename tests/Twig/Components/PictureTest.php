@@ -5,9 +5,9 @@ namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
 use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
 use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class PictureTest extends KernelTestCase
 {

@@ -9,8 +9,9 @@ use Twig\TwigFunction;
 class ResponsiveImageExtension extends AbstractExtension
 {
     public function __construct(
-        private PreloadManager $preloadManager
-    ) {}
+        private PreloadManager $preloadManager,
+    ) {
+    }
 
     public function getFunctions(): array
     {

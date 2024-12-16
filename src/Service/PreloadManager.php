@@ -10,7 +10,7 @@ class PreloadManager
     {
         $this->preloadImages[] = [
             'src' => $src,
-            'options' => $options
+            'options' => $options,
         ];
     }
 
@@ -21,22 +21,22 @@ class PreloadManager
         }
 
         $tags = [];
-        
+
         foreach ($this->preloadImages as $image) {
             $src = $image['src'];
             $options = $image['options'];
-            
+
             // If we have srcset/sizes, create appropriate preload tag
             if (!empty($options['srcset'])) {
-                $tags[] = sprintf(
+                $tags[] = \sprintf(
                     '<link rel="preload" as="image" href="%s" imagesrcset="%s"%s>',
                     $src,
                     $options['srcset'],
-                    !empty($options['sizes']) ? ' sizes="' . $options['sizes'] . '"' : ''
+                    !empty($options['sizes']) ? ' sizes="'.$options['sizes'].'"' : ''
                 );
             } else {
                 // Simple preload for single image
-                $tags[] = sprintf(
+                $tags[] = \sprintf(
                     '<link rel="preload" as="image" href="%s">',
                     $src
                 );

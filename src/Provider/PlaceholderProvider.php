@@ -28,7 +28,7 @@ class PlaceholderProvider implements ProviderInterface
         $background = ltrim($background, '#');
         $textColor = ltrim($textColor, '#');
 
-        return sprintf(
+        return \sprintf(
             'https://placehold.co/%dx%d/%s/%s?text=%s',
             $width,
             $height,

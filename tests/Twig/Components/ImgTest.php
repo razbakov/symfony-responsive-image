@@ -4,11 +4,11 @@ namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
 
 use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
 use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 use Ommax\ResponsiveImageBundle\Twig\Components\Img;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
-use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 
 class ImgTest extends KernelTestCase
 {
@@ -265,7 +265,7 @@ class ImgTest extends KernelTestCase
         // First verify the PreloadManager service exists
         $preloadManager = static::getContainer()->get(PreloadManager::class);
         $this->assertInstanceOf(PreloadManager::class, $preloadManager);
-        
+
         // Reset the PreloadManager
         $preloadManager->reset();
 
@@ -279,15 +279,15 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertTrue($component->preload, "Preload flag should be true");
-        $this->assertEquals('/image.jpg?width=400', $component->srcComputed, "Computed src should match expected");
+        $this->assertTrue($component->preload, 'Preload flag should be true');
+        $this->assertEquals('/image.jpg?width=400', $component->srcComputed, 'Computed src should match expected');
 
         $preloadTags = $preloadManager->getPreloadTags();
 
         $this->assertStringContainsString(
             '<link rel="preload" as="image" href="/image.jpg?width=400">',
             $preloadTags,
-            "Preload tags should contain the expected link tag"
+            'Preload tags should contain the expected link tag'
         );
     }
 

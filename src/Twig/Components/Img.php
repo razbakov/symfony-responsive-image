@@ -3,12 +3,12 @@
 namespace Ommax\ResponsiveImageBundle\Twig\Components;
 
 use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 use Ommax\ResponsiveImageBundle\Service\Transformer;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
-use Ommax\ResponsiveImageBundle\Service\PreloadManager;
 
 #[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
 class Img
@@ -142,7 +142,7 @@ class Img
 
         $this->src = $src;
         $this->width = $width;
-        if ($preload !== null) {
+        if (null !== $preload) {
             $this->preload = $preload;
         }
 
@@ -181,7 +181,7 @@ class Img
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
     }
 
-    protected function parseWidth(string $width): array 
+    protected function parseWidth(string $width): array
     {
         $widths = [];
         foreach (explode(' ', $width) as $value) {
@@ -192,6 +192,7 @@ class Img
                 $widths['default'] = (int) str_replace('px', '', $value);
             }
         }
+
         return $widths;
     }
 }
