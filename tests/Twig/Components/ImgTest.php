@@ -131,7 +131,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=100&amp;format=webp"', $rendered);
     }
 
     public function testFixedWidthPx(): void
@@ -144,7 +144,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=100&amp;format=webp"', $rendered);
         $this->assertStringNotContainsString('sizes="', $rendered);
         $this->assertStringNotContainsString('srcset="', $rendered);
     }
@@ -159,7 +159,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=1000"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=1000&amp;format=webp"', $rendered);
         $this->assertStringNotContainsString('sizes="', $rendered);
         $this->assertStringNotContainsString('srcset="', $rendered);
     }
@@ -174,10 +174,10 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=50 50w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=50&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=50&amp;format=webp 50w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=100&amp;format=webp 100w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=200&amp;format=webp 200w', $rendered);
         $this->assertStringContainsString('(max-width: 640px) 50px', $rendered);
         $this->assertStringContainsString('(max-width: 768px) 100px', $rendered);
         $this->assertStringContainsString('(max-width: 1024px) 200px', $rendered);
@@ -194,12 +194,12 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=640 640w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=640&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=640&amp;format=webp 640w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=768&amp;format=webp 768w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1024&amp;format=webp 1024w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1280&amp;format=webp 1280w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1536&amp;format=webp 1536w', $rendered);
         $this->assertStringContainsString('sizes="100vw', $rendered);
     }
 
@@ -213,9 +213,9 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=320"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=320 320w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=320&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=320&amp;format=webp 320w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=400&amp;format=webp 400w', $rendered);
         $this->assertStringContainsString('(max-width: 1024px) 50vw', $rendered);
         $this->assertStringContainsString('400px', $rendered);
     }
@@ -230,13 +230,13 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=500 500w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=400&amp;format=webp 400w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=500&amp;format=webp 500w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=768&amp;format=webp 768w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1024&amp;format=webp 1024w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1280&amp;format=webp 1280w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1536&amp;format=webp 1536w', $rendered);
         $this->assertStringContainsString('(max-width: 640px) 400px', $rendered);
         $this->assertStringContainsString('(max-width: 768px) 500px', $rendered);
         $this->assertStringContainsString('100vw', $rendered);
@@ -255,9 +255,9 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=100&amp;format=webp"', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=100&amp;format=webp 100w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=200&amp;format=webp 200w', $rendered);
     }
 
     public function testPreloadSimpleImage(): void
@@ -280,12 +280,12 @@ class ImgTest extends KernelTestCase
         );
 
         $this->assertTrue($component->preload, 'Preload flag should be true');
-        $this->assertEquals('/image.jpg?width=400', $component->srcComputed, 'Computed src should match expected');
+        $this->assertEquals('/image.jpg?width=400&format=webp', $component->srcComputed, 'Computed src should match expected');
 
         $preloadTags = $preloadManager->getPreloadTags();
 
         $this->assertStringContainsString(
-            '<link rel="preload" as="image" href="/image.jpg?width=400">',
+            '<link rel="preload" as="image" href="/image.jpg?width=400&format=webp">',
             $preloadTags,
             'Preload tags should contain the expected link tag'
         );
@@ -307,8 +307,8 @@ class ImgTest extends KernelTestCase
 
         $this->assertStringContainsString('imagesrcset="', $preloadTags);
         $this->assertStringContainsString('sizes="100vw"', $preloadTags);
-        $this->assertStringContainsString('/image.jpg?width=640 640w', $preloadTags);
-        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $preloadTags);
+        $this->assertStringContainsString('/image.jpg?width=640&format=webp 640w', $preloadTags);
+        $this->assertStringContainsString('/image.jpg?width=1536&format=webp 1536w', $preloadTags);
     }
 
     public function testPreloadDisabledByDefault(): void

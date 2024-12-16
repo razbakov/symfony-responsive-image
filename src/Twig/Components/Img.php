@@ -23,6 +23,7 @@ class Img
     public ?string $fit = 'cover';
     public ?string $focal = 'center';
     public ?string $quality = '80';
+    public ?string $format = 'webp';
     public ?string $loading = 'lazy';
     public ?string $fetchpriority = 'auto';
     public ?bool $preload = false;
@@ -178,6 +179,14 @@ class Img
 
     protected function getImage(array $modifiers = []): string
     {
+        if (isset($this->format)) {
+            $modifiers['format'] = (string) $this->format;
+        }
+
+        // if (isset($modifiers['quality'])) {
+        //     $modifiers['quality'] = (string) $modifiers['quality'];
+        // }
+
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
     }
 }
