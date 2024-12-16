@@ -390,4 +390,34 @@ class ImgTest extends KernelTestCase
 
         $this->assertStringContainsString('src="/image.jpg?width=400&amp;focal=top"', $rendered);
     }
+
+    public function testFallbackParameter(): void
+    {
+        $component = $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'format' => 'webp',
+                'fallback' => 'jpg',
+            ]
+        );
+
+        $this->assertEquals('/image.jpg?width=400&format=jpg', $component->srcComputed);
+    }
+
+    public function testDefaultFallbackParameter(): void
+    {
+        $component = $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.webp',
+                'width' => '400',
+                'format' => 'webp',
+                'fallback' => 'auto',
+            ]
+        );
+
+        $this->assertEquals('/image.webp?width=400&format=png', $component->srcComputed);
+    }
 }

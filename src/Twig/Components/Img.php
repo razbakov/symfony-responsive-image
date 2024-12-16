@@ -137,13 +137,14 @@ class Img
     }
 
     public function mount(
-        string $src, 
-        $width = null, 
+        string $src,
+        $width = null,
         ?bool $preload = null,
         ?string $format = null,
         ?string $quality = null,
         ?string $fit = null,
-        ?string $focal = null
+        ?string $focal = null,
+        ?string $fallback = null
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -155,7 +156,8 @@ class Img
         $this->quality = $quality;
         $this->fit = $fit;
         $this->focal = $focal;
-        
+        $this->fallback = $fallback;
+
         if (null !== $preload) {
             $this->preload = $preload;
         }
@@ -167,19 +169,20 @@ class Img
             // Use new transformer method to determine initial width
             $this->widthComputed = $this->transformer->getInitialWidth($this->widths, $this->width);
 
-            $this->srcComputed = $this->getImage(['width' => $this->widthComputed]);
+            // For the main src, apply fallback format
+            $this->srcComputed = $this->getImage(['width' => $this->widthComputed], true);
 
             // Generate srcset and sizes for responsive widths or breakpoint patterns
             if (str_contains($this->width, 'vw') || str_contains($this->width, ':')) {
                 $this->srcset = $this->transformer->getSrcset(
                     $this->src,
                     $this->widths,
-                    fn ($modifiers) => $this->getImage($modifiers)
+                    fn ($modifiers) => $this->getImage($modifiers, false) // Don't apply fallback for srcset
                 );
                 $this->sizes = $this->transformer->getSizes($this->widths);
             }
         } else {
-            $this->srcComputed = $this->getImage();
+            $this->srcComputed = $this->getImage([], true); // Apply fallback for main src
         }
 
         if ($this->preload) {
@@ -190,13 +193,30 @@ class Img
         }
     }
 
-    protected function getImage(array $modifiers = []): string
+    protected function getImage(array $modifiers = [], bool $applyFallback = false): string
     {
-        // Add format and quality to modifiers if they are set
-        if ($this->format) {
+        // Handle format
+        if ($applyFallback && $this->fallback) {
+            if ($this->fallback === 'auto') {
+                // Auto fallback logic based on original image format
+                $extension = strtolower(pathinfo($this->src, PATHINFO_EXTENSION));
+                
+                // PNG fallback for formats that might have transparency
+                if (in_array($extension, ['png', 'webp', 'gif'])) {
+                    $modifiers['format'] = 'png';
+                } else {
+                    // JPEG fallback for all other formats
+                    $modifiers['format'] = 'jpg';
+                }
+            } else {
+                $modifiers['format'] = $this->fallback;
+            }
+        } elseif ($this->format && $this->format !== 'auto') {
+            // If not applying fallback and format is set (and not auto), use it
             $modifiers['format'] = $this->format;
         }
 
+        // Add other modifiers
         if ($this->quality) {
             $modifiers['quality'] = $this->quality;
         }
@@ -207,6 +227,10 @@ class Img
 
         if ($this->focal) {
             $modifiers['focal'] = $this->focal;
+        }
+
+        if (isset($modifiers['width'])) {
+            $modifiers['width'] = (int) $modifiers['width'];
         }
 
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
