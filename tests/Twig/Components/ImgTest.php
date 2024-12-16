@@ -420,4 +420,19 @@ class ImgTest extends KernelTestCase
 
         $this->assertEquals('/image.webp?width=400&format=png', $component->srcComputed);
     }
+
+    public function testEmptyFallbackParameter(): void
+    {
+        $component = $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'format' => 'webp',
+                'fallback' => 'empty',
+            ]
+        );
+
+        $this->assertEquals(Img::EMPTY_GIF, $component->srcComputed);
+    }
 }

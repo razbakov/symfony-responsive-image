@@ -13,6 +13,8 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
 class Img
 {
+    public const EMPTY_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
     public string $src;
     public ?string $srcComputed = null;
     public ?string $alt = null;
@@ -199,7 +201,7 @@ class Img
         if ($applyFallback && $this->fallback) {
             if ($this->fallback === 'auto') {
                 // Auto fallback logic based on original image format
-                $extension = strtolower(pathinfo($this->src, PATHINFO_EXTENSION));
+                $extension = $this->getImageExtension();
                 
                 // PNG fallback for formats that might have transparency
                 if (in_array($extension, ['png', 'webp', 'gif'])) {
@@ -208,6 +210,8 @@ class Img
                     // JPEG fallback for all other formats
                     $modifiers['format'] = 'jpg';
                 }
+            } elseif ($this->fallback === 'empty') {
+                return self::EMPTY_GIF;
             } else {
                 $modifiers['format'] = $this->fallback;
             }
@@ -234,5 +238,10 @@ class Img
         }
 
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
+    }
+
+    protected function getImageExtension(): string
+    {
+        return strtolower(pathinfo($this->src, PATHINFO_EXTENSION));
     }
 }
