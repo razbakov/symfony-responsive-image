@@ -32,7 +32,7 @@ class PictureTest extends KernelTestCase
         $registry->addProvider($this->provider);
         $registry->setDefaultProvider('mock');
     }
-    
+
     public function testComponentMount(): void
     {
         $component = $this->mountTwigComponent(

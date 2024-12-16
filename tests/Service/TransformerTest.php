@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class TransformerTest extends TestCase
 {
     private Transformer $transformer;
-    
+
     protected function setUp(): void
     {
         $this->transformer = new Transformer([
@@ -83,7 +83,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 1024, 'vw' => '100'],
                     'xl' => ['value' => 1280, 'vw' => '100'],
                     '2xl' => ['value' => 1536, 'vw' => '100'],
-                ]
+                ],
             ],
             'halfscreen and fixed' => [
                 '50vw lg:400px',
@@ -94,7 +94,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 400, 'vw' => '0'],
                     'xl' => ['value' => 400, 'vw' => '0'],
                     '2xl' => ['value' => 400, 'vw' => '0'],
-                ]
+                ],
             ],
             'mixed values' => [
                 '400 sm:500 md:100vw',
@@ -105,7 +105,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 1024, 'vw' => '100'],
                     'xl' => ['value' => 1280, 'vw' => '100'],
                     '2xl' => ['value' => 1536, 'vw' => '100'],
-                ]
+                ],
             ],
             'mixed values with gap' => [
                 '100 lg:100vw',
@@ -116,7 +116,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 1024, 'vw' => '100'],
                     'xl' => ['value' => 1280, 'vw' => '100'],
                     '2xl' => ['value' => 1536, 'vw' => '100'],
-                ]
+                ],
             ],
             'vw to fixed width' => [
                 '100vw md:100',
@@ -127,7 +127,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 100, 'vw' => '0'],
                     'xl' => ['value' => 100, 'vw' => '0'],
                     '2xl' => ['value' => 100, 'vw' => '0'],
-                ]
+                ],
             ],
             'large fixed to vw' => [
                 '1000 lg:100vw',
@@ -138,7 +138,7 @@ class TransformerTest extends TestCase
                     'lg' => ['value' => 1024, 'vw' => '100'],
                     'xl' => ['value' => 1280, 'vw' => '100'],
                     '2xl' => ['value' => 1536, 'vw' => '100'],
-                ]
+                ],
             ],
         ];
     }

@@ -240,7 +240,7 @@ class ImgTest extends KernelTestCase
 
     public function testDensities(): void
     {
-        $this->markTestIncomplete("Not implemented");
+        $this->markTestIncomplete('Not implemented');
 
         $rendered = $this->renderTwigComponent(
             name: 'img',
