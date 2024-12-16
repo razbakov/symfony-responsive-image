@@ -101,8 +101,8 @@ Use for simple responsive images with automatic WebP conversion:
     fetchpriority="high"                 # Optional: Set high priority for LCP
     loading="lazy"                       # Optional: Enable lazy loading
 
-    format="webp"                        # Output format (default: webp)
     quality="80"                         # Optional: Image quality 0-100 (default: 80)
+    format="webp"                        # Output format (default: webp)
     fallback="auto"                      # Fallback format (default: auto)
 
     ratio="16:9"                         # Optional: Override aspect ratio
@@ -123,13 +123,16 @@ Use for art direction with different crops per screen size or orientation:
 <twig:picture
     src="/images/hero.jpg"                 # Required: Image source path
     alt="Hero image"                       # Recommended: Alt text for accessibility
+    class="hero-picture"                   # Any HTML attribute is supported
     width="100vw md:80vw"                  # Responsive sizes per breakpoint
+
+    quality="80"                           # Optional: Image quality 0-100 (default: 80)
+    format="webp"                          # Output format (default: webp)
+    fallback="auto"                        # Fallback format (default: auto)
+
     ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
     focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
     fit="sm:contain md:cover"              # Fit behavior per breakpoint
-    format="webp"                          # Output format (default: webp)
-    fallback="auto"                        # Fallback format (default: auto)
-    class="hero-picture"                   # Any HTML attribute is supported
 />
 ```
 
