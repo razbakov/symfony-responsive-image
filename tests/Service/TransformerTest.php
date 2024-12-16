@@ -34,7 +34,7 @@ class TransformerTest extends TestCase
      */
     public function testParseWidth(string $input, array $expected): void
     {
-        $result = $this->transformer->getSizes($input);
+        $result = $this->transformer->parseWidth($input);
         $this->assertEquals($expected, $result);
     }
 
@@ -140,6 +140,61 @@ class TransformerTest extends TestCase
                     '2xl' => ['value' => 1536, 'vw' => '100'],
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideSizesStrings
+     */
+    public function testGetSizes(array $widths, string $expected): void
+    {
+        $result = $this->transformer->getSizes($widths);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function provideSizesStrings(): array
+    {
+        return [
+            'fullscreen' => [
+                [
+                    'default' => ['value' => 640, 'vw' => '100'],
+                    'sm' => ['value' => 640, 'vw' => '100'],
+                    'md' => ['value' => 768, 'vw' => '100'],
+                    'lg' => ['value' => 1024, 'vw' => '100'],
+                    'xl' => ['value' => 1280, 'vw' => '100'],
+                    '2xl' => ['value' => 1536, 'vw' => '100'],
+                ],
+                '100vw'
+            ],
+            // Add more test cases for getSizes here
+        ];
+    }
+
+    /**
+     * @dataProvider provideSrcsetData
+     */
+    public function testGetSrcset(string $src, array $widths, string $expected): void
+    {
+        $result = $this->transformer->getSrcset(
+            $src,
+            $widths,
+            fn ($modifiers) => $src . '?' . http_build_query($modifiers)
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    public function provideSrcsetData(): array
+    {
+        return [
+            'basic widths' => [
+                '/image.jpg',
+                [
+                    'default' => ['value' => 300, 'vw' => '0'],
+                    'sm' => ['value' => 400, 'vw' => '0'],
+                ],
+                '/image.jpg?width=300 300w, /image.jpg?width=400 400w'
+            ],
+            // Add more test cases for srcset here
         ];
     }
 }

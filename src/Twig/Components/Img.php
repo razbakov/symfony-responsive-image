@@ -118,7 +118,7 @@ class Img
 
         if ($this->width) {
             // Get sizes from transformer
-            $this->widths = $this->transformer->getSizes($this->width);
+            $this->widths = $this->transformer->parseWidth($this->width);
 
             // Determine the initial width based on the pattern
             if (preg_match('/^\d+vw/', $this->width)) {
@@ -139,137 +139,16 @@ class Img
 
             // Generate srcset and sizes for responsive widths or breakpoint patterns
             if (str_contains($this->width, 'vw') || str_contains($this->width, ':')) {
-                $this->srcset = $this->getSrcset();
-                $this->sizes = $this->getSizes();
+                $this->srcset = $this->transformer->getSrcset(
+                    $this->src,
+                    $this->widths,
+                    fn ($modifiers) => $this->getImage($modifiers)
+                );
+                $this->sizes = $this->transformer->getSizes($this->widths);
             }
         } else {
             $this->srcComputed = $this->getImage();
         }
-    }
-
-    private function getSrcset(): string
-    {
-        if (!$this->width) {
-            return '';
-        }
-
-        $srcset = [];
-        foreach ($this->widths as $width) {
-            if ($width['value'] > 0) { // Only include positive widths
-                $srcset[] = \sprintf('%s %sw',
-                    $this->getImage(['width' => $width['value']]),
-                    $width['value']
-                );
-            }
-        }
-
-        return implode(', ', $srcset);
-    }
-
-    private function getSizes(): string
-    {
-        if (!$this->width) {
-            return '';
-        }
-
-        // Special case: if it's just a viewport width with no breakpoints
-        if ('100vw' === $this->width) {
-            return '100vw';
-        }
-
-        $breakpoints = [
-            'sm' => 640,
-            'md' => 768,
-            'lg' => 1024,
-            'xl' => 1280,
-            '2xl' => 1536,
-        ];
-
-        $sizes = [];
-        $breakpointKeys = array_keys($breakpoints);
-
-        // Find the largest explicit value for default size (no media query)
-        $largestValue = null;
-        foreach (array_reverse($breakpointKeys) as $key) {
-            if (isset($this->widths[$key])) {
-                $largestValue = $this->widths[$key];
-                break;
-            }
-        }
-
-        // If we found a largest value, use it as the default (no media query)
-        if ($largestValue) {
-            $sizes[] = $this->formatSizeValue($largestValue);
-        }
-
-        // Process breakpoints from largest to smallest
-        $sizeVariants = [];
-
-        foreach (array_reverse($breakpointKeys) as $i => $key) {
-            if (isset($this->widths[$key])) {
-                // Find the next breakpoint that has a value
-                $nextValue = null;
-                for ($j = $i + 1; $j < \count($breakpointKeys); ++$j) {
-                    $nextKey = array_reverse($breakpointKeys)[$j];
-                    if (isset($this->widths[$nextKey])) {
-                        $nextValue = $this->widths[$nextKey];
-                        break;
-                    }
-                }
-
-                // If no next breakpoint value found and we have a default value
-                if (!$nextValue && isset($this->widths['default'])) {
-                    $nextValue = $this->widths['default'];
-                }
-
-                // Add current value to size variants
-                $sizeVariants[] = [
-                    'size' => $this->formatSizeValue($this->widths[$key]),
-                    'screenMaxWidth' => $breakpoints[$key],
-                    'media' => \sprintf('(max-width: %dpx)', $breakpoints[$key]),
-                ];
-
-                // If next value is different, add it at this breakpoint
-                if ($nextValue && !$this->isSameValue($this->widths[$key], $nextValue)) {
-                    $sizeVariants[] = [
-                        'size' => $this->formatSizeValue($nextValue),
-                        'screenMaxWidth' => $breakpoints[$key],
-                        'media' => \sprintf('(max-width: %dpx)', $breakpoints[$key]),
-                    ];
-                }
-            }
-        }
-
-        // Sort variants by screen width (largest to smallest)
-        usort($sizeVariants, fn ($a, $b) => $b['screenMaxWidth'] - $a['screenMaxWidth']);
-
-        // Add size variants to sizes array
-        foreach ($sizeVariants as $variant) {
-            $sizes[] = $variant['media'].' '.$variant['size'];
-        }
-
-        // Add default value if it exists and differs from sm breakpoint
-        if (isset($this->widths['default'])
-            && (!isset($this->widths['sm']) || !$this->isSameValue($this->widths['default'], $this->widths['sm']))) {
-            $sizes[] = \sprintf('(max-width: %dpx) %s',
-                $breakpoints['sm'],
-                $this->formatSizeValue($this->widths['default'])
-            );
-        }
-
-        return implode(', ', array_unique($sizes));
-    }
-
-    private function isSameValue(array $value1, array $value2): bool
-    {
-        return $value1['value'] === $value2['value'] && $value1['vw'] === $value2['vw'];
-    }
-
-    private function formatSizeValue(array $width): string
-    {
-        return '0' !== $width['vw']
-            ? $width['vw'].'vw'
-            : $width['value'].'px';
     }
 
     private function getImage(array $modifiers = []): string
