@@ -275,4 +275,21 @@ class Transformer
         // For fixed widths or patterns starting with fixed width
         return $widths['default']['value'];
     }
+
+    // Add new method to handle density-based width calculations
+    public function getDensityBasedWidths(int $baseWidth, string $densities): array
+    {
+        $densityMultipliers = array_map(
+            fn($d) => (float) str_replace('x', '', trim($d)),
+            explode(' ', $densities)
+        );
+        
+        $widths = [];
+        foreach ($densityMultipliers as $multiplier) {
+            $widths[] = (int) ($baseWidth * $multiplier);
+        }
+        
+        sort($widths);
+        return $widths;
+    }
 }

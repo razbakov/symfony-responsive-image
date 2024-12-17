@@ -185,18 +185,9 @@ class Img
 
             // Handle additional sizes from densities
             if ($this->densities) {
-                $densityMultipliers = array_map(
-                    fn($d) => (float) str_replace('x', '', trim($d)),
-                    explode(' ', $this->densities)
-                );
-                
-                // For fixed widths, create a simple array of widths
                 if (!str_contains($this->width, 'vw') && !str_contains($this->width, ':')) {
-                    $widthsForSrcset = [];
-                    foreach ($densityMultipliers as $multiplier) {
-                        $widthsForSrcset[] = (int) ($this->widthComputed * $multiplier);
-                    }
-                    sort($widthsForSrcset);
+                    // For fixed widths, get density-based widths
+                    $widthsForSrcset = $this->transformer->getDensityBasedWidths($this->widthComputed, $this->densities);
                     
                     // Build srcset manually for fixed widths
                     $srcsetParts = [];
@@ -205,15 +196,9 @@ class Img
                     }
                     $this->srcset = implode(', ', $srcsetParts);
                 } else {
-                    // Add additional widths based on density multipliers
-                    foreach ($densityMultipliers as $multiplier) {
-                        $additionalWidth = (int) ($this->widthComputed * $multiplier);
-                        if (!in_array($additionalWidth, $this->widths)) {
-                            $this->widths[] = $additionalWidth;
-                        }
-                    }
-                    
-                    // Sort widths to ensure proper order
+                    // For responsive widths, merge with density-based widths
+                    $densityWidths = $this->transformer->getDensityBasedWidths($this->widthComputed, $this->densities);
+                    $this->widths = array_unique(array_merge($this->widths, $densityWidths));
                     sort($this->widths);
                     
                     // Generate srcset with all widths

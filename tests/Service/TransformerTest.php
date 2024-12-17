@@ -237,4 +237,15 @@ class TransformerTest extends TestCase
             ],
         ];
     }
+
+    public function testGetDensityBasedWidths(): void
+    {
+        $transformer = new Transformer();
+        
+        $widths = $transformer->getDensityBasedWidths(100, 'x1 x2');
+        $this->assertEquals([100, 200], $widths);
+        
+        $widths = $transformer->getDensityBasedWidths(100, '1x 2x 3x');
+        $this->assertEquals([100, 200, 300], $widths);
+    }
 }
