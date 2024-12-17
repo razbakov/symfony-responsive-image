@@ -11,7 +11,8 @@ class CloudinaryProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->provider = new CloudinaryProvider([
+        $this->provider = new CloudinaryProvider();
+        $this->provider->configure([
             'base_url' => 'https://res.cloudinary.com/demo',
             'defaults' => [
                 'quality' => '80',

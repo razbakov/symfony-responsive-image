@@ -42,9 +42,12 @@ class LiipImagineProvider implements ProviderInterface
 
     public function __construct(
         CacheManager $cacheManager,
-        array $config = [],
     ) {
         $this->cacheManager = $cacheManager;
+    }
+
+    public function configure(array $config): void
+    {
         $this->defaultFilter = $config['default_filter'] ?? 'default';
         $this->defaults = $config['defaults'] ?? [];
     }

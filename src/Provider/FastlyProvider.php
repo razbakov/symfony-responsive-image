@@ -33,7 +33,7 @@ class FastlyProvider implements ProviderInterface
         ],
     ];
 
-    public function __construct(array $config = [])
+    public function configure(array $config): void
     {
         $this->baseUrl = $config['base_url'] ?? '';
         $this->defaults = $config['defaults'] ?? [];

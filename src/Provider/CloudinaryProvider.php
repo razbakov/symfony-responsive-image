@@ -4,8 +4,8 @@ namespace Ommax\ResponsiveImageBundle\Provider;
 
 class CloudinaryProvider implements ProviderInterface
 {
-    private string $baseUrl;
-    private array $defaults;
+    private string $baseUrl = '';
+    private array $defaults = [];
 
     /**
      * Map of modifier keys to Cloudinary parameters.
@@ -77,7 +77,7 @@ class CloudinaryProvider implements ProviderInterface
         ],
     ];
 
-    public function __construct(array $config = [])
+    public function configure(array $config): void
     {
         $this->baseUrl = $config['base_url'] ?? '';
         $this->defaults = $config['defaults'] ?? [];
@@ -96,6 +96,9 @@ class CloudinaryProvider implements ProviderInterface
         // Check if the source is an external URL
         if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
             if (str_contains($src, '/upload/')) {
+                // Extract the domain part up to /upload/
+                $this->baseUrl = substr($src, 0, strpos($src, '/upload/') + 8);
+                // Extract the path after /upload/
                 $src = substr($src, strpos($src, '/upload/') + 8);
             }
         }

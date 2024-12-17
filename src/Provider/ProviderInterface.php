@@ -10,6 +10,11 @@ interface ProviderInterface
     public function getName(): string;
 
     /**
+     * Configure the provider with the given configuration.
+     */
+    public function configure(array $config): void;
+
+    /**
      * Generates the URL for the image with the specified options.
      *
      * This method takes the source image path and an array of transformation options,

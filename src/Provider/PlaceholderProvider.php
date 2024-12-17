@@ -20,14 +20,9 @@ class PlaceholderProvider implements ProviderInterface
 
     private array $defaults;
 
-    public function __construct(array $config = [])
-    {
-        $this->defaults = $config['defaults'] ?? [];
-    }
-
     public function configure(array $config): void
     {
-        $this->defaults = $config['defaults'];
+        $this->defaults = $config['defaults'] ?? [];
     }
 
     public function getName(): string
