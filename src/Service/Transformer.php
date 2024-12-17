@@ -280,16 +280,17 @@ class Transformer
     public function getDensityBasedWidths(int $baseWidth, string $densities): array
     {
         $densityMultipliers = array_map(
-            fn($d) => (float) str_replace('x', '', trim($d)),
+            fn ($d) => (float) str_replace('x', '', trim($d)),
             explode(' ', $densities)
         );
-        
+
         $widths = [];
         foreach ($densityMultipliers as $multiplier) {
             $widths[] = (int) ($baseWidth * $multiplier);
         }
-        
+
         sort($widths);
+
         return $widths;
     }
 }

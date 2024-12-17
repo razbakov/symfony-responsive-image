@@ -188,11 +188,11 @@ class Img
                 if (!str_contains($this->width, 'vw') && !str_contains($this->width, ':')) {
                     // For fixed widths, get density-based widths
                     $widthsForSrcset = $this->transformer->getDensityBasedWidths($this->widthComputed, $this->densities);
-                    
+
                     // Build srcset manually for fixed widths
                     $srcsetParts = [];
                     foreach ($widthsForSrcset as $w) {
-                        $srcsetParts[] = $this->getImage(['width' => $w], false) . ' ' . $w . 'w';
+                        $srcsetParts[] = $this->getImage(['width' => $w], false).' '.$w.'w';
                     }
                     $this->srcset = implode(', ', $srcsetParts);
                 } else {
@@ -200,7 +200,7 @@ class Img
                     $densityWidths = $this->transformer->getDensityBasedWidths($this->widthComputed, $this->densities);
                     $this->widths = array_unique(array_merge($this->widths, $densityWidths));
                     sort($this->widths);
-                    
+
                     // Generate srcset with all widths
                     $this->srcset = $this->transformer->getSrcset(
                         $this->src,
@@ -234,23 +234,23 @@ class Img
     {
         // Handle format
         if ($applyFallback && $this->fallback) {
-            if ($this->fallback === 'auto') {
+            if ('auto' === $this->fallback) {
                 // Auto fallback logic based on original image format
                 $extension = $this->getImageExtension();
-                
+
                 // PNG fallback for formats that might have transparency
-                if (in_array($extension, ['png', 'webp', 'gif'])) {
+                if (\in_array($extension, ['png', 'webp', 'gif'])) {
                     $modifiers['format'] = 'png';
                 } else {
                     // JPEG fallback for all other formats
                     $modifiers['format'] = 'jpg';
                 }
-            } elseif ($this->fallback === 'empty') {
+            } elseif ('empty' === $this->fallback) {
                 return self::EMPTY_GIF;
             } else {
                 $modifiers['format'] = $this->fallback;
             }
-        } elseif ($this->format && $this->format !== 'auto') {
+        } elseif ($this->format && 'auto' !== $this->format) {
             // If not applying fallback and format is set (and not auto), use it
             $modifiers['format'] = $this->format;
         }
@@ -285,6 +285,6 @@ class Img
 
     protected function getImageExtension(): string
     {
-        return strtolower(pathinfo($this->src, PATHINFO_EXTENSION));
+        return strtolower(pathinfo($this->src, \PATHINFO_EXTENSION));
     }
 }
