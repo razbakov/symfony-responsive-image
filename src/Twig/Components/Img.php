@@ -38,6 +38,7 @@ class Img
     public ?string $sizes = null;
     public ?string $srcset = null;
     public ?string $densities = null;
+    public ?array $modifiers = null;
 
     protected array $widths = [];
 
@@ -83,6 +84,7 @@ class Img
                 'decoding',
                 'format',
                 'densities',
+                'modifiers',
             ]);
 
         // Allow any data-* and aria-* attributes
@@ -121,6 +123,7 @@ class Img
         $resolver->setAllowedTypes('crossorigin', ['string', 'null']);
         $resolver->setAllowedTypes('decoding', ['string', 'null']);
         $resolver->setAllowedTypes('densities', ['string', 'null']);
+        $resolver->setAllowedTypes('modifiers', ['array', 'null']);
 
         if (isset($data['preset'])) {
             $presetName = $data['preset'];
@@ -153,6 +156,7 @@ class Img
         ?string $background = null,
         ?string $ratio = null,
         ?string $densities = null,
+        ?array $modifiers = null,
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -168,6 +172,7 @@ class Img
         $this->background = $background;
         $this->ratio = $ratio;
         $this->densities = $densities;
+        $this->modifiers = $modifiers;
 
         if (null !== $preload) {
             $this->preload = $preload;
@@ -278,6 +283,11 @@ class Img
 
         if (isset($modifiers['width'])) {
             $modifiers['width'] = (int) $modifiers['width'];
+        }
+
+        // Add custom modifiers if they exist
+        if ($this->modifiers) {
+            $modifiers = array_merge($modifiers, $this->modifiers);
         }
 
         return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);

@@ -19,6 +19,23 @@ class CloudinaryProvider implements ProviderInterface
         'focal' => 'g',
         'background' => 'b',
         'ratio' => 'ar',
+        'roundCorner' => 'r',
+        'gravity' => 'g',
+        'rotate' => 'a',
+        'effect' => 'e',
+        'color' => 'co',
+        'flags' => 'fl',
+        'dpr' => 'dpr',
+        'opacity' => 'o',
+        'overlay' => 'l',
+        'underlay' => 'u',
+        'transformation' => 't',
+        'zoom' => 'z',
+        'colorSpace' => 'cs',
+        'customFunc' => 'fn',
+        'density' => 'dn',
+        'aspectRatio' => 'ar',
+        'blur' => 'e_blur',
     ];
 
     /**
@@ -26,18 +43,37 @@ class CloudinaryProvider implements ProviderInterface
      */
     private const VALUE_MAP = [
         'fit' => [
-            'cover' => 'fill',
-            'contain' => 'fit',
-            'fill' => 'scale',
-            'inside' => 'limit',
-            'outside' => 'mfit',
+            'fill' => 'fill',
+            'inside' => 'pad',
+            'outside' => 'lpad',
+            'cover' => 'lfill',
+            'contain' => 'scale',
+            'minCover' => 'mfit',
+            'minInside' => 'mpad',
+            'thumbnail' => 'thumb',
+            'cropping' => 'crop',
+            'coverLimit' => 'limit',
         ],
-        'focal' => [
+        'format' => [
+            'jpeg' => 'jpg',
+        ],
+        'gravity' => [
+            'auto' => 'auto',
+            'subject' => 'auto:subject',
+            'face' => 'face',
+            'sink' => 'sink',
+            'faceCenter' => 'face:center',
+            'multipleFaces' => 'faces',
+            'multipleFacesCenter' => 'faces:center',
+            'north' => 'north',
+            'northEast' => 'north_east',
+            'northWest' => 'north_west',
+            'west' => 'west',
+            'southWest' => 'south_west',
+            'south' => 'south',
+            'southEast' => 'south_east',
+            'east' => 'east',
             'center' => 'center',
-            'top' => 'north',
-            'bottom' => 'south',
-            'left' => 'west',
-            'right' => 'east',
         ],
     ];
 
@@ -54,13 +90,15 @@ class CloudinaryProvider implements ProviderInterface
 
     public function getImage(string $src, array $modifiers): string
     {
-        // Remove leading slash if present
         $src = ltrim($src, '/');
-
-        // Start building the transformation string
         $transformations = [];
 
-        // Process each modifier
+        // Add default modifiers if not present
+        $modifiers = array_merge([
+            'format' => 'auto',
+            'quality' => 'auto',
+        ], $modifiers);
+
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
                 continue;
@@ -72,20 +110,34 @@ class CloudinaryProvider implements ProviderInterface
             if (isset(self::VALUE_MAP[$key])) {
                 if (isset(self::VALUE_MAP[$key][$value])) {
                     $value = self::VALUE_MAP[$key][$value];
-                } elseif ($key === 'focal' && preg_match('/^(\d*\.?\d+),(\d*\.?\d+)$/', $value, $matches)) {
-                    // Handle custom focal points like "0.5,0.3"
-                    $x = round($matches[1] * 100);
-                    $y = round($matches[2] * 100);
-                    $value = $x.'_'.$y;
                 }
             }
 
             // Handle special cases
-            if ($key === 'background') {
-                $value = 'rgb:'.ltrim($value, '#');
+            switch ($key) {
+                case 'background':
+                case 'color':
+                    $value = $this->convertHexToRgb($value);
+                    break;
+                case 'roundCorner':
+                    if ($value === 'max') {
+                        $value = 'max';
+                    } elseif (strpos($value, ':') !== false) {
+                        $value = str_replace(':', '_', $value);
+                    }
+                    break;
+                case 'blur':
+                    $cloudinaryKey = 'e';
+                    $value = 'blur:' . $value;
+                    break;
             }
 
-            $transformations[] = $cloudinaryKey.'_'.$value;
+            // Handle special formatting for certain keys
+            if (str_contains($cloudinaryKey, '_')) {
+                $transformations[] = $cloudinaryKey . ':' . $value;
+            } else {
+                $transformations[] = $cloudinaryKey . '_' . $value;
+            }
         }
 
         // Merge with default transformations
@@ -100,5 +152,10 @@ class CloudinaryProvider implements ProviderInterface
             $transformationString ? $transformationString.'/' : '',
             $src
         );
+    }
+
+    private function convertHexToRgb(string $value): string
+    {
+        return str_starts_with($value, '#') ? 'rgb_' . ltrim($value, '#') : $value;
     }
 }
