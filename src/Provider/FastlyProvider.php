@@ -4,8 +4,8 @@ namespace Ommax\ResponsiveImageBundle\Provider;
 
 class FastlyProvider implements ProviderInterface
 {
-    private string $baseUrl;
-    private array $defaults;
+    private string $baseUrl = '';
+    private array $defaults = [];
 
     /**
      * Map of modifier keys to Fastly parameters.
