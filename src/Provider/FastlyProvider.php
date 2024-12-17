@@ -35,7 +35,7 @@ class FastlyProvider implements ProviderInterface
 
     public function __construct(array $config = [])
     {
-        $this->baseUrl = $config['base_url'];
+        $this->baseUrl = $config['base_url'] ?? '';
         $this->defaultTransformations = $config['default_transformations'] ?? [];
     }
 

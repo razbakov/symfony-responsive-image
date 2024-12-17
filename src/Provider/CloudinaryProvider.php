@@ -79,8 +79,8 @@ class CloudinaryProvider implements ProviderInterface
 
     public function __construct(array $config = [])
     {
-        $this->baseUrl = $config['base_url'];
-        $this->defaultTransformations = $config['default_transformations'];
+        $this->baseUrl = $config['base_url'] ?? '';
+        $this->defaultTransformations = $config['default_transformations'] ?? [];
     }
 
     public function getName(): string
