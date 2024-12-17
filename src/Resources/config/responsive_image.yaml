@@ -34,6 +34,8 @@ responsive_image:
       driver: gd # gd, imagick
       cache: default
       filters: [] # LiipImagine filters
+      default_filter: "default"
+      default_transformations: []
 
     cloudinary:
       base_url: "%env(CLOUDINARY_URL)%"

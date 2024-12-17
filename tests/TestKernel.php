@@ -15,6 +15,7 @@ class TestKernel extends Kernel
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \Symfony\UX\TwigComponent\TwigComponentBundle(),
             new \Ommax\ResponsiveImageBundle\ResponsiveImageBundle(),
+            new \Liip\ImagineBundle\LiipImagineBundle(),
         ];
     }
 

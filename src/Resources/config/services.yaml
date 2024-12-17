@@ -34,3 +34,11 @@ services:
 
   Ommax\ResponsiveImageBundle\Twig\Extension\ResponsiveImageExtension:
     tags: ["twig.extension"]
+
+  Ommax\ResponsiveImageBundle\Provider\LiipImagineProvider:
+    arguments:
+      $cacheManager: "@liip_imagine.cache.manager"
+      $config:
+        default_filter: "default"
+    tags:
+      - { name: "responsive_image.provider" }
