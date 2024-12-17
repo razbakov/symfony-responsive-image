@@ -36,10 +36,17 @@ responsive_image:
       filters: [] # LiipImagine filters
 
     cloudinary:
-      cloud_name: "%env(CLOUDINARY_CLOUD_NAME)%"
-      api_key: "%env(CLOUDINARY_API_KEY)%"
-      api_secret: "%env(CLOUDINARY_API_SECRET)%"
-      secure: true
+      base_url: "%env(CLOUDINARY_URL)%"
+      default_transformations: ["f_auto", "q_auto"]
+
+    placeholder:
+      defaults:
+        width: 600
+        height: null
+        background: "868e96"
+        text: null
+        text_color: "FFFFFF"
+        ratio: null
 
   # Predefined presets for common use cases
   presets:
