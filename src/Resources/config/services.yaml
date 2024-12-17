@@ -37,6 +37,7 @@ services:
 
   Ommax\ResponsiveImageBundle\Provider\LiipImagineProvider:
     arguments:
-      $cacheManager: "@liip_imagine.cache.manager"
+      $urlGenerator: "@router"
+      $signer: "@liip_imagine.cache.signer"
     tags:
       - { name: "responsive_image.provider" }

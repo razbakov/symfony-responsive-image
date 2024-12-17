@@ -2,13 +2,20 @@
 
 namespace Ommax\ResponsiveImageBundle\Provider;
 
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
 
 class LiipImagineProvider implements ProviderInterface
 {
-    private CacheManager $cacheManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private SignerInterface $signer;
     private string $defaultFilter = 'default';
     private array $defaults = [];
+
+    /**
+     * Default breakpoints for responsive images (in pixels)
+     */
+    private const DEFAULT_BREAKPOINTS = [640, 768, 1024, 1280, 1536];
 
     /**
      * Map of modifier keys to Liip filter settings.
@@ -41,9 +48,11 @@ class LiipImagineProvider implements ProviderInterface
     ];
 
     public function __construct(
-        CacheManager $cacheManager,
+        UrlGeneratorInterface $urlGenerator,
+        SignerInterface $signer
     ) {
-        $this->cacheManager = $cacheManager;
+        $this->urlGenerator = $urlGenerator;
+        $this->signer = $signer;
     }
 
     public function configure(array $config): void
@@ -62,13 +71,42 @@ class LiipImagineProvider implements ProviderInterface
         $src = ltrim($src, '/');
         $filterName = $this->defaultFilter;
 
-        // Create runtime config based on modifiers
-        $runtimeConfig = [];
+        // Handle viewport width
+        if (isset($modifiers['width']) && str_contains($modifiers['width'], 'vw')) {
+            $srcset = [];
+            foreach (self::DEFAULT_BREAKPOINTS as $breakpoint) {
+                $breakpointModifiers = $modifiers;
+                $breakpointModifiers['width'] = $breakpoint;
+                
+                $url = $this->generateSecureUrl($src, $filterName, $breakpointModifiers);
+                $srcset[] = "$url {$breakpoint}w";
+            }
 
-        // Merge defaults with provided modifiers
+            $defaultUrl = $this->generateSecureUrl($src, $filterName, $modifiers);
+            return $defaultUrl . '" srcset="' . implode(', ', $srcset) . '" sizes="' . $modifiers['width'];
+        }
+
+        return $this->generateSecureUrl($src, $filterName, $modifiers);
+    }
+
+    private function generateSecureUrl(string $path, string $filter, array $modifiers): string
+    {
+        $runtimeConfig = $this->buildRuntimeConfig($modifiers);
+        $hash = $this->signer->sign($path, $runtimeConfig);
+
+        return $this->urlGenerator->generate('liip_imagine_filter', [
+            'filter' => $filter,
+            'path' => $path,
+            'hash' => $hash,
+            'filters' => $runtimeConfig
+        ], UrlGeneratorInterface::ABSOLUTE_PATH);
+    }
+
+    private function buildRuntimeConfig(array $modifiers): array
+    {
+        $runtimeConfig = [];
         $modifiers = array_merge($this->defaults, $modifiers);
 
-        // Convert modifiers to Liip filter configuration
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
                 continue;
@@ -76,8 +114,12 @@ class LiipImagineProvider implements ProviderInterface
 
             $liipKey = self::KEY_MAP[$key];
 
-            // Handle special cases
             if ('width' === $key || 'height' === $key) {
+                // Remove 'vw' suffix if present
+                if (is_string($value) && str_contains($value, 'vw')) {
+                    $value = (int) str_replace('vw', '', $value);
+                }
+                
                 $runtimeConfig['size'] = $runtimeConfig['size'] ?? [
                     'width' => null,
                     'height' => null,
@@ -102,16 +144,6 @@ class LiipImagineProvider implements ProviderInterface
             $runtimeConfig[$liipKey] = $value;
         }
 
-        try {
-            // Generate the filtered image URL using runtime config
-            return $this->cacheManager->getBrowserPath(
-                $src,
-                $filterName,
-                $runtimeConfig
-            );
-        } catch (\Exception $e) {
-            // Log error or handle appropriately
-            return $src;
-        }
+        return $runtimeConfig;
     }
 }
