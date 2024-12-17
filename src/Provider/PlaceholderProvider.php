@@ -64,29 +64,29 @@ class PlaceholderProvider implements ProviderInterface
         }
 
         // Handle ratio if specified
-        if (null !== $params['ratio']) {
+        if (isset($params['ratio']) && $params['ratio'] !== null) {
             if (preg_match('/^(\d+):(\d+)$/', $params['ratio'], $matches)) {
                 $ratioWidth = (int) $matches[1];
                 $ratioHeight = (int) $matches[2];
-                if (null === $params['height']) {
+                if (!isset($params['height']) || $params['height'] === null) {
                     $params['height'] = (int) ($params['width'] * $ratioHeight / $ratioWidth);
                 }
             }
         }
 
         // Set height to width if still not specified
-        if (null === $params['height']) {
+        if (!isset($params['height']) || $params['height'] === null) {
             $params['height'] = $params['width'];
         }
 
         // Set default text if not specified
-        if (null === $params['text']) {
+        if (!isset($params['text']) || $params['text'] === null) {
             $params['text'] = \sprintf('%dx%d', $params['width'], $params['height']);
         }
 
-        // Clean up color values
-        $params['background'] = ltrim($params['background'], '#');
-        $params['textColor'] = ltrim($params['textColor'], '#');
+        // Ensure background and textColor are set with defaults if needed
+        $params['background'] = isset($params['background']) ? ltrim($params['background'], '#') : '000000';
+        $params['textColor'] = isset($params['textColor']) ? ltrim($params['textColor'], '#') : 'FFFFFF';
 
         return $params;
     }
