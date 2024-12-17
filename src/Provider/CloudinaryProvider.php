@@ -90,12 +90,31 @@ class CloudinaryProvider implements ProviderInterface
 
     public function getImage(string $src, array $modifiers): string
     {
+        // Remove any leading slashes
         $src = ltrim($src, '/');
+        
+        // Check if the source is an external URL
+        if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
+            // Extract the path part after the last forward slash
+            $src = substr($src, strrpos($src, '/') + 1);
+        }
+        
         $transformations = [];
 
         // Merge defaults with provided modifiers
         $modifiers = array_merge($this->defaults, $modifiers);
 
+        // Define the order of transformations
+        $orderPriority = [
+            'width' => 1,
+            'height' => 2,
+            'quality' => 3,
+            'format' => 4,
+            // Add other keys with their priority if needed
+        ];
+
+        // Process modifiers and store them with their priority
+        $prioritizedTransformations = [];
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
                 continue;
@@ -129,20 +148,26 @@ class CloudinaryProvider implements ProviderInterface
                     break;
             }
 
-            // Handle special formatting for certain keys
-            if (str_contains($cloudinaryKey, '_')) {
-                $transformations[] = $cloudinaryKey.':'.$value;
-            } else {
-                $transformations[] = $cloudinaryKey.'_'.$value;
-            }
+            // Format the transformation
+            $transformation = str_contains($cloudinaryKey, '_') 
+                ? $cloudinaryKey.':'.$value 
+                : $cloudinaryKey.'_'.$value;
+
+            // Store with priority if defined, otherwise use a high number
+            $priority = $orderPriority[$key] ?? 999;
+            $prioritizedTransformations[$priority] = $transformation;
         }
+
+        // Sort by priority and get final transformations
+        ksort($prioritizedTransformations);
+        $transformations = array_values($prioritizedTransformations);
 
         // Build the final URL
         $transformationString = implode(',', $transformations);
 
-        return \sprintf(
-            '%s/%s/%s',
-            $this->baseUrl,
+        return sprintf(
+            '%s/%s%s',
+            rtrim($this->baseUrl, '/'),
             $transformationString ? $transformationString.'/' : '',
             $src
         );
