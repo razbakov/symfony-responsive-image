@@ -13,11 +13,6 @@ class LiipImagineProvider implements ProviderInterface
     private array $defaults = [];
 
     /**
-     * Default breakpoints for responsive images (in pixels).
-     */
-    private const DEFAULT_BREAKPOINTS = [640, 768, 1024, 1280, 1536];
-
-    /**
      * Map of modifier keys to Liip filter settings.
      */
     private const KEY_MAP = [
@@ -69,25 +64,7 @@ class LiipImagineProvider implements ProviderInterface
     public function getImage(string $src, array $modifiers): string
     {
         $src = ltrim($src, '/');
-        // Always use the base filter name
-        $filterName = $modifiers['filter'] ?? $this->defaultFilter;
-        unset($modifiers['filter']);
-        
-        // Handle viewport width
-        if (isset($modifiers['width']) && str_contains($modifiers['width'], 'vw')) {
-            $srcset = [];
-            foreach (self::DEFAULT_BREAKPOINTS as $breakpoint) {
-                $breakpointModifiers = $modifiers;
-                $breakpointModifiers['width'] = $breakpoint;
-
-                $url = $this->generateSecureUrl($src, $filterName, $breakpointModifiers);
-                $srcset[] = "$url {$breakpoint}w";
-            }
-
-            $defaultUrl = $this->generateSecureUrl($src, $filterName, $modifiers);
-
-            return $defaultUrl.'" srcset="'.implode(', ', $srcset).'" sizes="'.$modifiers['width'];
-        }
+        $filterName = $this->defaultFilter;
 
         return $this->generateSecureUrl($src, $filterName, $modifiers);
     }
@@ -118,11 +95,6 @@ class LiipImagineProvider implements ProviderInterface
             $liipKey = self::KEY_MAP[$key];
 
             if ('width' === $key || 'height' === $key) {
-                // Remove 'vw' suffix if present
-                if (\is_string($value) && str_contains($value, 'vw')) {
-                    $value = (int) str_replace('vw', '', $value);
-                }
-
                 $runtimeConfig['size'] = $runtimeConfig['size'] ?? [
                     'width' => null,
                     'height' => null,

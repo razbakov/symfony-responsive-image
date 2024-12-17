@@ -6,3 +6,8 @@ liip_imagine:
       filters:
         auto_rotate: ~
         strip: ~
+        scale: ~
+        thumbnail: ~
+        upscale: ~
+        relative_resize: ~
+        background: ~
