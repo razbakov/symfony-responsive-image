@@ -5,7 +5,7 @@ namespace Ommax\ResponsiveImageBundle\Provider;
 class CloudinaryProvider implements ProviderInterface
 {
     private string $baseUrl;
-    private array $defaultTransformations;
+    private array $defaults;
 
     /**
      * Map of modifier keys to Cloudinary parameters.
@@ -80,7 +80,7 @@ class CloudinaryProvider implements ProviderInterface
     public function __construct(array $config = [])
     {
         $this->baseUrl = $config['base_url'] ?? '';
-        $this->defaultTransformations = $config['default_transformations'] ?? [];
+        $this->defaults = $config['defaults'] ?? [];
     }
 
     public function getName(): string
@@ -93,11 +93,8 @@ class CloudinaryProvider implements ProviderInterface
         $src = ltrim($src, '/');
         $transformations = [];
 
-        // Add default modifiers if not present
-        $modifiers = array_merge([
-            'format' => 'auto',
-            'quality' => 'auto',
-        ], $modifiers);
+        // Merge defaults with provided modifiers
+        $modifiers = array_merge($this->defaults, $modifiers);
 
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
@@ -113,7 +110,7 @@ class CloudinaryProvider implements ProviderInterface
                 }
             }
 
-            // Handle special cases
+            // Rest of the switch case for special handling...
             switch ($key) {
                 case 'background':
                 case 'color':
@@ -139,9 +136,6 @@ class CloudinaryProvider implements ProviderInterface
                 $transformations[] = $cloudinaryKey.'_'.$value;
             }
         }
-
-        // Merge with default transformations
-        $transformations = array_merge($this->defaultTransformations, $transformations);
 
         // Build the final URL
         $transformationString = implode(',', $transformations);

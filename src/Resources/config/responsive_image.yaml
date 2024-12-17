@@ -32,10 +32,15 @@ responsive_image:
   providers:
     liip_imagine:
       default_filter: "default"
+      defaults:
+        format: webp
+        quality: 80
 
     cloudinary:
       base_url: "%env(CLOUDINARY_URL)%"
-      default_transformations: ["f_auto", "q_auto"]
+      defaults:
+        format: auto
+        quality: auto
 
     placeholder:
       defaults:
@@ -48,6 +53,9 @@ responsive_image:
 
     fastly:
       base_url: "%env(FASTLY_URL)%"
+      defaults:
+        format: webp
+        quality: 85
       default_transformations:
         - ["format", "auto"]
         - ["quality", "85"]

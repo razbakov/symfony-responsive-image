@@ -5,7 +5,7 @@ namespace Ommax\ResponsiveImageBundle\Provider;
 class FastlyProvider implements ProviderInterface
 {
     private string $baseUrl;
-    private array $defaultTransformations;
+    private array $defaults;
 
     /**
      * Map of modifier keys to Fastly parameters.
@@ -36,7 +36,7 @@ class FastlyProvider implements ProviderInterface
     public function __construct(array $config = [])
     {
         $this->baseUrl = $config['base_url'] ?? '';
-        $this->defaultTransformations = $config['default_transformations'] ?? [];
+        $this->defaults = $config['defaults'] ?? [];
     }
 
     public function getName(): string
@@ -46,8 +46,10 @@ class FastlyProvider implements ProviderInterface
 
     public function getImage(string $src, array $modifiers): string
     {
-        // Remove leading slash if present
         $src = ltrim($src, '/');
+
+        // Merge defaults with provided modifiers
+        $modifiers = array_merge($this->defaults, $modifiers);
 
         // Process modifiers
         $transformations = [];
@@ -72,12 +74,6 @@ class FastlyProvider implements ProviderInterface
 
             $transformations[] = $fastlyKey.'='.$value;
         }
-
-        // Merge with default transformations
-        $transformations = array_merge(
-            array_map(fn ($t) => "$t[0]=$t[1]", $this->defaultTransformations),
-            $transformations
-        );
 
         // Build the final URL
         $queryString = implode('&', $transformations);

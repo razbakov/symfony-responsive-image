@@ -8,6 +8,7 @@ class LiipImagineProvider implements ProviderInterface
 {
     private CacheManager $cacheManager;
     private string $defaultFilter;
+    private array $defaults;
 
     /**
      * Map of modifier keys to Liip filter settings.
@@ -45,6 +46,7 @@ class LiipImagineProvider implements ProviderInterface
     ) {
         $this->cacheManager = $cacheManager;
         $this->defaultFilter = $config['default_filter'] ?? 'default';
+        $this->defaults = $config['defaults'] ?? [];
     }
 
     public function getName(): string
@@ -60,11 +62,8 @@ class LiipImagineProvider implements ProviderInterface
         // Create runtime config based on modifiers
         $runtimeConfig = [];
 
-        // Add default modifiers if not present
-        $modifiers = array_merge([
-            'format' => 'auto',
-            'quality' => '85',
-        ], $modifiers);
+        // Merge defaults with provided modifiers
+        $modifiers = array_merge($this->defaults, $modifiers);
 
         // Convert modifiers to Liip filter configuration
         foreach ($modifiers as $key => $value) {
