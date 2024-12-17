@@ -146,7 +146,9 @@ class Img
         ?string $quality = null,
         ?string $fit = null,
         ?string $focal = null,
-        ?string $fallback = null
+        ?string $fallback = null,
+        ?string $background = null,
+        ?string $ratio = null,
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -159,6 +161,8 @@ class Img
         $this->fit = $fit;
         $this->focal = $focal;
         $this->fallback = $fallback;
+        $this->background = $background;
+        $this->ratio = $ratio;
 
         if (null !== $preload) {
             $this->preload = $preload;
@@ -235,6 +239,10 @@ class Img
 
         if ($this->background) {
             $modifiers['background'] = $this->background;
+        }
+
+        if ($this->ratio) {
+            $modifiers['ratio'] = $this->ratio;
         }
 
         if (isset($modifiers['width'])) {

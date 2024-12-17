@@ -388,7 +388,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;background=#ffffff"', $rendered);
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;background=%23ffffff"', $rendered);
     }
 
     public function testFocalParameter(): void
@@ -448,5 +448,19 @@ class ImgTest extends KernelTestCase
         );
 
         $this->assertEquals(Img::EMPTY_GIF, $component->srcComputed);
+    }
+
+    public function testRatioParameter(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'ratio' => '16:9',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;ratio=16%3A9"', $rendered);
     }
 }
