@@ -72,65 +72,115 @@ return [
 
 Choose the approach that best fits your needs:
 
-- Use `<twig:img>` when you need:
-
-  - Different sizes of the same image
-  - Same aspect ratio across all sizes
-  - Same crop/focal point across all sizes
-
-- Use `<twig:picture>` when you need:
-  - Different aspect ratios per breakpoint
-  - Different crops per breakpoint
-  - Different focal points per breakpoint
-  - Different sizes within each breakpoint
+- Use `<twig:img>` when you need different sizes of the same image
+- Use `<twig:picture>` when you need different crops/ratios per breakpoint
 
 ### Img Component
 
-Use for simple responsive images with automatic WebP conversion:
+Basic usage:
+
+```twig
+{# Simple responsive image #}
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    width="100vw sm:50vw"
+/>
+
+{# With aspect ratio and focal point #}
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    width="100vw sm:50vw"
+    ratio="16:9"
+    focal="center"
+/>
+
+{# Optimized hero image #}
+<twig:img
+    src="/images/hero.jpg"
+    alt="Hero image"
+    width="100vw"
+    preload="true"
+    fetchpriority="high"
+/>
+```
+
+#### Available Attributes
+
+The `<twig:img>` component supports the following attributes:
 
 ```twig
 <twig:img
-    src="/images/hero.jpg"               # Required: Image source path
-    alt="Hero image"                     # Recommended: Alt text for accessibility
-    width="100vw sm:50vw md:400px        # Full width on mobile, half width on tablet, 400px on desktop
-    preset="hero"                        # Use preset
-    class="hero-image"                   # Any HTML attribute is supported
-    data-controller="zoom"               # Custom data attributes
-    aria-label="Hero section"            # ARIA attributes
-    preload="true"                       # Optional: Add preload link
-    fetchpriority="high"                 # Optional: Set high priority for LCP
-    loading="lazy"                       # Optional: Enable lazy loading
-    format="webp"                        # Output format (default: webp)
-    quality="80"                         # Optional: Image quality 0-100 (default: 80)
-    focal="center"                       # Optional: Focus point for cropping
-    fit="cover"                          # Optional: How image should fit dimensions
-    fallback="png"                       # Fallback format (default: auto)
-    background="#ffffff"                 # Optional: Background color for 'contain' fit
-    ratio="16:9"                         # Optional: Override aspect ratio
-    densities="x1 x2"                    # Optional: Generate different densities
+    # Required attributes
+    src="/images/hero.jpg"               # Image source path
+    alt="Hero image"                     # Alt text for accessibility
 
-    height="600"                         # TBD: Optional: Override height
-    placeholder="blur"                   # TBD: Enable blurred placeholder
+    # Common attributes
+    width="100vw sm:50vw md:400px"       # Responsive widths
+    densities="x1 x2"                    # Generate different densities
+    ratio="16:9"                         # Aspect ratio
+    preset="hero"                        # Use preset configuration
+    
+    # Optimization attributes
+    preload="true"                       # Add preload link
+    fetchpriority="high"                 # Set high priority for LCP
+    loading="lazy"                       # Enable lazy loading
+    
+    # Image processing attributes
+    format="webp"                        # Output format (default: webp)
+    quality="80"                         # Image quality 0-100 (default: 80)
+    focal="center"                       # Focus point for cropping
+    fit="cover"                          # How image should fit dimensions
+    fallback="png"                       # Fallback format (default: auto)
+    background="#ffffff"                 # Background color for 'contain' fit
+
+    # Standard HTML attributes
+    class="hero-image"                   # CSS classes
+    data-controller="zoom"               # Data attributes
+    aria-label="Hero section"            # ARIA attributes
+
+    # Coming soon
+    height="600"                         # Override height
+    placeholder="blur"                   # Enable blurred placeholder
 />
 ```
 
 ### Picture Component
 
-Use for art direction with different crops per screen size or orientation:
+Basic usage:
+
+```twig
+{# Different crops per breakpoint #}
+<twig:picture
+    src="/images/hero.jpg"
+    alt="Hero image"
+    width="100vw md:80vw"
+    ratio="sm:1:1 md:16:9"
+/>
+```
+
+#### Available Attributes
 
 ```twig
 <twig:picture
-    src="/images/hero.jpg"                 # Required: Image source path
-    alt="Hero image"                       # Recommended: Alt text for accessibility
-    class="hero-picture"                   # Any HTML attribute is supported
-    width="100vw md:80vw"                  # Responsive sizes per breakpoint
+    # Required attributes
+    src="/images/hero.jpg"                 # Image source path
+    alt="Hero image"                       # Alt text for accessibility
+
+    # Common attributes
+    width="100vw md:80vw"                 # Responsive sizes per breakpoint
+    class="hero-picture"                   # Any HTML attribute
+    
+    # Image processing attributes
     format="webp"                          # Output format (default: webp)
-    quality="80"                           # Optional: Image quality 0-100 (default: 80)
+    quality="80"                           # Image quality 0-100 (default: 80)
     fallback="auto"                        # Fallback format (default: auto)
 
-    ratio="sm:1:1 md:16:9"                 # TBD: Different aspect ratios per breakpoint
-    focal="sm:center md:0.5,0.3"           # TBD: Focus points per breakpoint
-    fit="sm:contain md:cover"              # TBD: Fit behavior per breakpoint
+    # Coming soon
+    ratio="sm:1:1 md:16:9"                # Different ratios per breakpoint
+    focal="sm:center md:0.5,0.3"          # Focus points per breakpoint
+    fit="sm:contain md:cover"             # Fit behavior per breakpoint
 />
 ```
 
@@ -256,7 +306,7 @@ You can combine densities with responsive sizes:
 The component will:
 
 - Generate 1x and 2x versions for each size
-- Include both width (w) and density (x) descriptors in srcset
+- Include both width (w) descriptors in srcset
 - Automatically calculate the correct dimensions for each density
 
 ### Fit Options (Cropping and Resizing)
@@ -339,32 +389,6 @@ Use `<twig:picture>` when you need different versions of the image:
 ```
 
 ## Common Use Cases
-
-### Simple Responsive Image
-
-```twig
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    width="100vw"
-    ratio="16:9"
-/>
-```
-
-### Hero Image (LCP Optimization)
-
-```twig
-<twig:img
-    src="/images/hero.jpg"
-    alt="Hero image"
-    ratio="16:9"
-    fit="cover"
-    focal="center"
-    fetchpriority="high"
-    preload="true"
-    width="100vw"
-/>
-```
 
 ### Product Image (Contained)
 
@@ -490,11 +514,43 @@ responsive_image:
 
 The bundle supports multiple providers for image transformation and optimization. Each provider is responsible for generating optimized image URLs and handling transformations. See [Providers](providers.md) for more information.
 
-Currently supported providers:
+**Currently supported providers:**
 
 - `placeholder` - Uses placeholder service for testing
-- TBD: `liip_imagine` - LiipImagineBundle
-- TBD: `cloudinary` - Cloudinary service
+
+**Coming soon:**
+
+- `liip_imagine`
+- `cloudinary`
+- `aliyun`
+- `aws_amplify`
+- `bunny`
+- `caisy`
+- `cloudflare`
+- `cloudimage`
+- `contentful`
+- `directus`
+- `edgio`
+- `fastly`
+- `glide`
+- `gumlet`
+- `hygraph`
+- `imageengine`
+- `imagekit`
+- `imgix`
+- `ipx`
+- `netlify`
+- `prepr`
+- `prismic`
+- `sanity`
+- `sirv`
+- `storyblok`
+- `strapi`
+- `twicpics`
+- `unsplash`
+- `uploadcare`
+- `vercel`
+- `weserv`
 
 ## Error Handling
 
