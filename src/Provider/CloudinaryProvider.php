@@ -95,8 +95,9 @@ class CloudinaryProvider implements ProviderInterface
         
         // Check if the source is an external URL
         if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
-            // Extract the path part after the last forward slash
-            $src = substr($src, strrpos($src, '/') + 1);
+            if (str_contains($src, '/upload/')) {
+                $src = substr($src, strpos($src, '/upload/') + 8);
+            }
         }
         
         $transformations = [];
