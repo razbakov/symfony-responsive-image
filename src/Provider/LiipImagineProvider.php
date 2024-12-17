@@ -66,11 +66,31 @@ class LiipImagineProvider implements ProviderInterface
         return 'liip_imagine';
     }
 
+    private function generateFilterName(array $modifiers): string
+    {
+        // Start with the base filter name
+        $baseName = $modifiers['filter'] ?? $this->defaultFilter;
+        unset($modifiers['filter']);
+        
+        // If no modifiers, return base filter name
+        if (empty($modifiers)) {
+            return $baseName;
+        }
+        
+        // Sort modifiers to ensure consistent hash for same modifiers
+        ksort($modifiers);
+        
+        // Create a hash of the modifiers
+        $modifierHash = substr(md5(json_encode($modifiers)), 0, 8);
+        
+        return $baseName . '_' . $modifierHash;
+    }
+
     public function getImage(string $src, array $modifiers): string
     {
         $src = ltrim($src, '/');
-        $filterName = $this->defaultFilter;
-
+        $filterName = $this->generateFilterName($modifiers);
+        
         // Handle viewport width
         if (isset($modifiers['width']) && str_contains($modifiers['width'], 'vw')) {
             $srcset = [];
@@ -78,7 +98,7 @@ class LiipImagineProvider implements ProviderInterface
                 $breakpointModifiers = $modifiers;
                 $breakpointModifiers['width'] = $breakpoint;
 
-                $url = $this->generateSecureUrl($src, $filterName, $breakpointModifiers);
+                $url = $this->generateSecureUrl($src, $this->generateFilterName($breakpointModifiers), $breakpointModifiers);
                 $srcset[] = "$url {$breakpoint}w";
             }
 
