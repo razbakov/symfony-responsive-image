@@ -7,8 +7,8 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 class LiipImagineProvider implements ProviderInterface
 {
     private CacheManager $cacheManager;
-    private string $defaultFilter;
-    private array $defaults;
+    private string $defaultFilter = 'default';
+    private array $defaults = [];
 
     /**
      * Map of modifier keys to Liip filter settings.
