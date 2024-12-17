@@ -109,8 +109,8 @@ Use for simple responsive images with automatic WebP conversion:
     ratio="16:9"                         # Optional: Override aspect ratio
     densities="x1 x2"                    # Optional: Generate different densities
 
-    height="600"                         # Optional: Override height
-    placeholder="blur"                   # Enable blurred placeholder
+    height="600"                         # TBD: Optional: Override height
+    placeholder="blur"                   # TBD: Enable blurred placeholder
 />
 ```
 
@@ -128,9 +128,9 @@ Use for art direction with different crops per screen size or orientation:
     quality="80"                           # Optional: Image quality 0-100 (default: 80)
     fallback="auto"                        # Fallback format (default: auto)
 
-    ratio="sm:1:1 md:16:9"                 # Different aspect ratios per breakpoint
-    focal="sm:center md:0.5,0.3"           # Focus points per breakpoint
-    fit="sm:contain md:cover"              # Fit behavior per breakpoint
+    ratio="sm:1:1 md:16:9"                 # TBD: Different aspect ratios per breakpoint
+    focal="sm:center md:0.5,0.3"           # TBD: Focus points per breakpoint
+    fit="sm:contain md:cover"              # TBD: Fit behavior per breakpoint
 />
 ```
 
@@ -466,6 +466,7 @@ Default settings in `config/packages/responsive_image.yaml`:
 
 ```yaml
 responsive_image:
+  provider: "liip_imagine" # see below for providers
   missing_image_placeholder: "/path/to/404-placeholder.jpg"
   defaults:
     breakpoints:
@@ -488,6 +489,12 @@ responsive_image:
 ## Providers
 
 The bundle supports multiple providers for image transformation and optimization. Each provider is responsible for generating optimized image URLs and handling transformations. See [Providers](providers.md) for more information.
+
+Currently supported providers:
+
+- `placeholder` - Uses placeholder service for testing
+- TBD: `liip_imagine` - LiipImagineBundle
+- TBD: `cloudinary` - Cloudinary service
 
 ## Error Handling
 
