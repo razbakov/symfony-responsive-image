@@ -517,11 +517,12 @@ The bundle supports multiple providers for image transformation and optimization
 **Currently supported providers:**
 
 - `placeholder` - Uses placeholder service for testing
+- `cloudinary`
+- `fastly`
+- `liip_imagine`
 
 **Coming soon:**
 
-- `liip_imagine`
-- `cloudinary`
 - `aliyun`
 - `aws_amplify`
 - `bunny`
@@ -531,7 +532,6 @@ The bundle supports multiple providers for image transformation and optimization
 - `contentful`
 - `directus`
 - `edgio`
-- `fastly`
 - `glide`
 - `gumlet`
 - `hygraph`
