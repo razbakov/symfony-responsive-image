@@ -92,7 +92,7 @@ class CloudinaryProvider implements ProviderInterface
     {
         // Remove any leading slashes
         $src = ltrim($src, '/');
-        
+
         // Check if the source is an external URL
         if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
             if (str_contains($src, '/upload/')) {
@@ -102,7 +102,7 @@ class CloudinaryProvider implements ProviderInterface
                 $src = substr($src, strpos($src, '/upload/') + 8);
             }
         }
-        
+
         $transformations = [];
 
         // Merge defaults with provided modifiers
@@ -153,8 +153,8 @@ class CloudinaryProvider implements ProviderInterface
             }
 
             // Format the transformation
-            $transformation = str_contains($cloudinaryKey, '_') 
-                ? $cloudinaryKey.':'.$value 
+            $transformation = str_contains($cloudinaryKey, '_')
+                ? $cloudinaryKey.':'.$value
                 : $cloudinaryKey.'_'.$value;
 
             // Store with priority if defined, otherwise use a high number
@@ -169,7 +169,7 @@ class CloudinaryProvider implements ProviderInterface
         // Build the final URL
         $transformationString = implode(',', $transformations);
 
-        return sprintf(
+        return \sprintf(
             '%s/%s%s',
             rtrim($this->baseUrl, '/'),
             $transformationString ? $transformationString.'/' : '',

@@ -59,23 +59,23 @@ class PlaceholderProvider implements ProviderInterface
         }
 
         // Handle ratio if specified
-        if (isset($params['ratio']) && $params['ratio'] !== null) {
+        if (isset($params['ratio']) && null !== $params['ratio']) {
             if (preg_match('/^(\d+):(\d+)$/', $params['ratio'], $matches)) {
                 $ratioWidth = (int) $matches[1];
                 $ratioHeight = (int) $matches[2];
-                if (!isset($params['height']) || $params['height'] === null) {
+                if (!isset($params['height']) || null === $params['height']) {
                     $params['height'] = (int) ($params['width'] * $ratioHeight / $ratioWidth);
                 }
             }
         }
 
         // Set height to width if still not specified
-        if (!isset($params['height']) || $params['height'] === null) {
+        if (!isset($params['height']) || null === $params['height']) {
             $params['height'] = $params['width'];
         }
 
         // Set default text if not specified
-        if (!isset($params['text']) || $params['text'] === null) {
+        if (!isset($params['text']) || null === $params['text']) {
             $params['text'] = \sprintf('%dx%d', $params['width'], $params['height']);
         }
 

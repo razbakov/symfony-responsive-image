@@ -2,8 +2,8 @@
 
 namespace Ommax\ResponsiveImageBundle\Provider;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LiipImagineProvider implements ProviderInterface
 {
@@ -13,7 +13,7 @@ class LiipImagineProvider implements ProviderInterface
     private array $defaults = [];
 
     /**
-     * Default breakpoints for responsive images (in pixels)
+     * Default breakpoints for responsive images (in pixels).
      */
     private const DEFAULT_BREAKPOINTS = [640, 768, 1024, 1280, 1536];
 
@@ -49,7 +49,7 @@ class LiipImagineProvider implements ProviderInterface
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
-        SignerInterface $signer
+        SignerInterface $signer,
     ) {
         $this->urlGenerator = $urlGenerator;
         $this->signer = $signer;
@@ -77,13 +77,14 @@ class LiipImagineProvider implements ProviderInterface
             foreach (self::DEFAULT_BREAKPOINTS as $breakpoint) {
                 $breakpointModifiers = $modifiers;
                 $breakpointModifiers['width'] = $breakpoint;
-                
+
                 $url = $this->generateSecureUrl($src, $filterName, $breakpointModifiers);
                 $srcset[] = "$url {$breakpoint}w";
             }
 
             $defaultUrl = $this->generateSecureUrl($src, $filterName, $modifiers);
-            return $defaultUrl . '" srcset="' . implode(', ', $srcset) . '" sizes="' . $modifiers['width'];
+
+            return $defaultUrl.'" srcset="'.implode(', ', $srcset).'" sizes="'.$modifiers['width'];
         }
 
         return $this->generateSecureUrl($src, $filterName, $modifiers);
@@ -98,7 +99,7 @@ class LiipImagineProvider implements ProviderInterface
             'filter' => $filter,
             'path' => $path,
             'hash' => $hash,
-            'filters' => $runtimeConfig
+            'filters' => $runtimeConfig,
         ], UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 
@@ -116,10 +117,10 @@ class LiipImagineProvider implements ProviderInterface
 
             if ('width' === $key || 'height' === $key) {
                 // Remove 'vw' suffix if present
-                if (is_string($value) && str_contains($value, 'vw')) {
+                if (\is_string($value) && str_contains($value, 'vw')) {
                     $value = (int) str_replace('vw', '', $value);
                 }
-                
+
                 $runtimeConfig['size'] = $runtimeConfig['size'] ?? [
                     'width' => null,
                     'height' => null,

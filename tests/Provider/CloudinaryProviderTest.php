@@ -124,4 +124,4 @@ class CloudinaryProviderTest extends TestCase
             $result
         );
     }
-} 
+}
