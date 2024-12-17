@@ -125,7 +125,6 @@ Use for art direction with different crops per screen size or orientation:
     class="hero-picture"                   # Any HTML attribute is supported
     width="100vw md:80vw"                  # Responsive sizes per breakpoint
     format="webp"                          # Output format (default: webp)
-
     quality="80"                           # Optional: Image quality 0-100 (default: 80)
     fallback="auto"                        # Fallback format (default: auto)
 
