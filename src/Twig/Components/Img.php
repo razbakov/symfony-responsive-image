@@ -37,6 +37,7 @@ class Img
     public ?string $placeholderClass = null;
     public ?string $sizes = null;
     public ?string $srcset = null;
+    public ?string $densities = null;
 
     protected array $widths = [];
 
@@ -81,6 +82,7 @@ class Img
                 'crossorigin',
                 'decoding',
                 'format',
+                'densities',
             ]);
 
         // Allow any data-* and aria-* attributes
@@ -118,6 +120,7 @@ class Img
         $resolver->setAllowedTypes('title', ['string', 'null']);
         $resolver->setAllowedTypes('crossorigin', ['string', 'null']);
         $resolver->setAllowedTypes('decoding', ['string', 'null']);
+        $resolver->setAllowedTypes('densities', ['string', 'null']);
 
         if (isset($data['preset'])) {
             $presetName = $data['preset'];
@@ -149,6 +152,7 @@ class Img
         ?string $fallback = null,
         ?string $background = null,
         ?string $ratio = null,
+        ?string $densities = null,
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -163,6 +167,7 @@ class Img
         $this->fallback = $fallback;
         $this->background = $background;
         $this->ratio = $ratio;
+        $this->densities = $densities;
 
         if (null !== $preload) {
             $this->preload = $preload;
@@ -178,12 +183,53 @@ class Img
             // For the main src, apply fallback format
             $this->srcComputed = $this->getImage(['width' => $this->widthComputed], true);
 
+            // Handle additional sizes from densities
+            if ($this->densities) {
+                $densityMultipliers = array_map(
+                    fn($d) => (float) str_replace('x', '', trim($d)),
+                    explode(' ', $this->densities)
+                );
+                
+                // For fixed widths, create a simple array of widths
+                if (!str_contains($this->width, 'vw') && !str_contains($this->width, ':')) {
+                    $widthsForSrcset = [];
+                    foreach ($densityMultipliers as $multiplier) {
+                        $widthsForSrcset[] = (int) ($this->widthComputed * $multiplier);
+                    }
+                    sort($widthsForSrcset);
+                    
+                    // Build srcset manually for fixed widths
+                    $srcsetParts = [];
+                    foreach ($widthsForSrcset as $w) {
+                        $srcsetParts[] = $this->getImage(['width' => $w], false) . ' ' . $w . 'w';
+                    }
+                    $this->srcset = implode(', ', $srcsetParts);
+                } else {
+                    // Add additional widths based on density multipliers
+                    foreach ($densityMultipliers as $multiplier) {
+                        $additionalWidth = (int) ($this->widthComputed * $multiplier);
+                        if (!in_array($additionalWidth, $this->widths)) {
+                            $this->widths[] = $additionalWidth;
+                        }
+                    }
+                    
+                    // Sort widths to ensure proper order
+                    sort($this->widths);
+                    
+                    // Generate srcset with all widths
+                    $this->srcset = $this->transformer->getSrcset(
+                        $this->src,
+                        $this->widths,
+                        fn ($modifiers) => $this->getImage($modifiers, false)
+                    );
+                }
+            }
             // Generate srcset and sizes for responsive widths or breakpoint patterns
-            if (str_contains($this->width, 'vw') || str_contains($this->width, ':')) {
+            elseif (str_contains($this->width, 'vw') || str_contains($this->width, ':')) {
                 $this->srcset = $this->transformer->getSrcset(
                     $this->src,
                     $this->widths,
-                    fn ($modifiers) => $this->getImage($modifiers, false) // Don't apply fallback for srcset
+                    fn ($modifiers) => $this->getImage($modifiers, false)
                 );
                 $this->sizes = $this->transformer->getSizes($this->widths);
             }
