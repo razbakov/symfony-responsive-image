@@ -16,17 +16,24 @@ class ImgTest extends KernelTestCase
 
     /** @var ProviderInterface&MockObject */
     private ProviderInterface $provider;
+
+    /** @var ProviderInterface&MockObject */
+    private ProviderInterface $customProvider;
+
     private PreloadManager $preloadManager;
+
+    private ProviderRegistry $registry;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $container = static::getContainer();
-        $registry = $container->get(ProviderRegistry::class);
+        $this->registry = $container->get(ProviderRegistry::class);
         $this->preloadManager = $container->get(PreloadManager::class);
         $this->preloadManager->reset();
 
+        // Setup default mock provider
         $this->provider = $this->createMock(ProviderInterface::class);
         $this->provider->method('getName')->willReturn('mock');
         $this->provider
@@ -35,8 +42,8 @@ class ImgTest extends KernelTestCase
                 return $src.'?'.http_build_query($modifiers);
             });
 
-        $registry->addProvider($this->provider);
-        $registry->setDefaultProvider('mock');
+        $this->registry->addProvider($this->provider);
+        $this->registry->setDefaultProvider('mock');
     }
 
     public function testComponentMount(): void
@@ -460,5 +467,29 @@ class ImgTest extends KernelTestCase
         );
 
         $this->assertStringContainsString('src="/image.jpg?width=400&amp;ratio=16%3A9"', $rendered);
+    }
+
+    public function testCustomProvider(): void
+    {
+        $this->customProvider = $this->createMock(ProviderInterface::class);
+        $this->customProvider->method('getName')->willReturn('custom');
+        $this->customProvider
+            ->method('getImage')
+            ->willReturnCallback(function ($src, $modifiers) {
+                return 'custom://'.$src.'?'.http_build_query($modifiers);
+            });
+
+        $this->registry->addProvider($this->customProvider);
+
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'provider' => 'custom',
+            ]
+        );
+
+        $this->assertStringContainsString('src="custom:///image.jpg?width=400"', $rendered);
     }
 }

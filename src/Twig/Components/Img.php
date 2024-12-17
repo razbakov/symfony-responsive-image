@@ -39,6 +39,7 @@ class Img
     public ?string $srcset = null;
     public ?string $densities = null;
     public ?array $modifiers = null;
+    public ?string $provider = null;
 
     protected array $widths = [];
 
@@ -85,6 +86,7 @@ class Img
                 'format',
                 'densities',
                 'modifiers',
+                'provider',
             ]);
 
         // Allow any data-* and aria-* attributes
@@ -124,6 +126,7 @@ class Img
         $resolver->setAllowedTypes('decoding', ['string', 'null']);
         $resolver->setAllowedTypes('densities', ['string', 'null']);
         $resolver->setAllowedTypes('modifiers', ['array', 'null']);
+        $resolver->setAllowedTypes('provider', ['string', 'null']);
 
         if (isset($data['preset'])) {
             $presetName = $data['preset'];
@@ -157,6 +160,7 @@ class Img
         ?string $ratio = null,
         ?string $densities = null,
         ?array $modifiers = null,
+        ?string $provider = null,
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -173,6 +177,7 @@ class Img
         $this->ratio = $ratio;
         $this->densities = $densities;
         $this->modifiers = $modifiers;
+        $this->provider = $provider;
 
         if (null !== $preload) {
             $this->preload = $preload;
@@ -290,7 +295,7 @@ class Img
             $modifiers = array_merge($modifiers, $this->modifiers);
         }
 
-        return $this->providerRegistry->getProvider()->getImage($this->src, $modifiers);
+        return $this->providerRegistry->getProvider($this->provider)->getImage($this->src, $modifiers);
     }
 
     protected function getImageExtension(): string
