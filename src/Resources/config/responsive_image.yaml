@@ -48,6 +48,12 @@ responsive_image:
         text_color: "FFFFFF"
         ratio: null
 
+    fastly:
+      base_url: "%env(FASTLY_URL)%"
+      default_transformations:
+        - ["format", "auto"]
+        - ["quality", "85"]
+
   # Predefined presets for common use cases
   presets:
     thumbnail:

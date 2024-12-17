@@ -1,5 +1,6 @@
 parameters:
   env(CLOUDINARY_URL): "https://res.cloudinary.com/your-cloud-name/image/upload"
+  env(FASTLY_URL): "https://www.fastly.io"
 
 services:
   _defaults:
