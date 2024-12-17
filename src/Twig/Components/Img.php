@@ -233,6 +233,10 @@ class Img
             $modifiers['focal'] = $this->focal;
         }
 
+        if ($this->background) {
+            $modifiers['background'] = $this->background;
+        }
+
         if (isset($modifiers['width'])) {
             $modifiers['width'] = (int) $modifiers['width'];
         }

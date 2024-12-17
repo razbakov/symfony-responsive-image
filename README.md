@@ -104,13 +104,12 @@ Use for simple responsive images with automatic WebP conversion:
     quality="80"                         # Optional: Image quality 0-100 (default: 80)
     focal="center"                       # Optional: Focus point for cropping
     fit="cover"                          # Optional: How image should fit dimensions
-
-    fallback="auto"                      # Fallback format (default: auto)
+    fallback="png"                       # Fallback format (default: auto)
+    background="#ffffff"                 # Optional: Background color for 'contain' fit
 
     ratio="16:9"                         # Optional: Override aspect ratio
     height="600"                         # Optional: Override height
     densities="x1 x2"                    # Optional: Generate different densities
-    background="#ffffff"                 # Optional: Background color for 'contain' fit
     placeholder="blur"                   # Enable blurred placeholder
 />
 ```

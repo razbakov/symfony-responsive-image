@@ -377,6 +377,20 @@ class ImgTest extends KernelTestCase
         $this->assertStringContainsString('src="/image.jpg?width=400&amp;fit=contain"', $rendered);
     }
 
+    public function testBackgroundParameter(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'background' => '#ffffff',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=400&amp;background=#ffffff"', $rendered);
+    }
+
     public function testFocalParameter(): void
     {
         $rendered = $this->renderTwigComponent(
