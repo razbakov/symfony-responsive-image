@@ -7,7 +7,7 @@ class PlaceholderProvider implements ProviderInterface
     private const BASE_URL = 'https://placehold.co';
 
     /**
-     * Map of modifier keys to Placeholder parameters
+     * Map of modifier keys to Placeholder parameters.
      */
     private const KEY_MAP = [
         'width' => 'width',
@@ -38,14 +38,14 @@ class PlaceholderProvider implements ProviderInterface
     public function getImage(string $src, array $modifiers): string
     {
         $params = $this->processModifiers($modifiers);
-        
+
         return $this->buildUrl($params);
     }
 
     private function processModifiers(array $modifiers): array
     {
         $params = [];
-        
+
         // Process each modifier using KEY_MAP
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
@@ -64,24 +64,24 @@ class PlaceholderProvider implements ProviderInterface
         }
 
         // Handle ratio if specified
-        if ($params['ratio'] !== null) {
+        if (null !== $params['ratio']) {
             if (preg_match('/^(\d+):(\d+)$/', $params['ratio'], $matches)) {
-                $ratioWidth = (int)$matches[1];
-                $ratioHeight = (int)$matches[2];
-                if ($params['height'] === null) {
-                    $params['height'] = (int)($params['width'] * $ratioHeight / $ratioWidth);
+                $ratioWidth = (int) $matches[1];
+                $ratioHeight = (int) $matches[2];
+                if (null === $params['height']) {
+                    $params['height'] = (int) ($params['width'] * $ratioHeight / $ratioWidth);
                 }
             }
         }
 
         // Set height to width if still not specified
-        if ($params['height'] === null) {
+        if (null === $params['height']) {
             $params['height'] = $params['width'];
         }
 
         // Set default text if not specified
-        if ($params['text'] === null) {
-            $params['text'] = sprintf('%dx%d', $params['width'], $params['height']);
+        if (null === $params['text']) {
+            $params['text'] = \sprintf('%dx%d', $params['width'], $params['height']);
         }
 
         // Clean up color values
@@ -93,7 +93,7 @@ class PlaceholderProvider implements ProviderInterface
 
     private function buildUrl(array $params): string
     {
-        return sprintf(
+        return \sprintf(
             '%s/%dx%d/%s/%s?text=%s',
             self::BASE_URL,
             $params['width'],

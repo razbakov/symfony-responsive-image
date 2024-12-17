@@ -8,7 +8,7 @@ class CloudinaryProvider implements ProviderInterface
     private array $defaultTransformations;
 
     /**
-     * Map of modifier keys to Cloudinary parameters
+     * Map of modifier keys to Cloudinary parameters.
      */
     private const KEY_MAP = [
         'width' => 'w',
@@ -39,7 +39,7 @@ class CloudinaryProvider implements ProviderInterface
     ];
 
     /**
-     * Map of modifier values to Cloudinary values
+     * Map of modifier values to Cloudinary values.
      */
     private const VALUE_MAP = [
         'fit' => [
@@ -120,23 +120,23 @@ class CloudinaryProvider implements ProviderInterface
                     $value = $this->convertHexToRgb($value);
                     break;
                 case 'roundCorner':
-                    if ($value === 'max') {
+                    if ('max' === $value) {
                         $value = 'max';
-                    } elseif (strpos($value, ':') !== false) {
+                    } elseif (str_contains($value, ':')) {
                         $value = str_replace(':', '_', $value);
                     }
                     break;
                 case 'blur':
                     $cloudinaryKey = 'e';
-                    $value = 'blur:' . $value;
+                    $value = 'blur:'.$value;
                     break;
             }
 
             // Handle special formatting for certain keys
             if (str_contains($cloudinaryKey, '_')) {
-                $transformations[] = $cloudinaryKey . ':' . $value;
+                $transformations[] = $cloudinaryKey.':'.$value;
             } else {
-                $transformations[] = $cloudinaryKey . '_' . $value;
+                $transformations[] = $cloudinaryKey.'_'.$value;
             }
         }
 
@@ -145,8 +145,8 @@ class CloudinaryProvider implements ProviderInterface
 
         // Build the final URL
         $transformationString = implode(',', $transformations);
-        
-        return sprintf(
+
+        return \sprintf(
             '%s/%s/%s',
             $this->baseUrl,
             $transformationString ? $transformationString.'/' : '',
@@ -156,6 +156,6 @@ class CloudinaryProvider implements ProviderInterface
 
     private function convertHexToRgb(string $value): string
     {
-        return str_starts_with($value, '#') ? 'rgb_' . ltrim($value, '#') : $value;
+        return str_starts_with($value, '#') ? 'rgb_'.ltrim($value, '#') : $value;
     }
 }

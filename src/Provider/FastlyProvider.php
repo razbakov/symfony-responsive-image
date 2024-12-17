@@ -8,7 +8,7 @@ class FastlyProvider implements ProviderInterface
     private array $defaultTransformations;
 
     /**
-     * Map of modifier keys to Fastly parameters
+     * Map of modifier keys to Fastly parameters.
      */
     private const KEY_MAP = [
         'width' => 'width',
@@ -21,7 +21,7 @@ class FastlyProvider implements ProviderInterface
     ];
 
     /**
-     * Map of modifier values to Fastly values
+     * Map of modifier values to Fastly values.
      */
     private const VALUE_MAP = [
         'fit' => [
@@ -64,29 +64,29 @@ class FastlyProvider implements ProviderInterface
             }
 
             // Handle special cases
-            if ($key === 'background') {
+            if ('background' === $key) {
                 $value = ltrim($value, '#');
-            } elseif ($key === 'ratio' && preg_match('/^(\d+):(\d+)$/', $value, $matches)) {
-                $value = $matches[1] . '/' . $matches[2];
+            } elseif ('ratio' === $key && preg_match('/^(\d+):(\d+)$/', $value, $matches)) {
+                $value = $matches[1].'/'.$matches[2];
             }
 
-            $transformations[] = $fastlyKey . '=' . $value;
+            $transformations[] = $fastlyKey.'='.$value;
         }
 
         // Merge with default transformations
         $transformations = array_merge(
-            array_map(fn($t) => "$t[0]=$t[1]", $this->defaultTransformations),
+            array_map(fn ($t) => "$t[0]=$t[1]", $this->defaultTransformations),
             $transformations
         );
 
         // Build the final URL
         $queryString = implode('&', $transformations);
-        
-        return sprintf(
+
+        return \sprintf(
             '%s/%s%s',
             rtrim($this->baseUrl, '/'),
             $src,
-            $queryString ? '?' . $queryString : ''
+            $queryString ? '?'.$queryString : ''
         );
     }
-} 
+}

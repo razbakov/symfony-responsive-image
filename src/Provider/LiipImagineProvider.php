@@ -10,7 +10,7 @@ class LiipImagineProvider implements ProviderInterface
     private string $defaultFilter;
 
     /**
-     * Map of modifier keys to Liip filter settings
+     * Map of modifier keys to Liip filter settings.
      */
     private const KEY_MAP = [
         'width' => 'size',
@@ -23,7 +23,7 @@ class LiipImagineProvider implements ProviderInterface
     ];
 
     /**
-     * Map of modifier values to Liip values
+     * Map of modifier values to Liip values.
      */
     private const VALUE_MAP = [
         'fit' => [
@@ -41,7 +41,7 @@ class LiipImagineProvider implements ProviderInterface
 
     public function __construct(
         CacheManager $cacheManager,
-        array $config = []
+        array $config = [],
     ) {
         $this->cacheManager = $cacheManager;
         $this->defaultFilter = $config['default_filter'] ?? 'default';
@@ -75,7 +75,7 @@ class LiipImagineProvider implements ProviderInterface
             $liipKey = self::KEY_MAP[$key];
 
             // Handle special cases
-            if ($key === 'width' || $key === 'height') {
+            if ('width' === $key || 'height' === $key) {
                 $runtimeConfig['size'] = $runtimeConfig['size'] ?? [
                     'width' => null,
                     'height' => null,
@@ -90,7 +90,7 @@ class LiipImagineProvider implements ProviderInterface
             }
 
             // Handle ratio parsing
-            if ($key === 'ratio' && preg_match('/^(\d+):(\d+)$/', $value, $matches)) {
+            if ('ratio' === $key && preg_match('/^(\d+):(\d+)$/', $value, $matches)) {
                 $value = [
                     'width' => (int) $matches[1],
                     'height' => (int) $matches[2],
