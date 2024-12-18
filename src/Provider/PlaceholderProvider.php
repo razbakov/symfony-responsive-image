@@ -4,11 +4,10 @@ namespace Ommax\ResponsiveImageBundle\Provider;
 
 class PlaceholderProvider implements ProviderInterface
 {
+    private array $defaults = [];
+
     private const BASE_URL = 'https://placehold.co';
 
-    /**
-     * Map of modifier keys to Placeholder parameters.
-     */
     private const KEY_MAP = [
         'width' => 'width',
         'height' => 'height',
@@ -17,8 +16,6 @@ class PlaceholderProvider implements ProviderInterface
         'text_color' => 'textColor',
         'ratio' => 'ratio',
     ];
-
-    private array $defaults;
 
     public function configure(array $config): void
     {

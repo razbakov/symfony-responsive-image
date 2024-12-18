@@ -7,9 +7,6 @@ class FastlyProvider implements ProviderInterface
     private string $baseUrl = '';
     private array $defaults = [];
 
-    /**
-     * Map of modifier keys to Fastly parameters.
-     */
     private const KEY_MAP = [
         'width' => 'width',
         'height' => 'height',
@@ -20,9 +17,6 @@ class FastlyProvider implements ProviderInterface
         'ratio' => 'aspect-ratio',
     ];
 
-    /**
-     * Map of modifier values to Fastly values.
-     */
     private const VALUE_MAP = [
         'fit' => [
             'fill' => 'crop',

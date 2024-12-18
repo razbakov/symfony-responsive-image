@@ -7,14 +7,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LiipImagineProvider implements ProviderInterface
 {
-    private UrlGeneratorInterface $urlGenerator;
-    private SignerInterface $signer;
     private string $defaultFilter = 'default';
     private array $defaults = [];
 
-    /**
-     * Map of modifier keys to Liip filter settings.
-     */
+    private UrlGeneratorInterface $urlGenerator;
+    private SignerInterface $signer;
+
     private const KEY_MAP = [
         'width' => 'size',
         'height' => 'size',
@@ -25,9 +23,6 @@ class LiipImagineProvider implements ProviderInterface
         'ratio' => 'ratio',
     ];
 
-    /**
-     * Map of modifier values to Liip values.
-     */
     private const VALUE_MAP = [
         'fit' => [
             'fill' => 'outbound',

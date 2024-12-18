@@ -7,9 +7,6 @@ class CloudinaryProvider implements ProviderInterface
     private string $baseUrl = '';
     private array $defaults = [];
 
-    /**
-     * Map of modifier keys to Cloudinary parameters.
-     */
     private const KEY_MAP = [
         'width' => 'w',
         'height' => 'h',
@@ -38,9 +35,6 @@ class CloudinaryProvider implements ProviderInterface
         'blur' => 'e_blur',
     ];
 
-    /**
-     * Map of modifier values to Cloudinary values.
-     */
     private const VALUE_MAP = [
         'fit' => [
             'fill' => 'fill',
