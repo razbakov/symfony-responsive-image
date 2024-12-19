@@ -43,36 +43,60 @@ This bundle shows promise as a production-ready solution for responsive image ha
 
 ### Areas for Improvement
 
-#### Documentation Gaps
-
-- No mention of caching strategy for generated images
-- Missing information about cleanup of generated images
-- No documentation about handling image upload/storage
-- No performance benchmarks or metrics
-
 #### Technical Considerations
 
-- Use configuration from `responsive_image.yaml` for default values, remove from component defaults.
 - Security: Generate a Secure Hash for Each Request: Use a cryptographic hash (like SHA-256) that includes: The transformation parameters (e.g., dimensions, crop, etc.). A server-side secret key to ensure requests can’t be forged.
 - Fallback for src in img component: The image URL. Mandatory for the `<img>` element. On browsers supporting srcset, src is treated like a candidate image with a pixel density descriptor 1x, unless an image with this pixel density descriptor is already defined in srcset, or unless srcset contains w descriptors.
 - Support transformation from svg to webp, png, jpg, etc.
-- Add densities for picture component
 - Request Caching: Cache generated files and serve them for repeated requests instead of processing transformations each time.
-- No mention of memory limits for large image processing
-- Missing information about concurrent image processing
-- No details about queue system for bulk image processing
-- No mention of CDN integration guidelines
 
-#### Error Handling
+1. **Error Handling**:
+   - The `CloudinaryProvider` lacks proper error handling. There's no validation or error handling for invalid URLs, malformed configurations, or failed transformations.
+   - No exceptions are thrown when required configuration is missing (like `base_url`).
 
-- Could provide more details about error logging format
-- Missing information about monitoring recommendations
-- No mention of rate limiting for image generation
-- Could add details about failure recovery
+2. **Type Safety**:
+   - The `modifiers` array values are not type-checked before use.
+   - No validation of input parameters in the `getImage` method.
+   - The code assumes certain array keys exist without checking (`$config['base_url']`).
 
-#### Integration
+3. **Magic Values**:
+   - Extensive use of magic strings in `KEY_MAP` and `VALUE_MAP`.
+   - Hardcoded values like '/upload/' in URL parsing.
+   - Magic number 999 used as default priority.
 
-- Could add examples for popular frameworks (API Platform, EasyAdmin)
-- Missing CI/CD pipeline recommendations
-- No mention of Docker configuration
-- Could add Kubernetes deployment examples
+4. **Configuration**:
+   - The `configure` method accepts any array structure without validation.
+   - No schema validation for the configuration array.
+   - Default values are not well-documented.
+
+5. **Code Organization**:
+   - Large transformation maps (`KEY_MAP`, `VALUE_MAP`) could be moved to separate configuration files.
+   - The `getImage` method is too long (violates Single Responsibility Principle).
+   - Complex URL manipulation logic mixed with transformation logic.
+
+6. **Documentation**:
+   - Missing PHPDoc blocks for class properties.
+   - No documentation for the complex transformation logic.
+   - No documentation for the expected format of the `$modifiers` array.
+
+7. **Security**:
+   - No sanitization of input URLs.
+   - No validation of file extensions or MIME types.
+   - Potential security risk in URL manipulation.
+
+8. **Performance**:
+   - Multiple string operations in URL processing could be optimized.
+   - Array merging and transformation sorting happens on every request.
+   - No caching mechanism for transformed URLs.
+
+9. **Maintainability**:
+   - Complex nested conditionals in URL processing.
+   - Hard to extend transformation logic due to tight coupling.
+   - No logging mechanism for debugging purposes.
+
+10. **Testing**:
+    - Complex transformation logic makes unit testing difficult.
+    - No clear separation between URL building and transformation logic makes testing harder.
+    - Many implicit dependencies that are hard to mock.
+
+These issues could impact the reliability, security, and maintainability of the code.
