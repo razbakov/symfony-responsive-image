@@ -9,30 +9,42 @@ class Picture extends Img
 {
     public function getBreakpoints(): array
     {
-        if (!$this->width || !str_contains($this->width, ':')) {
+        if (!$this->width) {
+            return [];
+        }
+
+        // Handle viewport width units
+        if (str_contains($this->width, 'vw')) {
+            $breakpoints = [];
+            
+            foreach ($this->transformer->getBreakpoints() as $breakpoint => $size) {
+                $breakpoints[] = [
+                    'media' => "(min-width: {$size}px)",
+                    'srcset' => $this->getImage(['width' => $size]) . " {$size}w",
+                    'sizes' => $this->width,
+                ];
+            }
+            
+            return $breakpoints;
+        }
+
+        // Handle regular breakpoints
+        if (!str_contains($this->width, ':')) {
             return [];
         }
 
         $breakpoints = [];
         $widths = $this->transformer->parseWidth($this->width);
+        $configuredBreakpoints = $this->transformer->getBreakpoints();
 
         foreach ($widths as $breakpoint => $width) {
             if ('default' === $breakpoint) {
                 continue;
             }
 
-            $minWidth = match ($breakpoint) {
-                'sm' => '640px',
-                'md' => '768px',
-                'lg' => '1024px',
-                'xl' => '1280px',
-                '2xl' => '1536px',
-                default => null,
-            };
-
-            if ($minWidth) {
+            if (isset($configuredBreakpoints[$breakpoint])) {
                 $breakpoints[] = [
-                    'media' => "(min-width: {$minWidth})",
+                    'media' => "(min-width: {$configuredBreakpoints[$breakpoint]}px)",
                     'srcset' => $this->getImage(['width' => $width['value']]),
                 ];
             }
@@ -43,9 +55,24 @@ class Picture extends Img
 
     public function getSrcComputed(): string
     {
+        if (str_contains($this->width, 'vw')) {
+            // Use the smallest configured breakpoint
+            $smallestBreakpoint = min($this->transformer->getBreakpoints());
+            return $this->getImage(['width' => $smallestBreakpoint]);
+        }
+
         $widths = $this->transformer->parseWidth($this->width);
         $width = $widths['default'] ?? array_shift($widths);
 
         return $this->getImage(['width' => $width['value']]);
+    }
+
+    public function getSizes(): ?string
+    {
+        if (str_contains($this->width, 'vw')) {
+            return $this->width;
+        }
+
+        return null;
     }
 }

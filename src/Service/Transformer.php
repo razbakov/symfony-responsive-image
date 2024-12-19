@@ -293,4 +293,9 @@ class Transformer
 
         return $widths;
     }
+
+    public function getBreakpoints(): array
+    {
+        return $this->breakpoints;
+    }
 }

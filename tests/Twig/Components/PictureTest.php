@@ -120,4 +120,23 @@ class PictureTest extends KernelTestCase
         $this->assertStringContainsString('srcset="/image.jpg?width=100"', $rendered);
         $this->assertStringContainsString('srcset="/image.jpg?width=200"', $rendered);
     }
+
+    public function testViewportWidthUnit(): void
+    {
+        $rendered = $this->renderTwigComponent(
+            name: 'picture',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '100vw',
+            ]
+        );
+
+        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=640 640w"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=768 768w"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=1024 1024w"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=1280 1280w"', $rendered);
+        $this->assertStringContainsString('srcset="/image.jpg?width=1536 1536w"', $rendered);
+        $this->assertStringContainsString('sizes="100vw"', $rendered);
+    }
 }
