@@ -44,27 +44,13 @@ class Picture extends Img
 
             if (isset($configuredBreakpoints[$breakpoint])) {
                 $breakpoints[] = [
-                    'media' => "(min-width: {$configuredBreakpoints[$breakpoint]}px)",
+                    'media' => "(max-width: {$configuredBreakpoints[$breakpoint]}px)",
                     'srcset' => $this->getImage(['width' => $width['value']]),
                 ];
             }
         }
 
         return $breakpoints;
-    }
-
-    public function getSrcComputed(): string
-    {
-        if (str_contains($this->width, 'vw')) {
-            // Use the smallest configured breakpoint
-            $smallestBreakpoint = min($this->transformer->getBreakpoints());
-            return $this->getImage(['width' => $smallestBreakpoint]);
-        }
-
-        $widths = $this->transformer->parseWidth($this->width);
-        $width = $widths['default'] ?? array_shift($widths);
-
-        return $this->getImage(['width' => $width['value']]);
     }
 
     public function getSizes(): ?string

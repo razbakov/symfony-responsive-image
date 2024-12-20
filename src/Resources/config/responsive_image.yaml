@@ -28,6 +28,10 @@ responsive_image:
     # Placeholder settings
     placeholder: none
 
+    # Fallback settings
+    fallback: lg
+    fallback_format: auto
+
   # Provider-specific configuration
   providers:
     liip_imagine:

@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsTwigComponent('img', template: '@ResponsiveImage/components/img.html.twig')]
 class Img
@@ -16,7 +17,6 @@ class Img
     public const EMPTY_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
     public string $src;
-    public ?string $srcComputed = null;
     public ?string $alt = null;
     public ?string $width = null;
     public ?int $widthComputed = null;
@@ -31,6 +31,7 @@ class Img
     public ?bool $preload = null;
     public ?string $background = null;
     public ?string $fallback = null;
+    public ?string $fallbackFormat = null;
     public ?string $class = null;
     public ?string $preset = null;
     public ?string $placeholder = null;
@@ -40,6 +41,7 @@ class Img
     public ?string $densities = null;
     public ?array $modifiers = null;
     public ?string $provider = null;
+    public ?string $fallbackImage = null;
 
     protected array $widths = [];
 
@@ -50,6 +52,9 @@ class Img
         protected PreloadManager $preloadManager,
     ) {
         $this->params = $params;
+        $defaults = $this->params->get('responsive_image.defaults');
+        $this->fallback = $defaults['fallback'];
+        $this->fallbackFormat = $defaults['fallback_format'];
     }
 
     #[PreMount]
@@ -71,9 +76,12 @@ class Img
                 'preload',
                 'background',
                 'fallback',
+                'fallbackFormat',
+                'fallback-format',
                 'class',
                 'preset',
                 'placeholder',
+                'placeholderClass',
                 'placeholder-class',
                 'srcset',
                 'id',
@@ -113,6 +121,7 @@ class Img
         $resolver->setAllowedTypes('preload', ['bool', 'null']);
         $resolver->setAllowedTypes('background', ['string', 'null']);
         $resolver->setAllowedTypes('fallback', ['string', 'null']);
+        $resolver->setAllowedTypes('fallback-format', ['string', 'null']);
         $resolver->setAllowedTypes('class', ['string', 'null']);
         $resolver->setAllowedTypes('preset', ['string', 'null']);
         $resolver->setAllowedTypes('placeholder', ['string', 'null']);
@@ -144,6 +153,11 @@ class Img
             }
         }
 
+        if (isset($data['fallback-format'])) {
+            $data['fallbackFormat'] = $data['fallback-format'];
+            unset($data['fallback-format']);
+        }
+
         return $resolver->resolve($data) + $data;
     }
 
@@ -161,6 +175,7 @@ class Img
         ?string $densities = null,
         ?array $modifiers = null,
         ?string $provider = null,
+        ?string $fallbackFormat = null
     ): void {
         if (empty($src)) {
             throw new \InvalidArgumentException('Image src cannot be empty');
@@ -179,6 +194,10 @@ class Img
         $this->modifiers = $modifiers;
         $this->provider = $provider;
 
+        if ($fallbackFormat !== null) {
+            $this->fallbackFormat = $fallbackFormat;
+        }
+
         if (null !== $preload) {
             $this->preload = $preload;
         }
@@ -190,16 +209,16 @@ class Img
             // Use new transformer method to determine initial width
             $this->widthComputed = $this->transformer->getInitialWidth($this->widths, $this->width);
 
-            // For the main src, apply fallback format
-            $this->srcComputed = $this->getImage(['width' => $this->widthComputed], true);
+            // For the main src, use the specified format
+            $this->fallbackImage = $this->getImage(['width' => $this->widthComputed], false);
 
-            // Handle additional sizes from densities
+            // For srcset images, also use specified format
             if ($this->densities) {
                 if (!str_contains($this->width, 'vw') && !str_contains($this->width, ':')) {
                     // For fixed widths, get density-based widths
                     $widthsForSrcset = $this->transformer->getDensityBasedWidths($this->widthComputed, $this->densities);
 
-                    // Build srcset manually for fixed widths
+                    // Build srcset manually for fixed widths - don't apply fallback for srcset
                     $srcsetParts = [];
                     foreach ($widthsForSrcset as $w) {
                         $srcsetParts[] = $this->getImage(['width' => $w], false).' '.$w.'w';
@@ -229,11 +248,11 @@ class Img
                 $this->sizes = $this->transformer->getSizes($this->widths);
             }
         } else {
-            $this->srcComputed = $this->getImage([], true); // Apply fallback for main src
+            $this->fallbackImage = $this->getImage([], true);
         }
 
         if ($this->preload) {
-            $this->preloadManager->addPreloadImage($this->srcComputed, [
+            $this->preloadManager->addPreloadImage($this->fallbackImage, [
                 'srcset' => $this->srcset,
                 'sizes' => $this->sizes,
             ]);
@@ -242,27 +261,29 @@ class Img
 
     protected function getImage(array $modifiers = [], bool $applyFallback = false): string
     {
-        // Handle format
-        if ($applyFallback && $this->fallback) {
-            if ('auto' === $this->fallback) {
+        // Add custom modifiers if they exist
+        if ($this->modifiers) {
+            $modifiers = array_merge($modifiers, $this->modifiers);
+        }
+
+        // First apply the explicitly specified format if it exists
+        if ($this->format && !$applyFallback) {
+            $modifiers['format'] = $this->format;
+        }
+        // Then handle fallback formats if we're in fallback mode
+        elseif ($applyFallback) {
+            if ('empty' === $this->fallbackFormat) {
+                return self::EMPTY_GIF;
+            } elseif ('auto' === $this->fallbackFormat) {
                 // Auto fallback logic based on original image format
                 $extension = $this->getImageExtension();
-
-                // PNG fallback for formats that might have transparency
-                if (\in_array($extension, ['png', 'webp', 'gif'])) {
-                    $modifiers['format'] = 'png';
-                } else {
-                    // JPEG fallback for all other formats
-                    $modifiers['format'] = 'jpg';
-                }
-            } elseif ('empty' === $this->fallback) {
-                return self::EMPTY_GIF;
-            } else {
+                $modifiers['format'] = \in_array($extension, ['png', 'webp', 'gif']) ? 'png' : 'jpg';
+            } elseif ($this->fallbackFormat) {
+                $modifiers['format'] = $this->fallbackFormat;
+            } elseif ($this->fallback) {
+                // If fallback is specified, use that format
                 $modifiers['format'] = $this->fallback;
             }
-        } elseif ($this->format && 'auto' !== $this->format) {
-            // If not applying fallback and format is set (and not auto), use it
-            $modifiers['format'] = $this->format;
         }
 
         // Add other modifiers
@@ -290,16 +311,40 @@ class Img
             $modifiers['width'] = (int) $modifiers['width'];
         }
 
-        // Add custom modifiers if they exist
-        if ($this->modifiers) {
-            $modifiers = array_merge($modifiers, $this->modifiers);
-        }
-
         return $this->providerRegistry->getProvider($this->provider)->getImage($this->src, $modifiers);
     }
 
     protected function getImageExtension(): string
     {
         return strtolower(pathinfo($this->src, \PATHINFO_EXTENSION));
+    }
+
+    public function getSrc(): string
+    {
+        if (str_contains($this->width, 'vw')) {
+            $breakpoints = $this->transformer->getBreakpoints();
+            return $this->getImage(['width' => $breakpoints[$this->fallback]], true);
+        }
+
+        $widths = $this->transformer->parseWidth($this->width);
+        $width = $widths['default'] ?? array_shift($widths);
+
+        return $this->getImage(['width' => $width['value']], true);
+    }
+
+    public function getSrcComputed(): string
+    {
+        // For empty fallback, return empty GIF
+        if ('empty' === $this->fallbackFormat) {
+            return self::EMPTY_GIF;
+        }
+
+        // For other cases, return the fallback image with fallback format
+        if ($this->width) {
+            $getFallback = str_contains($this->width, 'w') ? true : false;
+            return $this->getImage(['width' => $this->widthComputed], $getFallback);
+        }
+
+        return $this->getImage([], false);
     }
 }

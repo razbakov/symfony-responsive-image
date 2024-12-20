@@ -132,7 +132,8 @@ The `<twig:img>` component supports the following attributes:
     quality="80"                         # Image quality 0-100 (default: 80)
     focal="center"                       # Focus point for cropping
     fit="cover"                          # How image should fit dimensions
-    fallback="png"                       # Fallback format (default: auto)
+    fallback="lg"                        # Fallback breakpoint (default: lg)
+    fallback-format="png"                # Fallback format (default: auto)
     background="#ffffff"                 # Background color for 'contain' fit
 
     # Standard HTML attributes
@@ -175,7 +176,8 @@ Basic usage:
     # Image processing attributes
     format="webp"                          # Output format (default: webp)
     quality="80"                           # Image quality 0-100 (default: 80)
-    fallback="auto"                        # Fallback format (default: auto)
+    fallback="lg"                          # Fallback breakpoint (default: lg)
+    fallback-format="png"                  # Fallback format (default: auto)
 
     # Coming soon
     ratio="sm:1:1 md:16:9"                # Different ratios per breakpoint
@@ -322,13 +324,17 @@ The `fit` property specifies how the image should be resized to fit the target d
 
 ### Fallback Options
 
-The `fallback` property controls format selection for older browsers:
+The `fallback-format` property controls format selection for older browsers:
 
 - `auto` (default): Chooses based on original image
   - PNG fallback if original has transparency (PNG, WebP, GIF)
   - JPEG fallback for all other formats
 - `jpg`: Force JPEG as fallback format
 - `png`: Force PNG as fallback format
+- `empty`: Return empty GIF image
+
+The `fallback` property controls which breakpoint is used for the fallback image.
+By default it is set to `lg`, assuming older browsers that don't support `srcset` are more likely to be desktop and have a resolution of 1024px.
 
 ### Placeholder Options
 

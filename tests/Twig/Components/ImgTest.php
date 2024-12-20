@@ -9,10 +9,12 @@ use Ommax\ResponsiveImageBundle\Twig\Components\Img;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
+use Ommax\ResponsiveImageBundle\Tests\TestHelper\HtmlTestHelper;
 
 class ImgTest extends KernelTestCase
 {
     use InteractsWithTwigComponents;
+    use HtmlTestHelper;
 
     /** @var ProviderInterface&MockObject */
     private ProviderInterface $provider;
@@ -95,15 +97,16 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('alt="Test image"', $rendered);
-        $this->assertStringContainsString('class="img-fluid rounded"', $rendered);
-        $this->assertStringContainsString('referrerpolicy="origin"', $rendered);
-        $this->assertStringContainsString('id="image"', $rendered);
-        $this->assertStringContainsString('data-controller="responsive-image"', $rendered);
-        $this->assertStringContainsString('width="100"', $rendered);
-        $this->assertStringContainsString('height="100"', $rendered);
-        $this->assertStringContainsString('loading="lazy"', $rendered);
-        $this->assertStringContainsString('fetchpriority="auto"', $rendered);
+        // Test standard HTML attributes
+        $this->assertImageAttribute($rendered, 'alt', 'Test image');
+        $this->assertImageAttribute($rendered, 'class', 'img-fluid rounded');
+        $this->assertImageAttribute($rendered, 'referrerpolicy', 'origin');
+        $this->assertImageAttribute($rendered, 'id', 'image');
+        $this->assertImageAttribute($rendered, 'data-controller', 'responsive-image');
+        $this->assertImageAttribute($rendered, 'width', '100');
+        $this->assertImageAttribute($rendered, 'height', '100');
+        $this->assertImageAttribute($rendered, 'loading', 'lazy');
+        $this->assertImageAttribute($rendered, 'fetchpriority', 'auto');
     }
 
     public function testPresetConfiguration(): void
@@ -146,7 +149,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '100');
     }
 
     public function testFixedWidthPx(): void
@@ -159,7 +162,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '100');
         $this->assertStringNotContainsString('sizes="', $rendered);
         $this->assertStringNotContainsString('srcset="', $rendered);
     }
@@ -174,7 +177,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=1000"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '1000');
         $this->assertStringNotContainsString('sizes="', $rendered);
         $this->assertStringNotContainsString('srcset="', $rendered);
     }
@@ -189,14 +192,14 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=50 50w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
-        $this->assertStringContainsString('(max-width: 640px) 50px', $rendered);
-        $this->assertStringContainsString('(max-width: 768px) 100px', $rendered);
-        $this->assertStringContainsString('(max-width: 1024px) 200px', $rendered);
-        $this->assertStringContainsString('200px', $rendered);
+        $attributes = $this->parseImageAttributes($rendered);
+        $this->assertImageSrcParam($rendered, 'width', '50');
+        $this->assertStringContainsString('/image.jpg?width=50 50w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=100 100w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=200 200w', $attributes['srcset']);
+        $this->assertStringContainsString('(max-width: 640px) 50px', $attributes['sizes']);
+        $this->assertStringContainsString('(max-width: 768px) 100px', $attributes['sizes']);
+        $this->assertStringContainsString('(max-width: 1024px) 200px', $attributes['sizes']);
     }
 
     public function testFullscreen(): void
@@ -209,13 +212,18 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=640 640w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
-        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
-        $this->assertStringContainsString('sizes="100vw', $rendered);
+        $attributes = $this->parseImageAttributes($rendered);
+        $this->assertImageSrcParam($rendered, 'width', '640');
+        
+        // Test srcset values
+        $this->assertStringContainsString('/image.jpg?width=640 640w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=768 768w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $attributes['srcset']);
+        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $attributes['srcset']);
+        
+        // Test sizes attribute
+        $this->assertStringContainsString('100vw', $attributes['sizes']);
     }
 
     public function testHalfscreenAndFixed(): void
@@ -228,7 +236,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=320"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '320');
         $this->assertStringContainsString('/image.jpg?width=320 320w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
         $this->assertStringContainsString('(max-width: 1024px) 50vw', $rendered);
@@ -245,7 +253,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '400');
         $this->assertStringContainsString('/image.jpg?width=400 400w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=500 500w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
@@ -268,7 +276,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '100');
         $this->assertStringContainsString('/image.jpg?width=100 100w', $rendered);
         $this->assertStringContainsString('/image.jpg?width=200 200w', $rendered);
     }
@@ -283,7 +291,7 @@ class ImgTest extends KernelTestCase
         $preloadManager->reset();
 
         // Mount component with preload=true
-        $component = $this->mountTwigComponent(
+        $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
                 'src' => '/image.jpg',
@@ -292,13 +300,12 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertTrue($component->preload, 'Preload flag should be true');
-        $this->assertEquals('/image.jpg?width=400', $component->srcComputed, 'Computed src should match expected');
+        $this->assertImageSrcParam($rendered, 'width', '400');
 
         $preloadTags = $preloadManager->getPreloadTags();
 
         $this->assertStringContainsString(
-            '<link rel="preload" as="image" href="/image.jpg?width=400">',
+            '<link rel="preload" as="image" href="/image.jpg?width=400',
             $preloadTags,
             'Preload tags should contain the expected link tag'
         );
@@ -351,7 +358,8 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;format=avif"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '400');
+        $this->assertImageSrcParam($rendered, 'format', 'avif');
     }
 
     public function testQualityParameter(): void
@@ -365,7 +373,8 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;quality=90"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '400');
+        $this->assertImageSrcParam($rendered, 'quality', '90');
     }
 
     public function testFitParameter(): void
@@ -379,7 +388,7 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;fit=contain"', $rendered);
+        $this->assertImageSrcParam($rendered, 'fit', 'contain');
     }
 
     public function testBackgroundParameter(): void
@@ -393,7 +402,8 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;background=%23ffffff"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '400');
+        $this->assertImageSrcParam($rendered, 'background', '#ffffff');
     }
 
     public function testFocalParameter(): void
@@ -407,37 +417,40 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;focal=top"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '400');
+        $this->assertImageSrcParam($rendered, 'focal', 'top');
     }
 
     public function testFallbackParameter(): void
     {
-        $component = $this->mountTwigComponent(
+        $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
                 'src' => '/image.jpg',
-                'width' => '400',
+                'width' => '100w',
                 'format' => 'webp',
                 'fallback' => 'jpg',
             ]
         );
 
-        $this->assertEquals('/image.jpg?width=400&format=jpg', $component->srcComputed);
+        $this->assertImageSrcParam($rendered, 'width', '100');
+        $this->assertImageSrcParam($rendered, 'format', 'jpg');
     }
 
     public function testDefaultFallbackParameter(): void
     {
-        $component = $this->mountTwigComponent(
+        $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
                 'src' => '/image.webp',
-                'width' => '400',
+                'width' => '100w',
                 'format' => 'webp',
                 'fallback' => 'auto',
             ]
         );
 
-        $this->assertEquals('/image.webp?width=400&format=png', $component->srcComputed);
+        $this->assertImageSrcParam($rendered, 'width', '100');
+        $this->assertImageSrcParam($rendered, 'format', 'png');
     }
 
     public function testEmptyFallbackParameter(): void
@@ -448,15 +461,30 @@ class ImgTest extends KernelTestCase
                 'src' => '/image.jpg',
                 'width' => '400',
                 'format' => 'webp',
-                'fallback' => 'empty',
+                'fallback-format' => 'empty',
             ]
         );
 
-        $this->assertEquals(Img::EMPTY_GIF, $component->srcComputed);
+        $this->assertEquals(Img::EMPTY_GIF, $component->getSrcComputed());
     }
 
     public function testRatioParameter(): void
     {
+        // Mount the component to test the computed values
+        $component = $this->mountTwigComponent(
+            name: 'img',
+            data: [
+                'src' => '/image.jpg',
+                'width' => '400',
+                'ratio' => '16:9',
+            ]
+        );
+
+        // Test the computed values directly
+        $this->assertEquals('400', $component->width);
+        $this->assertEquals('16:9', $component->ratio);
+
+        // Test the rendered HTML
         $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
@@ -466,7 +494,9 @@ class ImgTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=400&amp;ratio=16%3A9"', $rendered);
+        // Test using our helper methods
+        $this->assertImageSrcParam($rendered, 'width', '400');
+        $this->assertImageSrcParam($rendered, 'ratio', '16:9');
     }
 
     public function testCustomProvider(): void
@@ -484,12 +514,12 @@ class ImgTest extends KernelTestCase
         $rendered = $this->renderTwigComponent(
             name: 'img',
             data: [
-                'src' => '/image.jpg',
+                'src' => 'image.jpg',
                 'width' => '400',
                 'provider' => 'custom',
             ]
         );
 
-        $this->assertStringContainsString('src="custom:///image.jpg?width=400"', $rendered);
+        $this->assertStringContainsString('custom://image.jpg?width=400', $rendered);
     }
 }

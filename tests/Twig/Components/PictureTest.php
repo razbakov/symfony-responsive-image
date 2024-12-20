@@ -8,10 +8,12 @@ use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
+use Ommax\ResponsiveImageBundle\Tests\TestHelper\HtmlTestHelper;
 
 class PictureTest extends KernelTestCase
 {
     use InteractsWithTwigComponents;
+    use HtmlTestHelper;
 
     /** @var ProviderInterface&MockObject */
     private ProviderInterface $provider;
@@ -100,8 +102,8 @@ class PictureTest extends KernelTestCase
             ]
         );
 
+        $this->assertImageSrcParam($rendered, 'width', '100');
         $this->assertStringContainsString('width="100"', $rendered);
-        $this->assertStringContainsString('src="/image.jpg?width=100"', $rendered);
     }
 
     public function testResponsiveWidth(): void
@@ -114,11 +116,13 @@ class PictureTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=50"', $rendered);
-        $this->assertStringContainsString('media="(min-width: 768px)"', $rendered);
-        $this->assertStringContainsString('media="(min-width: 1024px)"', $rendered);
-        $this->assertStringContainsString('srcset="/image.jpg?width=100"', $rendered);
-        $this->assertStringContainsString('srcset="/image.jpg?width=200"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '50');
+        $this->assertSourceAttribute($rendered, 'media', '(max-width: 640px)', 0);
+        $this->assertSourceAttribute($rendered, 'media', '(max-width: 768px)', 1);
+        $this->assertSourceAttribute($rendered, 'media', '(max-width: 1024px)', 2);
+        $this->assertSourceAttribute($rendered, 'srcset', '/image.jpg?width=50', 0);
+        $this->assertSourceAttribute($rendered, 'srcset', '/image.jpg?width=100', 1);
+        $this->assertSourceAttribute($rendered, 'srcset', '/image.jpg?width=200', 2);
     }
 
     public function testViewportWidthUnit(): void
@@ -131,7 +135,7 @@ class PictureTest extends KernelTestCase
             ]
         );
 
-        $this->assertStringContainsString('src="/image.jpg?width=640"', $rendered);
+        $this->assertImageSrcParam($rendered, 'width', '640');
         $this->assertStringContainsString('srcset="/image.jpg?width=640 640w"', $rendered);
         $this->assertStringContainsString('srcset="/image.jpg?width=768 768w"', $rendered);
         $this->assertStringContainsString('srcset="/image.jpg?width=1024 1024w"', $rendered);

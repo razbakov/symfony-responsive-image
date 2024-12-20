@@ -39,7 +39,9 @@ responsive_image:
     lg: 1024
     xl: 1280
     2xl: 1536
-  defaults: ~
+  defaults:
+    fallback: lg
+    fallback_format: auto
   presets:
     hero:
       ratio: "16:9"
