@@ -283,52 +283,80 @@ class ImgTest extends KernelTestCase
 
     public function testPreloadSimpleImage(): void
     {
-        // First verify the PreloadManager service exists
-        $preloadManager = static::getContainer()->get(PreloadManager::class);
-        $this->assertInstanceOf(PreloadManager::class, $preloadManager);
+        $twig = static::getContainer()->get('twig');
+        
+        // Create a test template that simulates a real page layout
+        $template = $twig->createTemplate(<<<EOF
+            <html>
+            <head>
+                {{ responsive_image_preloads() }}
+            </head>
+            <body>
+                <twig:img
+                    src="/image.jpg"
+                    width="400"
+                    :preload="true"
+                />
+            </body>
+            </html>
+        EOF);
 
-        // Reset the PreloadManager
-        $preloadManager->reset();
+        // Render the entire page
+        $rendered = $template->render([]);
 
-        // Mount component with preload=true
-        $rendered = $this->renderTwigComponent(
-            name: 'img',
-            data: [
-                'src' => '/image.jpg',
-                'width' => '400',
-                'preload' => true,
-            ]
+        // Verify preload tag is in the head
+        $this->assertStringContainsString(
+            '<link rel="preload" as="image" href="/image.jpg?width=400">',
+            $rendered,
+            'Page should contain preload tag in head'
         );
 
-        $this->assertImageSrcParam($rendered, 'width', '400');
-
-        $preloadTags = $preloadManager->getPreloadTags();
-
-        $this->assertStringContainsString(
-            '<link rel="preload" as="image" href="/image.jpg?width=400',
-            $preloadTags,
-            'Preload tags should contain the expected link tag'
+        // Verify img tag is in the body
+        $this->assertMatchesRegularExpression(
+            '/<body>.*<img.*src="\/image\.jpg\?width=400".*>.*<\/body>/s',
+            $rendered
         );
     }
 
     public function testPreloadResponsiveImage(): void
     {
-        $this->mountTwigComponent(
-            name: 'img',
-            data: [
-                'src' => '/image.jpg',
-                'width' => '100vw',
-                'preload' => true,
-            ]
-        );
+        $twig = static::getContainer()->get('twig');
+        
+        // Create a test template that simulates a real page layout
+        $template = $twig->createTemplate(<<<EOF
+            <html>
+            <head>
+                {{ responsive_image_preloads() }}
+            </head>
+            <body>
+                <twig:img
+                    src="/image.jpg"
+                    width="100vw"
+                    :preload="true"
+                />
+            </body>
+            </html>
+        EOF);
 
-        $preloadManager = static::getContainer()->get(PreloadManager::class);
-        $preloadTags = $preloadManager->getPreloadTags();
+        // Render the entire page
+        $rendered = $template->render([]);
 
-        $this->assertStringContainsString('imagesrcset="', $preloadTags);
-        $this->assertStringContainsString('sizes="100vw"', $preloadTags);
-        $this->assertStringContainsString('/image.jpg?width=640 640w', $preloadTags);
-        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $preloadTags);
+        // Verify preload tags are in the head
+        $this->assertStringContainsString('<link rel="preload" as="image"', $rendered);
+        $this->assertStringContainsString('imagesrcset="', $rendered);
+        $this->assertStringContainsString('sizes="100vw"', $rendered);
+        
+        // Verify responsive image sizes are included in preload
+        $this->assertStringContainsString('/image.jpg?width=640 640w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=768 768w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1024 1024w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1280 1280w', $rendered);
+        $this->assertStringContainsString('/image.jpg?width=1536 1536w', $rendered);
+
+        // Verify the actual img tag is rendered in the body
+        $this->assertMatchesRegularExpression('/<body>.*<img.*src=".*".*>.*<\/body>/s', $rendered);
+        $this->assertStringContainsString('srcset="', $rendered);
+        $this->assertStringContainsString('sizes="100vw"', $rendered);
     }
 
     public function testPreloadDisabledByDefault(): void
