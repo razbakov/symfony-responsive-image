@@ -56,7 +56,7 @@ A Symfony bundle that provides two components for optimized images:
 ## Installation
 
 ```bash
-composer require Razbakov/symfony-responsive-image
+composer require razbakov/symfony-responsive-image
 ```
 
 Register the bundle in `config/bundles.php`:
