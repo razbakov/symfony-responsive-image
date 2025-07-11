@@ -579,7 +579,7 @@ The bundle provides several error handling mechanisms:
 
 ```bash
 # Clone repository
-git clone https://github.com/Razbakov/symfony-responsive-image
+git clone https://github.com/razbakov/symfony-responsive-image
 cd symfony-responsive-image
 
 # Install dependencies
