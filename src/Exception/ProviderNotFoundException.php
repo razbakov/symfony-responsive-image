@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Exception;
+namespace Razbakov\ResponsiveImageBundle\Exception;
 
 class ProviderNotFoundException extends \RuntimeException
 {

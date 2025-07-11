@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests;
+namespace Razbakov\ResponsiveImageBundle\Tests;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -14,7 +14,7 @@ class TestKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \Symfony\UX\TwigComponent\TwigComponentBundle(),
-            new \Ommax\ResponsiveImageBundle\ResponsiveImageBundle(),
+            new \Razbakov\ResponsiveImageBundle\ResponsiveImageBundle(),
             new \Liip\ImagineBundle\LiipImagineBundle(),
         ];
     }

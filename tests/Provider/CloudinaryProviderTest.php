@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Provider;
+namespace Razbakov\ResponsiveImageBundle\Tests\Provider;
 
-use Ommax\ResponsiveImageBundle\Provider\CloudinaryProvider;
+use Razbakov\ResponsiveImageBundle\Provider\CloudinaryProvider;
 use PHPUnit\Framework\TestCase;
 
 class CloudinaryProviderTest extends TestCase

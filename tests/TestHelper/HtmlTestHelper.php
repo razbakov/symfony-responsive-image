@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\TestHelper;
+namespace Razbakov\ResponsiveImageBundle\Tests\TestHelper;
 
 trait HtmlTestHelper
 {

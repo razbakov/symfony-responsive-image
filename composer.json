@@ -1,5 +1,5 @@
 {
-  "name": "ommax/symfony-responsive-image",
+  "name": "razbakov/symfony-responsive-image",
   "description": "A Symfony bundle for responsive images with automatic WebP conversion, smart cropping, and Core Web Vitals optimization",
   "type": "symfony-bundle",
   "license": "MIT",
@@ -43,12 +43,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Ommax\\ResponsiveImageBundle\\": "src/"
+      "Razbakov\\ResponsiveImageBundle\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Ommax\\ResponsiveImageBundle\\Tests\\": "tests/"
+      "Razbakov\\ResponsiveImageBundle\\Tests\\": "tests/"
     }
   },
   "config": {

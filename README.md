@@ -56,7 +56,7 @@ A Symfony bundle that provides two components for optimized images:
 ## Installation
 
 ```bash
-composer require ommax/symfony-responsive-image
+composer require Razbakov/symfony-responsive-image
 ```
 
 Register the bundle in `config/bundles.php`:
@@ -64,7 +64,7 @@ Register the bundle in `config/bundles.php`:
 ```php
 return [
     // ...
-    Ommax\ResponsiveImageBundle\ResponsiveImageBundle::class => ['all' => true],
+    Razbakov\ResponsiveImageBundle\ResponsiveImageBundle::class => ['all' => true],
 ];
 ```
 
@@ -579,7 +579,7 @@ The bundle provides several error handling mechanisms:
 
 ```bash
 # Clone repository
-git clone https://github.com/ommax/symfony-responsive-image
+git clone https://github.com/Razbakov/symfony-responsive-image
 cd symfony-responsive-image
 
 # Install dependencies
@@ -595,4 +595,4 @@ This bundle is available under the MIT license.
 
 ## Credits
 
-Inspired by [NuxtImg](https://image.nuxtjs.org/) and [Ibexa Platform](https://www.ibexa.co/).
+Inspired by [NuxtImg](https://image.nuxtjs.org/).

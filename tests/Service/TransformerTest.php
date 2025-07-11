@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Service;
+namespace Razbakov\ResponsiveImageBundle\Tests\Service;
 
-use Ommax\ResponsiveImageBundle\Service\Transformer;
+use Razbakov\ResponsiveImageBundle\Service\Transformer;
 use PHPUnit\Framework\TestCase;
 
 class TransformerTest extends TestCase

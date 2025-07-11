@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\DependencyInjection;
+namespace Razbakov\ResponsiveImageBundle\Tests\DependencyInjection;
 
-use Ommax\ResponsiveImageBundle\DependencyInjection\Configuration;
+use Razbakov\ResponsiveImageBundle\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;

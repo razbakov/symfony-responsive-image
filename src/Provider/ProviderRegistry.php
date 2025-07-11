@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Provider;
+namespace Razbakov\ResponsiveImageBundle\Provider;
 
-use Ommax\ResponsiveImageBundle\Exception\ProviderNotFoundException;
+use Razbakov\ResponsiveImageBundle\Exception\ProviderNotFoundException;
 
 class ProviderRegistry
 {

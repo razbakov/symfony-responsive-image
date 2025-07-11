@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\DependencyInjection;
+namespace Razbakov\ResponsiveImageBundle\DependencyInjection;
 
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;

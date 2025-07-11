@@ -1,10 +1,10 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Twig\Components;
+namespace Razbakov\ResponsiveImageBundle\Twig\Components;
 
-use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
-use Ommax\ResponsiveImageBundle\Service\PreloadManager;
-use Ommax\ResponsiveImageBundle\Service\Transformer;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Razbakov\ResponsiveImageBundle\Service\PreloadManager;
+use Razbakov\ResponsiveImageBundle\Service\Transformer;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle;
+namespace Razbakov\ResponsiveImageBundle;
 
-use Ommax\ResponsiveImageBundle\DependencyInjection\Compiler\ProviderPass;
+use Razbakov\ResponsiveImageBundle\DependencyInjection\Compiler\ProviderPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

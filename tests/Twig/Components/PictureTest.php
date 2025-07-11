@@ -1,14 +1,14 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\Twig\Components;
+namespace Razbakov\ResponsiveImageBundle\Tests\Twig\Components;
 
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
-use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
-use Ommax\ResponsiveImageBundle\Twig\Components\Picture;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderInterface;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Razbakov\ResponsiveImageBundle\Twig\Components\Picture;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\Test\InteractsWithTwigComponents;
-use Ommax\ResponsiveImageBundle\Tests\TestHelper\HtmlTestHelper;
+use Razbakov\ResponsiveImageBundle\Tests\TestHelper\HtmlTestHelper;
 
 class PictureTest extends KernelTestCase
 {

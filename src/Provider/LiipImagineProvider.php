@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Provider;
+namespace Razbakov\ResponsiveImageBundle\Provider;
 
 use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

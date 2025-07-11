@@ -79,7 +79,7 @@ You can create your own provider by implementing the `ProviderInterface`:
 ```php
 namespace App\Provider;
 
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderInterface;
 
 class CustomProvider implements ProviderInterface
 {

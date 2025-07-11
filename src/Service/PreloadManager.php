@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Service;
+namespace Razbakov\ResponsiveImageBundle\Service;
 
 class PreloadManager
 {

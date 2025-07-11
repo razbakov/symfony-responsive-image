@@ -1,10 +1,10 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Tests\DependencyInjection;
+namespace Razbakov\ResponsiveImageBundle\Tests\DependencyInjection;
 
-use Ommax\ResponsiveImageBundle\DependencyInjection\ResponsiveImageExtension;
-use Ommax\ResponsiveImageBundle\Provider\ProviderInterface;
-use Ommax\ResponsiveImageBundle\Provider\ProviderRegistry;
+use Razbakov\ResponsiveImageBundle\DependencyInjection\ResponsiveImageExtension;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderInterface;
+use Razbakov\ResponsiveImageBundle\Provider\ProviderRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

@@ -8,7 +8,7 @@ services:
     autoconfigure: true
     public: false
 
-  Ommax\ResponsiveImageBundle\:
+  Razbakov\ResponsiveImageBundle\:
     resource: "../../*"
     exclude:
       - "../../DependencyInjection/"
@@ -16,26 +16,26 @@ services:
       - "../../Tests/"
 
   responsive_image.provider_registry:
-    class: Ommax\ResponsiveImageBundle\Provider\ProviderRegistry
+    class: Razbakov\ResponsiveImageBundle\Provider\ProviderRegistry
     public: true
     arguments:
       $defaultProvider: "%responsive_image.provider%"
 
-  Ommax\ResponsiveImageBundle\Provider\ProviderRegistry: "@responsive_image.provider_registry"
+  Razbakov\ResponsiveImageBundle\Provider\ProviderRegistry: "@responsive_image.provider_registry"
 
-  Ommax\ResponsiveImageBundle\Twig\Components\Img:
+  Razbakov\ResponsiveImageBundle\Twig\Components\Img:
     tags: ["twig.component"]
 
-  Ommax\ResponsiveImageBundle\Twig\Components\Picture:
+  Razbakov\ResponsiveImageBundle\Twig\Components\Picture:
     tags: ["twig.component"]
 
-  Ommax\ResponsiveImageBundle\Service\PreloadManager:
+  Razbakov\ResponsiveImageBundle\Service\PreloadManager:
     public: true
 
-  Ommax\ResponsiveImageBundle\Twig\Extension\ResponsiveImageExtension:
+  Razbakov\ResponsiveImageBundle\Twig\Extension\ResponsiveImageExtension:
     tags: ["twig.extension"]
 
-  Ommax\ResponsiveImageBundle\Provider\LiipImagineProvider:
+  Razbakov\ResponsiveImageBundle\Provider\LiipImagineProvider:
     arguments:
       $urlGenerator: "@router"
       $signer: "@liip_imagine.cache.signer"

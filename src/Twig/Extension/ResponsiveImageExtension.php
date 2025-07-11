@@ -1,8 +1,8 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Twig\Extension;
+namespace Razbakov\ResponsiveImageBundle\Twig\Extension;
 
-use Ommax\ResponsiveImageBundle\Service\PreloadManager;
+use Razbakov\ResponsiveImageBundle\Service\PreloadManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

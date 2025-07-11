@@ -1,6 +1,6 @@
 <?php
 
-namespace Ommax\ResponsiveImageBundle\Provider;
+namespace Razbakov\ResponsiveImageBundle\Provider;
 
 class PlaceholderProvider implements ProviderInterface
 {
