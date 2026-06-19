@@ -564,6 +564,7 @@ The bundle provides several error handling mechanisms:
 
 - Missing images return a 404 placeholder
 - Invalid configurations throw `InvalidConfigurationException`
+- Provider-specific invalid configuration, empty image sources, directory traversal attempts, and malformed provider URLs throw `InvalidArgumentException`
 - Processing errors are logged to Symfony's error log
 
 ## Security
@@ -572,6 +573,18 @@ The bundle provides several error handling mechanisms:
 - Maximum upload size: Configured through PHP's upload_max_filesize
 - Path validation prevents directory traversal attacks
 - Image validation ensures file integrity
+- Provider URLs are validated before use
+- Non-scalar transformation modifier values are rejected before URL generation
+
+## Operational Deployment Notes
+
+For production deployments:
+
+- Configure external provider base URLs through environment variables (`CLOUDINARY_URL`, `FASTLY_URL`) instead of hardcoding them in templates.
+- Keep LiipImagine signed URLs enabled when using runtime transformations, so transformation requests cannot be forged by changing query parameters manually.
+- Put generated images behind the Symfony HTTP cache, a CDN, or the provider's native cache to avoid repeated transformation work for the same source image and modifiers.
+- Monitor 4xx/5xx responses from image providers separately from application errors. Broken image transformations can directly affect Core Web Vitals and LCP.
+- Prefer explicit presets for frequently used image variants. This keeps generated URLs stable and improves cache hit rates.
 
 ## Development
 
