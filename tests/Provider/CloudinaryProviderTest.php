@@ -2,8 +2,8 @@
 
 namespace Razbakov\ResponsiveImageBundle\Tests\Provider;
 
-use Razbakov\ResponsiveImageBundle\Provider\CloudinaryProvider;
 use PHPUnit\Framework\TestCase;
+use Razbakov\ResponsiveImageBundle\Provider\CloudinaryProvider;
 
 class CloudinaryProviderTest extends TestCase
 {
@@ -123,5 +123,61 @@ class CloudinaryProviderTest extends TestCase
             'https://res.cloudinary.com/demo/w_300,q_80,f_jpg/sample.jpg',
             $result
         );
+    }
+
+    public function testExternalCloudinaryUrlDoesNotMutateConfiguredBaseUrl(): void
+    {
+        $externalResult = $this->provider->getImage('https://res.cloudinary.com/other/upload/sample.jpg', [
+            'width' => '300',
+        ]);
+
+        $localResult = $this->provider->getImage('sample.jpg', [
+            'width' => '300',
+        ]);
+
+        $this->assertEquals(
+            'https://res.cloudinary.com/other/upload/w_300,q_80,f_jpg/sample.jpg',
+            $externalResult
+        );
+        $this->assertEquals(
+            'https://res.cloudinary.com/demo/w_300,q_80,f_jpg/sample.jpg',
+            $localResult
+        );
+    }
+
+    public function testThrowsExceptionWhenBaseUrlIsMissingForRelativeSource(): void
+    {
+        $provider = new CloudinaryProvider();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('base_url');
+
+        $provider->getImage('sample.jpg', []);
+    }
+
+    public function testThrowsExceptionForMalformedCloudinaryUrl(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('/upload/');
+
+        $this->provider->getImage('https://res.cloudinary.com/demo/sample.jpg', []);
+    }
+
+    public function testThrowsExceptionForDirectoryTraversalSource(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('directory traversal');
+
+        $this->provider->getImage('../secret.jpg', []);
+    }
+
+    public function testThrowsExceptionForNonScalarModifier(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Modifier "width"');
+
+        $this->provider->getImage('sample.jpg', [
+            'width' => ['300'],
+        ]);
     }
 }

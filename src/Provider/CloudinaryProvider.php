@@ -6,6 +6,14 @@ class CloudinaryProvider implements ProviderInterface
 {
     private string $baseUrl = '';
     private array $defaults = [];
+    private const UPLOAD_SEGMENT = '/upload/';
+    private const DEFAULT_TRANSFORMATION_PRIORITY = 999;
+    private const ORDER_PRIORITY = [
+        'width' => 1,
+        'height' => 2,
+        'quality' => 3,
+        'format' => 4,
+    ];
 
     private const KEY_MAP = [
         'width' => 'w',
@@ -73,7 +81,11 @@ class CloudinaryProvider implements ProviderInterface
 
     public function configure(array $config): void
     {
-        $this->baseUrl = $config['base_url'] ?? '';
+        if (isset($config['base_url'])) {
+            $this->assertValidBaseUrl($config['base_url']);
+            $this->baseUrl = rtrim($config['base_url'], '/');
+        }
+
         $this->defaults = $config['defaults'] ?? [];
     }
 
@@ -84,34 +96,20 @@ class CloudinaryProvider implements ProviderInterface
 
     public function getImage(string $src, array $modifiers): string
     {
-        // Remove any leading slashes
-        $src = ltrim($src, '/');
+        $src = $this->normalizeSource($src);
+        $baseUrl = $this->baseUrl;
 
-        // Check if the source is an external URL
-        if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://')) {
-            if (str_contains($src, '/upload/')) {
-                // Extract the domain part up to /upload/
-                $this->baseUrl = substr($src, 0, strpos($src, '/upload/') + 8);
-                // Extract the path after /upload/
-                $src = substr($src, strpos($src, '/upload/') + 8);
-            }
+        if ($this->isExternalUrl($src)) {
+            [$baseUrl, $src] = $this->splitCloudinaryUrl($src);
         }
 
-        $transformations = [];
+        if ('' === $baseUrl) {
+            throw new \InvalidArgumentException('Cloudinary provider requires "base_url" configuration for relative image paths.');
+        }
 
-        // Merge defaults with provided modifiers
         $modifiers = array_merge($this->defaults, $modifiers);
+        $this->assertValidModifiers($modifiers);
 
-        // Define the order of transformations
-        $orderPriority = [
-            'width' => 1,
-            'height' => 2,
-            'quality' => 3,
-            'format' => 4,
-            // Add other keys with their priority if needed
-        ];
-
-        // Process modifiers and store them with their priority
         $prioritizedTransformations = [];
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
@@ -151,21 +149,18 @@ class CloudinaryProvider implements ProviderInterface
                 ? $cloudinaryKey.':'.$value
                 : $cloudinaryKey.'_'.$value;
 
-            // Store with priority if defined, otherwise use a high number
-            $priority = $orderPriority[$key] ?? 999;
-            $prioritizedTransformations[$priority] = $transformation;
+            $priority = self::ORDER_PRIORITY[$key] ?? self::DEFAULT_TRANSFORMATION_PRIORITY;
+            $prioritizedTransformations[$priority][] = $transformation;
         }
 
-        // Sort by priority and get final transformations
         ksort($prioritizedTransformations);
-        $transformations = array_values($prioritizedTransformations);
+        $transformations = array_merge(...array_values($prioritizedTransformations));
 
-        // Build the final URL
         $transformationString = implode(',', $transformations);
 
         return \sprintf(
             '%s/%s%s',
-            rtrim($this->baseUrl, '/'),
+            rtrim($baseUrl, '/'),
             $transformationString ? $transformationString.'/' : '',
             $src
         );
@@ -174,5 +169,55 @@ class CloudinaryProvider implements ProviderInterface
     private function convertHexToRgb(string $value): string
     {
         return str_starts_with($value, '#') ? 'rgb_'.ltrim($value, '#') : $value;
+    }
+
+    private function normalizeSource(string $src): string
+    {
+        $src = trim($src);
+
+        if ('' === $src) {
+            throw new \InvalidArgumentException('Image source cannot be empty.');
+        }
+
+        if (str_contains($src, '..')) {
+            throw new \InvalidArgumentException('Image source cannot contain directory traversal segments.');
+        }
+
+        return $this->isExternalUrl($src) ? $src : ltrim($src, '/');
+    }
+
+    private function isExternalUrl(string $src): bool
+    {
+        return str_starts_with($src, 'http://') || str_starts_with($src, 'https://');
+    }
+
+    private function splitCloudinaryUrl(string $src): array
+    {
+        if (!str_contains($src, self::UPLOAD_SEGMENT)) {
+            throw new \InvalidArgumentException('Cloudinary image URL must contain the "/upload/" segment.');
+        }
+
+        $uploadPosition = strpos($src, self::UPLOAD_SEGMENT);
+
+        return [
+            substr($src, 0, $uploadPosition + \strlen(self::UPLOAD_SEGMENT)),
+            substr($src, $uploadPosition + \strlen(self::UPLOAD_SEGMENT)),
+        ];
+    }
+
+    private function assertValidBaseUrl(string $baseUrl): void
+    {
+        if ('' === trim($baseUrl) || !filter_var($baseUrl, \FILTER_VALIDATE_URL)) {
+            throw new \InvalidArgumentException('Cloudinary provider "base_url" must be a valid URL.');
+        }
+    }
+
+    private function assertValidModifiers(array $modifiers): void
+    {
+        foreach ($modifiers as $key => $value) {
+            if (!\is_scalar($value) && null !== $value) {
+                throw new \InvalidArgumentException(\sprintf('Modifier "%s" must be a scalar value or null.', $key));
+            }
+        }
     }
 }

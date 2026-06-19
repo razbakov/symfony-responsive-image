@@ -29,7 +29,15 @@ class FastlyProvider implements ProviderInterface
 
     public function configure(array $config): void
     {
-        $this->baseUrl = $config['base_url'] ?? '';
+        if (!isset($config['base_url']) || '' === trim($config['base_url'])) {
+            throw new \InvalidArgumentException('Fastly provider requires "base_url" configuration.');
+        }
+
+        if (!filter_var($config['base_url'], \FILTER_VALIDATE_URL)) {
+            throw new \InvalidArgumentException('Fastly provider "base_url" must be a valid URL.');
+        }
+
+        $this->baseUrl = rtrim($config['base_url'], '/');
         $this->defaults = $config['defaults'] ?? [];
     }
 
@@ -40,12 +48,11 @@ class FastlyProvider implements ProviderInterface
 
     public function getImage(string $src, array $modifiers): string
     {
-        $src = ltrim($src, '/');
+        $src = $this->normalizeSource($src);
 
-        // Merge defaults with provided modifiers
         $modifiers = array_merge($this->defaults, $modifiers);
+        $this->assertValidModifiers($modifiers);
 
-        // Process modifiers
         $transformations = [];
         foreach ($modifiers as $key => $value) {
             if (!isset(self::KEY_MAP[$key])) {
@@ -66,10 +73,9 @@ class FastlyProvider implements ProviderInterface
                 $value = $matches[1].'/'.$matches[2];
             }
 
-            $transformations[] = $fastlyKey.'='.$value;
+            $transformations[] = rawurlencode($fastlyKey).'='.rawurlencode((string) $value);
         }
 
-        // Build the final URL
         $queryString = implode('&', $transformations);
 
         return \sprintf(
@@ -78,5 +84,29 @@ class FastlyProvider implements ProviderInterface
             $src,
             $queryString ? '?'.$queryString : ''
         );
+    }
+
+    private function normalizeSource(string $src): string
+    {
+        $src = trim($src);
+
+        if ('' === $src) {
+            throw new \InvalidArgumentException('Image source cannot be empty.');
+        }
+
+        if (str_contains($src, '..')) {
+            throw new \InvalidArgumentException('Image source cannot contain directory traversal segments.');
+        }
+
+        return ltrim($src, '/');
+    }
+
+    private function assertValidModifiers(array $modifiers): void
+    {
+        foreach ($modifiers as $key => $value) {
+            if (!\is_scalar($value) && null !== $value) {
+                throw new \InvalidArgumentException(\sprintf('Modifier "%s" must be a scalar value or null.', $key));
+            }
+        }
     }
 }
